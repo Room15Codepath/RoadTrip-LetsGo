@@ -1,17 +1,42 @@
-RoadTrip-LetsGo
+# Group Project - *RoadTrip - Let's Go!*
 
-Description of the project:
+### Group Members - *Yingbin Wang*, *Liubov Sireneva*, *Prerna Manaktala*, *Tessa Voon*
+
+## Description
 Put driving(walking, biking) route and points of interest together.
 
-What does the app do?
-This app can tell you dining/gas station etc. choices (within certain distance or driving time) along the driving route so that user can dine/pump gas etc. and still reach destination on time.
-The choices will be presented on the map as well as listed with highlight information and user can click in to get more information. We will use Yelp, Foursquare etc. APIs. 
-The idea is straight forward and basic scope/user stories are well defined, but much more feature can be added. 
+#### What does the app do?<br>
+This app can tell you dining/gas station etc. choices (within certain distance or driving time) along the driving route so that user can dine/pump gas etc. and still reach destination on time.<br>
+The choices will be presented on the map as well as listed with highlight information and user can click in to get more information. We will use Yelp, Foursquare etc. APIs.
 
-Basic user stories:
-1. User can specify starting location(or current location), destination and the kind of stops they are interested(such as gas station, Restaurant, hotel etc.). 
-2. The route will first show up, then the candidate stops will show up within a certain range of the route. A more detailed query (such as thai restaurant) can be applied to limit the number of results. 
-3. Users can click on the candidate stops on the map then a highlight will pop up (such as location, rating, business hour, phone number etc.) 
-4. Users can also click to get the list information of all possible stops and clicking item will present detailed information about the business.
-5. There are general filters that can be applied such as minimum rating, search range, price range, data sources (yelp, foursquare or other resources), transportation types etc. 
-6. Filters can be saved, updated and reset.
+<br><br>
+## Wireframes
+
+<br><br>
+
+## User Stories:
+
+### Onboarding
+* [ ] User can login with Facebook / Email 
+* [ ] User can view an onboarding guide (instructions to start using app)
+
+### Setting Trip Filters
+* [ ] User can update filters to improve route result  
+  * [ ] User can specify starting location and destination
+  * [ ] Address is sent to a Geocoding API to get latitude and longitude coordinates of start & end locations (autocomplete addresses if possible)
+  * [ ] User can specify the kind of stops he / she is interested in (such as gas station, restaurant, hotel)
+  
+### Suggested Stops 
+* [ ] User can view route with candidate stops 
+  * [ ] Coordinates are sent to a Navigation API to generate & display route 
+  * [ ] Retrieve & display candidate stops from Yelp API's with filters applied
+  * [ ] User can click on a stop to view more details such as location, rating etc (from Yelp's API)
+  * [ ] User can filter further 
+  
+### Managing Trip Filters
+* [ ] User can save current filter for use next time 
+* [ ] User can view, edit or delete a list of filters he / she saved 
+
+### Optional 
+* [ ] Estimate the amount of time needed to complete the trip
+* [ ] Give a few suggested routes and estimated time / cost etc 
