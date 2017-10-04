@@ -17,7 +17,7 @@ The choices will be presented on the map as well as listed with highlight inform
 ## User Stories:
 
 ### Onboarding
-* [ ] User can login with Facebook / Email 
+* [ ] User can login with email 
 * [ ] User can view an onboarding guide (instructions to start using app)
 
 ### Setting Trip Filters
@@ -29,9 +29,9 @@ The choices will be presented on the map as well as listed with highlight inform
 ### Suggested Stops 
 * [ ] User can view route with candidate stops 
   * [ ] Coordinates are sent to a Navigation API to generate & display route 
-  * [ ] Retrieve & display candidate stops from Yelp API's with filters applied
-  * [ ] User can click on a stop to view more details such as location, rating etc (from Yelp's API)
-  * [ ] User can filter further 
+  * [ ] Retrieve & display candidate stops from Yelp / Foursquare API's with filters applied
+  * [ ] User can click on a stop to view more details such as location, rating etc (from Yelp / Foursquare API)
+  * [ ] User can filter further (e.g. by rating, proximity)
   
 ### Managing Trip Filters
 * [ ] User can save current filter for use next time 
