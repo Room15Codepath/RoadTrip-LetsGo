@@ -40,3 +40,11 @@ The choices will be presented on the map as well as listed with highlight inform
 ### Optional 
 * [ ] Estimate the amount of time needed to complete the trip
 * [ ] Give a few suggested routes and estimated time / cost etc 
+
+## Video Walkthrough
+
+Here's a walkthrough of implemented user stories:
+
+<img src='https://i.imgur.com/gWQ9y26.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+GIF created with Vokoscreen
