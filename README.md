@@ -8,8 +8,7 @@ Put driving(walking, biking) route and points of interest together.
 #### What does the app do?<br>
 This app can tell you dining/gas station etc. choices (within certain distance or driving time) along the driving route so that user can dine/pump gas etc. and still reach destination on time.<br>
 The choices will be presented on the map as well as listed with highlight information and user can click in to get more information. We will use Yelp, Foursquare etc. APIs.
-
-<br><br>
+<br>
 ## Wireframes
 
 <img src='https://i.imgur.com/gWQ9y26.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
