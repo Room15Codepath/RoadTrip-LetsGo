@@ -60,3 +60,6 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+# ignore secret keys
+**/*/res/values/secrets.xml
