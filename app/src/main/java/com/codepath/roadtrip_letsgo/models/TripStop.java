@@ -39,31 +39,4 @@ public class TripStop {
         return tripStop;
     }
 
-//    public static ArrayList<TripStop> fromJSONArray(JSONArray jsonArray, StopType stopType) {
-//        ArrayList<TripStop> tripStops = new ArrayList<TripStop>();
-//        for (int i=0; i<jsonArray.length(); i++) {
-//            TripStop tripStop = new TripStop();
-//            TripLocation tripLocation = new TripLocation();
-//            try {
-//                JSONObject placeObj = jsonArray.getJSONObject(i);
-//                tripLocation.loc_name = placeObj.getString("name");
-//                tripLocation.address = placeObj.getJSONObject("location").toString();
-//                tripLocation.point = new LatLng(
-//                        placeObj.getJSONObject("coordinates").getDouble("latitude"),
-//                        placeObj.getJSONObject("coordinates").getDouble("longitude"));
-//                tripStop.trip_location = tripLocation;
-//                tripStop.yelp_id = placeObj.getString("id");
-//                tripStop.rating = placeObj.getDouble("rating");
-//                tripStop.is_closed = placeObj.getBoolean("isClosed");
-//                tripStop.distance_away = placeObj.getDouble("distance");
-//                tripStop.stop_type = stopType;
-//                tripStop.image_url = placeObj.getString("imageUrl");
-//                tripStops.add(tripStop);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return tripStops;
-//    }
-
 }
