@@ -1,5 +1,6 @@
-package com.codepath.roadtrip_letsgo;
+package com.codepath.roadtrip_letsgo.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.codepath.roadtrip_letsgo.R;
+import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
@@ -14,6 +17,8 @@ import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,7 +90,10 @@ public class HomeActivity extends AppCompatActivity {
         btnFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(HomeActivity.this, ResultsActivity.class);
+                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
+                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
+                startActivity(i);
             }
         });
     }
