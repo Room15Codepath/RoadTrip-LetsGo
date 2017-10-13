@@ -3,7 +3,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 repositories {
+    jcenter()
     maven { url 'https://maven.fabric.io/public' }
+
 }
 android {
     compileSdkVersion 26
@@ -22,6 +24,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    defaultConfig {
+        // ...
+        resConfigs "auto"
+    }
+}
+
+ext {
+    supportLibVersion = '26.0.0'  // variable that can be referenced to keep support libs consistent
 }
 
 dependencies {
@@ -29,10 +39,17 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:design:26.+'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
     testCompile 'junit:junit:4.12'
+    compile 'com.firebaseui:firebase-ui-auth:3.0.0'
+
+    // Required only if Facebook login support is required
+    compile 'com.facebook.android:facebook-login:4.27.0'
+    compile 'com.google.firebase:firebase-auth:11.4.2'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
+apply plugin: 'com.google.gms.google-services'
