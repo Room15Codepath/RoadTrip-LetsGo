@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="stop_type_array">
+        <item>Cafe</item>
+        <item>Restaurant</item>
+        <item>ATM</item>
+        <item>Mall</item>
+        <item>Gas Station</item>
+    </string-array>
+</resources>
