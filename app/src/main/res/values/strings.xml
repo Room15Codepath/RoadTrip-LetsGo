@@ -13,5 +13,15 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
     <string name="title_activity_search">SearchActivity</string>
+
+    <string name="origin_hint">Enter Origin</string>
+    <string name="destination_hint">Enter Destination</string>
+    <string name="select_stop">Select a type of stop</string>
+    <string name="find_stops">Find Stops</string>
+    <string name="login_label">Log in with Facebook</string>
+    <string name="facebook_app_id">127523021241004</string>
+    <string name="fb_login_protocol_scheme">fb127523021241004</string>
+    <string name="facebook_application_id" translatable="false">127523021241004</string>
 </resources>
