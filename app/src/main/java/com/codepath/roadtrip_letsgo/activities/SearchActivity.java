@@ -1,4 +1,4 @@
-package com.codepath.roadtrip_letsgo;
+package com.codepath.roadtrip_letsgo.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SmartFragmentStatePagerAdapter;
 

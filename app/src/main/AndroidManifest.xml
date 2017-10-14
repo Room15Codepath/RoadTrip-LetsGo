@@ -68,9 +68,10 @@
             android:value="9320d6bd0e2e412f88aa5cc51e6a5810aba83b9e" />
 
         <activity
-            android:name=".SearchActivity"
+            android:name=".activities.SearchActivity"
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activities.HomeActivity"></activity>
         <activity android:name=".activities.ResultsActivity"></activity>
     </application>
 
