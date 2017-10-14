@@ -17,4 +17,5 @@
     <string name="facebook_app_id">127523021241004</string>
     <string name="fb_login_protocol_scheme">fb127523021241004</string>
     <string name="facebook_application_id" translatable="false">127523021241004</string>
+    <string name="map_fragment">map_fragment</string>
 </resources>
