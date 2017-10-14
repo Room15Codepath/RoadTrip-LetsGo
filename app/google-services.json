@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "859238813982",
+    "firebase_url": "https://roadtrip-letsgo.firebaseio.com",
+    "project_id": "roadtrip-letsgo",
+    "storage_bucket": "roadtrip-letsgo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859238813982:android:11485a57f8ef9a30",
+        "android_client_info": {
+          "package_name": "com.codepath.roadtrip_letsgo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859238813982-1prhlpcp5atinqqfabnui2h48704luhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoyL8axOM4F2VmsiZdrPSI7HMUM8If7GI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
