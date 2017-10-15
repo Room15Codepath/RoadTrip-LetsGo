@@ -1,8 +1,11 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
@@ -21,19 +25,39 @@ import com.codepath.roadtrip_letsgo.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
+import com.codepath.roadtrip_letsgo.network.GMapV2Direction;
 import com.codepath.roadtrip_letsgo.utils.StopType;
+import com.codepath.roadtrip_letsgo.utils.Util;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.ui.IconGenerator;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
 import com.yelp.fusion.client.models.Business;
 import com.yelp.fusion.client.models.SearchResponse;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,11 +65,16 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cz.msebera.android.httpclient.Header;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
+@RuntimePermissions
 public class SearchActivity extends AppCompatActivity implements ListViewFragment.OnCompleteListener{
     private SupportMapFragment mapFragment;
     private ListViewFragment lvFragment;
@@ -139,12 +168,84 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     public void onComplete() {
         mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
         lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
-        if(lvFragment !=null)
+        if(stops.size()>0)
         {
             lvFragment.addItems(stops);
         }
-
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    loadMap(map);
+                    // map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
+                }
+            });
+        } else {
+            Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
+        }
     }
+
+    private void loadMap(GoogleMap googleMap) {
+        map = googleMap;
+        if (map != null) {
+            // Map is ready
+            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            SearchActivityPermissionsDispatcher.getMyLocationWithCheck(this);
+            SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+            //TripLocation origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
+           // TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+            map.getUiSettings().setZoomControlsEnabled(true);
+            addLocationMarkers(origin, dest);
+
+            addRoute(origin, dest);
+            if(stops.size()>0) {
+                for (TripStop tripStop : stops) {
+                   // TripStop tripStop = TripStop.fromBusiness(businesses.get(i), StopType.CAFE);
+                    BitmapDescriptor defaultMarker =
+                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                    Marker marker = map.addMarker(new MarkerOptions()
+                            .position(tripStop.trip_location.point)
+                            .title(tripStop.trip_location.loc_name)
+                            .snippet(tripStop.trip_location.address)
+                            .icon(defaultMarker));
+                }
+
+            }
+
+        } else {
+            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addRoute(TripLocation origin, TripLocation dest) {
+        final GMapV2Direction md = new GMapV2Direction();
+
+        md.getDocument(origin.point, dest.point, GMapV2Direction.MODE_DRIVING,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            Document doc = Util.byteToDocument(responseBody);
+                            ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                            drawPolyline(directionPoint);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                    }
+                });
+    }
+
+    private void addLocationMarkers(TripLocation origin, TripLocation dest) {
+        BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
+        Marker marker_origin = Util.addMarker(map, origin.point, origin.loc_name, origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
+        Marker marker_dest = Util.addMarker(map, dest.point, dest.loc_name, dest.address, icon_dest);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -235,5 +336,89 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             // HTTP error happened, do something to handle it.
         }
     };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        SearchActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void getMyLocation() {
+        //noinspection MissingPermission
+        map.setMyLocationEnabled(true);
+
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
+        //noinspection MissingPermission
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            onLocationChanged(location);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    protected void startLocationUpdates() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
+
+        SettingsClient settingsClient = LocationServices.getSettingsClient(this);
+        settingsClient.checkLocationSettings(locationSettingsRequest);
+        //noinspection MissingPermission
+        getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        onLocationChanged(locationResult.getLastLocation());
+                    }
+                },
+                Looper.myLooper());
+    }
+
+    public void onLocationChanged(Location location) {
+        // GPS may be turned off
+        if (location == null) {
+            return;
+        }
+        // Report to the UI that the location was updated
+        mCurrentLocation = location;
+    //    String msg = "Updated Location: " +
+     //           Double.toString(location.getLatitude()) + "," +
+     //           Double.toString(location.getLongitude());
+      //  Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Display the connection status
+
+        if (mCurrentLocation != null) {
+            Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
+            LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+            map.animateCamera(cameraUpdate);
+        } else {
+            Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
+        }
+        SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+    }
 
 }
