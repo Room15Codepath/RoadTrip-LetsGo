@@ -1,9 +1,9 @@
 package com.codepath.roadtrip_letsgo.fragments;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,8 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.fragments.dummy.DummyContent;
+import com.codepath.roadtrip_letsgo.activities.SearchActivity;
+import com.codepath.roadtrip_letsgo.adapters.LocationAdapter;
 import com.codepath.roadtrip_letsgo.fragments.dummy.DummyContent.DummyItem;
+import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
+import com.codepath.roadtrip_letsgo.models.TripLocation;
+
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
+
+import butterknife.Unbinder;
 
 /**
  * A fragment representing a list of Items.
@@ -27,7 +36,12 @@ public class ListViewFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    ArrayList<TripLocation> locations;
+    LocationAdapter adapter;
+    Unbinder unbinder;
 
+//@BindView(R.id.rvLocations)
+RecyclerView rvLocations;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -35,8 +49,7 @@ public class ListViewFragment extends Fragment {
     public ListViewFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
+    //
     public static ListViewFragment newInstance(int columnCount) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
@@ -58,38 +71,33 @@ public class ListViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+     //   unbinder = ButterKnife.bind(getContext(), view);
+        rvLocations = (RecyclerView) view.findViewById(R.id.rvLocations);
+        locations = new ArrayList<>();
+        adapter = new LocationAdapter(locations);
+        rvLocations.setAdapter(adapter);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvLocations.setLayoutManager(linearLayoutManager);
+
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(rvLocations.getContext(), DividerItemDecoration.VERTICAL);
+        rvLocations.addItemDecoration(itemDecoration);
+
+        ItemClickSupport.addTo(rvLocations).setOnItemClickListener(
+                (recyclerView, position, vw) -> {
+                    //create intent
+                    Intent intent = new Intent(getContext(), SearchActivity.class);
+                    TripLocation loc = locations.get(position);
+                    intent.putExtra("location", Parcels.wrap(loc));
+                    //launch activity
+                    startActivity(intent);
+                }
+        );
+
         return view;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -104,5 +112,12 @@ public class ListViewFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
+    }
+
+    // When binding a fragment in onCreateView, set the views to null in onDestroyView.
+    // ButterKnife returns an Unbinder on the initial binding that has an unbind method to do this automatically.
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+     //   unbinder.unbind();
     }
 }

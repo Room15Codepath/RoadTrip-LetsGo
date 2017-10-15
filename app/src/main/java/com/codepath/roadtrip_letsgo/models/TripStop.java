@@ -19,6 +19,8 @@ public class TripStop {
     public double rating;
     public boolean is_closed;
     public double distance_away;
+    public String phone;
+    public String url;
 
     public TripStop() {}
 
@@ -31,6 +33,8 @@ public class TripStop {
         tripStop.is_closed = biz.getIsClosed();
         tripStop.rating = biz.getRating();
         tripStop.yelp_id = biz.getId();
+        tripStop.phone= biz.getPhone();
+        tripStop.url = biz.getUrl();
         tripLocation.loc_name = biz.getName();
         tripLocation.address = biz.getLocation().getDisplayAddress().toString();
         tripLocation.point = new LatLng(biz.getCoordinates().getLatitude(),

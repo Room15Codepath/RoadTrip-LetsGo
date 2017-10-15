@@ -16,10 +16,10 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp" />
 
-    <TextView
+    <!--TextView
         android:id="@+id/text_sign_in_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Signed out" />
+        android:text="Signed out" /-->
 
 </RelativeLayout>

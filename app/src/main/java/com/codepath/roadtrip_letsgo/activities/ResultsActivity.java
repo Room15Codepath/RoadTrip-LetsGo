@@ -229,8 +229,11 @@ public class ResultsActivity extends AppCompatActivity {
             ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             TripLocation origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
             TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+            map.getUiSettings().setZoomControlsEnabled(true);
             addLocationMarkers(origin, dest);
+
             addRoute(origin, dest);
+
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
         }

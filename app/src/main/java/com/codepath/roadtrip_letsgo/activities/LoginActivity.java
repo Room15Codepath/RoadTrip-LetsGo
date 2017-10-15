@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -59,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         // Check if user is signed in (non-null) and update UI accordingly.
-        updateUI(currentUser);
+      //  updateUI(currentUser);
 
     }
 
@@ -112,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                           // updateUI(null);
                         }
 
                         // ...
@@ -128,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void updateUI(FirebaseUser user) {
+    /*private void updateUI(FirebaseUser user) {
         if (user != null) {
             ((TextView) findViewById(R.id.text_sign_in_status)).setText(
                     "User ID: " + user.getUid());
@@ -136,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.text_sign_in_status)).setText(
                     "Error: sign in failed.");
         }
-    }
+    }*/
 
 
 }

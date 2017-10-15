@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
-import com.codepath.roadtrip_letsgo.fragments.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 
 
 /**
@@ -34,10 +34,10 @@ public class SearchPagerAdapter extends SmartFragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position){
         if(position == 0){
-            return new MapFragment();
+            return SupportMapFragment.newInstance();
         }
         else if(position == 1){
-            return new ListViewFragment();
+            return ListViewFragment.newInstance(1);
         }
         else{
             return null;
