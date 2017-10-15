@@ -84,7 +84,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'org.parceler:parceler-api:1.1.6'
-    compile 'com.google.maps.android:android-maps-utils:0.5+'
+    compile 'com.google.maps.android:android-maps-utils:0.5'
     compile 'io.github.ranga543:yelp-fusion-client:0.1.2'
     compile 'com.firebaseui:firebase-ui-auth:3.0.0'
     compile 'com.facebook.android:facebook-login:4.27.0'

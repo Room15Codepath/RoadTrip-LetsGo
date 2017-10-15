@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.models.TripLocation;
+import com.codepath.roadtrip_letsgo.models.TripStop;
 
 import java.util.List;
 
@@ -21,10 +21,10 @@ import butterknife.ButterKnife;
  */
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
-    List<TripLocation> mLocations;
+    List<TripStop> mLocations;
     Context context;
 
-    public LocationAdapter(List<TripLocation> locations) {
+    public LocationAdapter(List<TripStop> locations) {
         mLocations = locations;
     }
 
@@ -39,16 +39,21 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        TripLocation location = mLocations.get(position);
-        Log.d("DEBUG", "adapter bind holder location id :" + location.loc_name);
+        TripStop location = mLocations.get(position);
+        Log.d("DEBUG", "adapter bind holder location id :" + location.trip_location.loc_name);
 
-        holder.tvName.setText(location.loc_name);
-        holder.tvAddress.setText(location.address);
+        holder.tvName.setText(location.trip_location.loc_name);
+        holder.tvAddress.setText(location.trip_location.address);
     }
 
     @Override
     public int getItemCount() {
         return mLocations.size();
+    }
+
+    public void addItems(List<TripStop> list){
+        mLocations.addAll(list);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
