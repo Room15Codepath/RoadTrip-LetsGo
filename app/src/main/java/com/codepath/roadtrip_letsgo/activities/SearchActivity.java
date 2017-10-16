@@ -196,8 +196,15 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
            // TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
             map.getUiSettings().setZoomControlsEnabled(true);
             addLocationMarkers(origin, dest);
+//            LatLng latLng = new LatLng(origin.point.getLatitude(),mCurrentLocation.getLongitude());
+            // Show the current location in Google Map
+            map.moveCamera(CameraUpdateFactory.newLatLng(origin.point));
 
+            // Zoom in the Google Map
+            map.animateCamera(CameraUpdateFactory.zoomTo(10));
             addRoute(origin, dest);
+
+            Log.d("DEBUG", "stops data size=" + stops.size());
             if(stops.size()>0) {
                 for (TripStop tripStop : stops) {
                    // TripStop tripStop = TripStop.fromBusiness(businesses.get(i), StopType.CAFE);
@@ -208,10 +215,22 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                             .title(tripStop.trip_location.loc_name)
                             .snippet(tripStop.trip_location.address)
                             .icon(defaultMarker));
+                    marker.setTag(tripStop);
                 }
-
             }
+            map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    Log.d("DEBUG:", "info window clicked");
+                    Intent intent = new Intent(SearchActivity.this, LocationDetailActivity.class);
+                    if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
+                    TripStop loc = (TripStop) marker.getTag();
+                    intent.putExtra("location", Parcels.wrap(loc));
+                    //launch activity
+                    startActivity(intent);
 
+                }
+            });
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
         }
