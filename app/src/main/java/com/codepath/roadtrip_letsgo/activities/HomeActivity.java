@@ -32,6 +32,9 @@ public class HomeActivity extends AppCompatActivity {
     @BindView(R.id.sStopType) Spinner sStopType;
     @BindView(R.id.btnFind) Button btnFind;
 
+    public static final String USER = "USER";
+    public static final String PERMISSION = "PERMISSION";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

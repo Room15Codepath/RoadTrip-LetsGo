@@ -13,13 +13,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp" />
 
-    <!--TextView
-        android:id="@+id/text_sign_in_status"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btn_skip_fblogin"
+        android:layout_below="@+id/btn_facevook_login"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signed out" /-->
+        android:background="@color/com_facebook_button_login_background_color"
+        android:textColor="@color/com_facebook_button_text_color"
+        android:text="Skip login"/>
 
 </RelativeLayout>
