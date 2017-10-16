@@ -201,7 +201,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             map.moveCamera(CameraUpdateFactory.newLatLng(origin.point));
 
             // Zoom in the Google Map
-            map.animateCamera(CameraUpdateFactory.zoomTo(10));
+            map.animateCamera(CameraUpdateFactory.zoomTo(15));
             addRoute(origin, dest);
 
             Log.d("DEBUG", "stops data size=" + stops.size());

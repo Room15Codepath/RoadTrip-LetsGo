@@ -3,8 +3,11 @@ package com.codepath.roadtrip_letsgo.models;
 import com.codepath.roadtrip_letsgo.utils.StopType;
 import com.google.android.gms.maps.model.LatLng;
 import com.yelp.fusion.client.models.Business;
+import com.yelp.fusion.client.models.Hour;
 
 import org.parceler.Parcel;
+
+import java.util.ArrayList;
 
 /**
  * Created by tessavoon on 10/12/17.
@@ -21,6 +24,8 @@ public class TripStop {
     public double distance_away;
     public String phone;
     public String url;
+    public int review_count;
+    public ArrayList<Hour> hours;
 
     public TripStop() {}
 
@@ -34,6 +39,8 @@ public class TripStop {
         tripStop.rating = biz.getRating();
         tripStop.yelp_id = biz.getId();
         tripStop.phone= biz.getPhone();
+        tripStop.review_count = biz.getReviewCount();
+        tripStop.hours = biz.getHours();
         tripStop.url = biz.getUrl();
         tripLocation.loc_name = biz.getName();
         tripLocation.address = biz.getLocation().getDisplayAddress().toString();

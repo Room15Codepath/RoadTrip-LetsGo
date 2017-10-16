@@ -5,23 +5,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.codepath.roadtrip_letsgo.activities.LocationDetailActivity">
-    <ImageView
-        android:id="@+id/ivImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        />
+
+    <RelativeLayout
+        android:id="@+id/rlHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/ivImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            app:srcCompat="@mipmap/ic_launcher" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/ivImage"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:rating="2.0"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:transformPivotX="0dp"
+            android:layout_toEndOf="@+id/ivImage"/>
+
+        <TextView
+            android:id="@+id/tvReviewCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Reviews"
+            android:layout_toEndOf="@+id/ratingBar"
+            />
+
+        <TextView
+            android:id="@+id/tvInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:linksClickable="true"
+            tools:text="info"
+            android:layout_below="@+id/ratingBar"
+            android:layout_toEndOf="@+id/ivImage" />
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/ivImage"
+            android:layout_below="@+id/tvInfo"
+            android:autoLink="all"
+            android:drawableLeft="@drawable/ic_place"
+            android:linksClickable="true"
+            tools:text="phone" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tvName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAlignment="textStart"
         tools:text="name"
         android:textColor="@android:color/black"
-        android:layout_alignTop="@+id/ivImage"
-        android:layout_toEndOf="@+id/ivImage" />
+        android:layout_below="@+id/rlHeader"
+        />
 
     <TextView
         android:id="@+id/tvAddress"
@@ -29,48 +78,16 @@
         android:layout_height="wrap_content"
         tools:text="address"
         android:layout_below="@+id/tvName"
-        android:layout_toEndOf="@+id/ivImage" />
+        android:layout_alignStart="@+id/tvName" />
 
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autoLink="all"
-        android:linksClickable="true"
-        tools:text="body"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="5dp"
-        android:layout_below="@+id/ivImage"
-        android:layout_marginStart="5dp" />
-
-    <ImageView
-        android:id="@+id/ivMedia"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_info_black_24dp"
-        android:layout_below="@+id/tvBody"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ivMedia"
-        android:orientation="horizontal"
-        android:layout_margin="3dp"
-        >
-        <TextView
-            android:id="@+id/tvReply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_place"
-            android:layout_weight="1"
-            tools:text="reply"/>
-        <TextView
-            android:id="@+id/tvFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_star"
-            android:layout_weight="1"
-            tools:text="favorite"/>
-    </LinearLayout>
-
+        android:layout_margin="20dp"
+        android:layout_below="@+id/tvAddress"
+        />
 </RelativeLayout>
