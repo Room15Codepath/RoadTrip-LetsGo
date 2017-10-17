@@ -1,10 +1,16 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -31,16 +37,18 @@ import io.fabric.sdk.android.Fabric;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getName();
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
 
-    //LoginButton btnFacebookLogin;
+
     private CallbackManager mCallbackManager;
-    //private AccessToken handleFacebookAccessToken;
     private FirebaseAuth mAuth;
+    FirebaseUser user;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         //Fabric is from project requirement.
         Fabric.with(this, new Crashlytics());
@@ -49,16 +57,59 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
+        user = mAuth.getCurrentUser();
+
+        if (user != null) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Have both permissions", Toast.LENGTH_LONG).show();
+                gotoHomeActivity(user.getUid(), hasPermissions());
+            } else {
+                requestLocationPermission();
+            }
+        }
+
+        if (user == null) {
+            requestLocationPermission();
+        }
+        Button btnSkipLogin = findViewById(R.id.btn_skip_fblogin);
+        btnSkipLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "checkLocationPermission");
+                if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    // our app has permissions.
+                    gotoHomeActivity(null, hasPermissions());
+
+                }
+                else {
+                    //our app doesn't have permissions, So i m requesting permissions.
+                    requestLocationPermission();
+                }
+
+            }
+        });
+
+
         initializeFacebookLogin ();
+
+    }
+
+    private void gotoHomeActivity(String userID, boolean allowed) {
+        Toast.makeText(this, "gotoHomeActivity__"+allowed, Toast.LENGTH_LONG).show();
+        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        i.putExtra(HomeActivity.USER, userID);
+        i.putExtra(HomeActivity.PERMISSION, allowed);
+        startActivity(i);  ///got into Home
 
     }
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart()");
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        // Check if user is signed in (non-null) and update UI accordingly.
-      //  updateUI(currentUser);
+        user = mAuth.getCurrentUser();
 
     }
 
@@ -101,17 +152,18 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                            Intent i = new Intent(LoginActivity.this,HomeActivity.class);
-                            i.putExtra("user", user.getUid() );
-                            startActivity(i);  ///got into Home
+                            user = mAuth.getCurrentUser();
+                            if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                                    && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                gotoHomeActivity(user.getUid(), hasPermissions());
+                            } else {
+                                requestLocationPermission();
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                           // updateUI(null);
                         }
 
                         // ...
@@ -127,15 +179,56 @@ public class LoginActivity extends AppCompatActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*private void updateUI(FirebaseUser user) {
-        if (user != null) {
-            ((TextView) findViewById(R.id.text_sign_in_status)).setText(
-                    "User ID: " + user.getUid());
-        } else {
-            ((TextView) findViewById(R.id.text_sign_in_status)).setText(
-                    "Error: sign in failed.");
+    private boolean hasPermissions() {
+        int res = 0;
+        //string array of permissions,
+        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        for (String perms : permissions) {
+            res = checkCallingOrSelfPermission(perms);
+            if (!(res == PackageManager.PERMISSION_GRANTED)) {
+                return false;
+            }
         }
-    }*/
+        return true;
+    }
+
+    public boolean requestLocationPermission() {
+        Log.d(TAG, "checkLocationPermission");
+        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            ActivityCompat.requestPermissions(LoginActivity.this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted
+                    if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "onRequestPermissionsResult");
+                        user = mAuth.getCurrentUser();
+                        gotoHomeActivity(user.getUid(), hasPermissions());
+                    }
+
+                } else {
+                    // permission denied
+                    gotoHomeActivity(null, hasPermissions());
+
+                }
+                return;
+            }
+        }
+    }
 
 
 }
