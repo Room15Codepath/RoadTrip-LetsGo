@@ -69,9 +69,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        if (user == null) {
-            requestLocationPermission();
-        }
         Button btnSkipLogin = findViewById(R.id.btn_skip_fblogin);
         btnSkipLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,7 +214,11 @@ public class LoginActivity extends AppCompatActivity {
                     if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "onRequestPermissionsResult");
                         user = mAuth.getCurrentUser();
-                        gotoHomeActivity(user.getUid(), hasPermissions());
+                        if (user!=null) {
+                            gotoHomeActivity(user.getUid(), hasPermissions());
+                        } else {
+                            gotoHomeActivity(null, hasPermissions());
+                        }
                     }
 
                 } else {
