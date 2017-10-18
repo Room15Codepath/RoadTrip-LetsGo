@@ -19,20 +19,20 @@ GIF created with Vokoscreen
 ## User Stories:
 
 ### Onboarding
-* [ ] User can login with email 
+* [x ] User can login with email (facebook)
 * [ ] User can view an onboarding guide (instructions to start using app)
 
 ### Setting Trip Filters
 * [ ] User can update filters to improve route result  
-  * [ ] User can specify starting location and destination
-  * [ ] Address is sent to a Geocoding API to get latitude and longitude coordinates of start & end locations (autocomplete addresses if possible)
-  * [ ] User can specify the kind of stops he / she is interested in (such as gas station, restaurant, hotel)
+  * [x] User can specify starting location and destination
+  * [x] Address is sent to a Geocoding API to get latitude and longitude coordinates of start & end locations (autocomplete addresses if possible)
+  * [x] User can specify the kind of stops he / she is interested in (such as gas station, restaurant, hotel)
   
 ### Suggested Stops 
-* [ ] User can view route with candidate stops 
-  * [ ] Coordinates are sent to a Navigation API to generate & display route 
-  * [ ] Retrieve & display candidate stops from Yelp / Foursquare API's with filters applied
-  * [ ] User can click on a stop to view more details such as location, rating etc (from Yelp / Foursquare API)
+* [x] User can view route with candidate stops 
+  * [x] Coordinates are sent to a Navigation API to generate & display route 
+  * [x] Retrieve & display candidate stops from Yelp / Foursquare API's with filters applied
+  * [x] User can click on a stop to view more details such as location, rating etc (from Yelp / Foursquare API)
   * [ ] User can filter further (e.g. by rating, proximity)
   
 ### Managing Trip Filters
