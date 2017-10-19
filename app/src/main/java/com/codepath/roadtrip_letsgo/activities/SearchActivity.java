@@ -168,6 +168,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     public void onComplete() {
         mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
         lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
+        lvFragment.addTrip(origin, dest);
         if(stops.size()>0)
         {
             lvFragment.addItems(stops);
@@ -225,6 +226,8 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                     Intent intent = new Intent(SearchActivity.this, LocationDetailActivity.class);
                     if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
                     TripStop loc = (TripStop) marker.getTag();
+                    intent.putExtra("start", Parcels.wrap(origin));
+                    intent.putExtra("end", Parcels.wrap(dest));
                     intent.putExtra("location", Parcels.wrap(loc));
                     //launch activity
                     startActivity(intent);

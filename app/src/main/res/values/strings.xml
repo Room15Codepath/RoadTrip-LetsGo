@@ -100,4 +100,5 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="recommended_review">Recommended Review</string>
+    <string name="starttrip">Start Trip</string>
 </resources>

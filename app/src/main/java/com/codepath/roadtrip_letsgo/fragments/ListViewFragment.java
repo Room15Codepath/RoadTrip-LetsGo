@@ -17,6 +17,7 @@ import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.activities.LocationDetailActivity;
 import com.codepath.roadtrip_letsgo.adapters.LocationAdapter;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
+import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 
 import org.parceler.Parcels;
@@ -39,6 +40,9 @@ public class ListViewFragment extends Fragment {
   //  private OnListFragmentInteractionListener mListener;
     ArrayList<TripStop> locations;
     LocationAdapter adapter;
+    TripLocation origin;
+    TripLocation dest;
+
     Unbinder unbinder;
 
 //@BindView(R.id.rvLocations)
@@ -50,11 +54,16 @@ RecyclerView rvLocations;
     public ListViewFragment() {
     }
 
+    public void addTrip(TripLocation start, TripLocation end) {
+        origin = start;
+        dest = end;
+    }
     //
-    public static ListViewFragment newInstance(int columnCount) {
+    public static ListViewFragment newInstance(int inp) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        args.putParcelable("start", Parcels.wrap(start));
+  //      args.putParcelable("end", Parcels.wrap(end));
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,9 +72,10 @@ RecyclerView rvLocations;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+  //      if (getArguments() != null) {
+   //         origin = Parcels.unwrap(getArguments().getParcelable("start"));
+  //          dest = Parcels.unwrap(getArguments().getParcelable("end"));
+  //      }
     }
 
     @Override
@@ -90,6 +100,9 @@ RecyclerView rvLocations;
                     //create intent
                     Intent intent = new Intent(getContext(), LocationDetailActivity.class);
                     TripStop loc = locations.get(position);
+                    intent.putExtra("start", Parcels.wrap(origin));
+                    intent.putExtra("end", Parcels.wrap(dest));
+
                     intent.putExtra("location", Parcels.wrap(loc));
                     //launch activity
                     startActivity(intent);
