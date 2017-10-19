@@ -110,9 +110,9 @@ public class LocationDetailActivity extends AppCompatActivity {
 
         StringBuilder sb = new StringBuilder();
         sb.append("https://www.google.com/maps/dir");
-        sb.append("/" + origin.point.latitude +","+ origin.point.longitude +"(" + origin.loc_name +")");
-        sb.append("/" + stop.trip_location.point.latitude +","+ stop.trip_location.point.longitude +"("+stop.trip_location.loc_name +")");
-        sb.append("/" + dest.point.latitude +","+ dest.point.longitude +"(" + dest.loc_name + ")");
+        sb.append("/" + origin.point.latitude +","+ origin.point.longitude );
+        sb.append("/" + stop.trip_location.point.latitude +","+ stop.trip_location.point.longitude);
+        sb.append("/" + dest.point.latitude +","+ dest.point.longitude);
 
         Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
         i.setPackage("com.google.android.apps.maps");
