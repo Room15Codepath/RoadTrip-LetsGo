@@ -26,6 +26,7 @@ import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.network.GMapV2Direction;
+import com.codepath.roadtrip_letsgo.network.YelpClient;
 import com.codepath.roadtrip_letsgo.utils.StopType;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -51,27 +52,22 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.yelp.fusion.client.connection.YelpFusionApi;
-import com.yelp.fusion.client.connection.YelpFusionApiFactory;
-import com.yelp.fusion.client.models.Business;
-import com.yelp.fusion.client.models.SearchResponse;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
+import org.json.JSONObject;
 import org.parceler.Parcels;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
+import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 @RuntimePermissions
@@ -81,8 +77,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     private GoogleMap map;
     private LocationRequest mLocationRequest;
     Location mCurrentLocation;
-    YelpFusionApiFactory yelpFusionApiFactory;
-    YelpFusionApi yelpFusionApi;
+    private YelpClient yelpClient;
     private final static String KEY_LOCATION = "location";
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
@@ -95,74 +90,31 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     private final int REQUEST_CODE_SET = 20;  //for settings
     TripLocation origin;
     TripLocation dest;
+    String stopType;
 
-    //private SearchView searchView;
     private SmartFragmentStatePagerAdapter adapterViewPager;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.sliding_tabs) TabLayout tabLayout;
     @BindView(R.id.viewpager) ViewPager viewPager;
 
-    Thread thread = new Thread(new Runnable(){
-        @Override
-        public void run() {
-            try {
-                yelpFusionApiFactory = new YelpFusionApiFactory();
-                yelpFusionApi = yelpFusionApiFactory.createAPI(
-                        getResources().getString(R.string.yelp_client_id),
-                        getResources().getString(R.string.yelp_secret_key));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
         ButterKnife.bind(this);
-
-       // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        yelpClient = getYelpClient();
         setSupportActionBar(toolbar);
- //       ViewPager viewPager = (ViewPager)findViewById(R.id.viewpager);
         adapterViewPager =new SearchPagerAdapter(getSupportFragmentManager(),this);
         viewPager.setAdapter(adapterViewPager);
-//        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
         stops = new ArrayList<>();
-        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
-        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
-
-        thread.start();
-        while (yelpFusionApi ==null) {
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                // skip;
-            }
-        }
-        getBusinesses();
-
-
+        parseIntent();
     }
 
-    public void getBusinesses() {
-        try {
-            Map<String, String> params = new HashMap<>();
-
-            params.put("term", "cafe");
-            params.put("latitude", String.valueOf(origin.point.latitude));
-            params.put("longitude", String.valueOf(origin.point.longitude));
-            params.put("radius","2000");
-            Call<SearchResponse> call = yelpFusionApi.getBusinessSearch(params);
-            call.enqueue(callback);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    public void parseIntent() {
+        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
+        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+        stopType = getIntent().getStringExtra("stopType");
     }
 
     public void onComplete() {
@@ -189,36 +141,18 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     private void loadMap(GoogleMap googleMap) {
         map = googleMap;
         if (map != null) {
-            // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             SearchActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
-            //TripLocation origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
-           // TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
             map.getUiSettings().setZoomControlsEnabled(true);
             addLocationMarkers(origin, dest);
 //            LatLng latLng = new LatLng(origin.point.getLatitude(),mCurrentLocation.getLongitude());
             // Show the current location in Google Map
             map.moveCamera(CameraUpdateFactory.newLatLng(origin.point));
-
             // Zoom in the Google Map
             map.animateCamera(CameraUpdateFactory.zoomTo(15));
             addRoute(origin, dest);
+            getBusinesses();
 
-            Log.d("DEBUG", "stops data size=" + stops.size());
-            if(stops.size()>0) {
-                for (TripStop tripStop : stops) {
-                   // TripStop tripStop = TripStop.fromBusiness(businesses.get(i), StopType.CAFE);
-                    BitmapDescriptor defaultMarker =
-                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
-                    Marker marker = map.addMarker(new MarkerOptions()
-                            .position(tripStop.trip_location.point)
-                            .title(tripStop.trip_location.loc_name)
-                            .snippet(tripStop.trip_location.address)
-                            .icon(defaultMarker));
-                    marker.setTag(tripStop);
-                }
-            }
             map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
@@ -229,7 +163,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                     intent.putExtra("start", Parcels.wrap(origin));
                     intent.putExtra("end", Parcels.wrap(dest));
                     intent.putExtra("location", Parcels.wrap(loc));
-                    //launch activity
                     startActivity(intent);
 
                 }
@@ -261,6 +194,44 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                 });
     }
 
+    private void getBusinesses() {
+        RequestParams params = new RequestParams();
+        params.put("term", stopType);
+        params.put("latitude", String.valueOf(origin.point.latitude));
+        params.put("longitude", String.valueOf(origin.point.longitude));
+        params.put("radius","2000");
+        yelpClient.getBusinesses(params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    Log.d("yelpbusinesses", response.toString());
+                    for (int i=0; i<response.getJSONArray("businesses").length(); i++) {
+                        TripStop tripStop = TripStop.fromJSON(
+                                response.getJSONArray("businesses").getJSONObject(i), StopType.CAFE);
+                        BitmapDescriptor defaultMarker =
+                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                        Marker marker = map.addMarker(new MarkerOptions()
+                                .position(tripStop.trip_location.point)
+                                .title(tripStop.trip_location.loc_name)
+                                .snippet(tripStop.trip_location.address)
+                                .icon(defaultMarker));
+                        marker.setTag(tripStop);
+                        stops.add(tripStop);
+                    }
+                    lvFragment.addItems(stops);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("yelpbusinesses", errorResponse.toString());
+            }
+        });
+    }
+
     private void addLocationMarkers(TripLocation origin, TripLocation dest) {
         BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
         Marker marker_origin = Util.addMarker(map, origin.point, origin.loc_name, origin.address, icon_origin);
@@ -278,9 +249,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //query
                 searchView.clearFocus();
-
                 return true;
             }
 
@@ -341,24 +310,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         Polyline polyline = map.addPolyline(rectLine);
     }
 
-    Callback<SearchResponse> callback = new Callback<SearchResponse>() {
-        @Override
-        public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
-            SearchResponse searchResponse = response.body();
-            Log.d("response", searchResponse.getBusinesses().toString());
-            ArrayList<Business> businesses= searchResponse.getBusinesses();
-            for (Business b: businesses) {
-                stops.add(TripStop.fromBusiness(b, StopType.CAFE));
-            }
-           if(lvFragment!=null) lvFragment.addItems(stops);
-        }
-
-        @Override
-        public void onFailure(Call<SearchResponse> call, Throwable t) {
-            // HTTP error happened, do something to handle it.
-        }
-    };
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -418,7 +369,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         if (location == null) {
             return;
         }
-        // Report to the UI that the location was updated
         mCurrentLocation = location;
     //    String msg = "Updated Location: " +
      //           Double.toString(location.getLatitude()) + "," +

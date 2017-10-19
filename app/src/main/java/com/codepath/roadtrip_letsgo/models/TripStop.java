@@ -2,12 +2,10 @@ package com.codepath.roadtrip_letsgo.models;
 
 import com.codepath.roadtrip_letsgo.utils.StopType;
 import com.google.android.gms.maps.model.LatLng;
-import com.yelp.fusion.client.models.Business;
-import com.yelp.fusion.client.models.Hour;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.parceler.Parcel;
-
-import java.util.ArrayList;
 
 /**
  * Created by tessavoon on 10/12/17.
@@ -25,29 +23,46 @@ public class TripStop {
     public String phone;
     public String url;
     public int review_count;
-    public ArrayList<Hour> hours;
 
     public TripStop() {}
 
-    public static TripStop fromBusiness(Business biz, StopType stopType) {
+    public static TripStop fromJSON(JSONObject json, StopType stopType) {
         TripStop tripStop = new TripStop();
-        TripLocation tripLocation = new TripLocation();
-        tripStop.distance_away = biz.getDistance();
-        tripStop.image_url = biz.getImageUrl();
-        tripStop.stop_type = stopType;
-        tripStop.is_closed = biz.getIsClosed();
-        tripStop.rating = biz.getRating();
-        tripStop.yelp_id = biz.getId();
-        tripStop.phone= biz.getPhone();
-        tripStop.review_count = biz.getReviewCount();
-        tripStop.hours = biz.getHours();
-        tripStop.url = biz.getUrl();
-        tripLocation.loc_name = biz.getName();
-        tripLocation.address = biz.getLocation().getDisplayAddress().toString();
-        tripLocation.point = new LatLng(biz.getCoordinates().getLatitude(),
-            biz.getCoordinates().getLongitude());
-        tripStop.trip_location = tripLocation;
+        try {
+            TripLocation tripLocation = new TripLocation();
+            tripStop.distance_away = json.getDouble("distance");
+            tripStop.image_url = json.getString("image_url");
+            tripStop.stop_type = stopType;
+            tripStop.is_closed = json.getBoolean("is_closed");
+            tripStop.rating = json.getDouble("rating");
+            tripStop.yelp_id = json.getString("id");
+            tripStop.phone= json.getString("phone");
+            tripStop.review_count = json.getInt("review_count");
+            tripStop.url = json.getString("url");
+            tripLocation.loc_name = json.getString("name");
+            tripLocation.address = getAddressStr(
+                    json.getJSONObject("location").getJSONArray("display_address"));
+            tripLocation.point = new LatLng(
+                    json.getJSONObject("coordinates").getDouble("latitude"),
+                    json.getJSONObject("coordinates").getDouble("longitude"));
+            tripStop.trip_location = tripLocation;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return tripStop;
+    }
+
+    private static String getAddressStr(JSONArray address) {
+        StringBuilder str = new StringBuilder();
+        try {
+            for (int i=0; i<address.length(); i++) {
+                str.append(address.getString(i));
+                str.append(" ");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return str.toString();
     }
 
 }
