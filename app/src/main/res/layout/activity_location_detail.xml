@@ -80,6 +80,17 @@
         android:layout_below="@+id/tvName"
         android:layout_alignStart="@+id/tvName" />
 
+    <TextView
+        android:id="@+id/map_direction"
+        android:layout_below="@+id/tvAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onDirection"
+        android:text="Direction"
+        android:textColor="@color/colorPrimaryDark"/>
+
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -88,6 +99,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:layout_below="@+id/tvAddress"
+        android:layout_below="@+id/map_direction"
         />
+
+
 </RelativeLayout>

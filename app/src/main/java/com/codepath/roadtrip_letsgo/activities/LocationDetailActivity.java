@@ -1,8 +1,11 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +25,7 @@ public class LocationDetailActivity extends AppCompatActivity {
     TextView tvAddress;
     @BindView(R.id.ivImage)
     ImageView ivImage;
+    TripStop stop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +33,26 @@ public class LocationDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_location_detail);
         ButterKnife.bind(this);
 
-        TripStop stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
+        stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
         tvName.setText(stop.trip_location.loc_name);
         tvAddress.setText(stop.trip_location.address );
         //Glide.with(this).from(stop.image_url).into(ivImage);
         GlideApp.with(this).load(stop.image_url).override(300,300).fitCenter().into(ivImage);
 
         Log.d("DEBUG", "input location:" + stop.trip_location.loc_name);
+    }
+
+    public void onDirection(View view) {
+
+        String gmmIntentUri = String.format("google.navigation:q=%s,+%s", stop.trip_location.loc_name, stop.trip_location.address);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(gmmIntentUri));
+        // Make the Intent explicit by setting the Google Maps package
+        mapIntent.setPackage("com.google.android.apps.maps");
+
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+
+
     }
 }
