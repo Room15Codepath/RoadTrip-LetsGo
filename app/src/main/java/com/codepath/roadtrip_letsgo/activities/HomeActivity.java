@@ -93,10 +93,10 @@ public class HomeActivity extends AppCompatActivity {
         btnFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(HomeActivity.this, ResultsActivity.class);
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
                 i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
                 i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
+                i.putExtra("stopType", sStopType.getSelectedItem().toString());
                 startActivity(i);
             }
         });

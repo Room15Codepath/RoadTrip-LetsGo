@@ -90,6 +90,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     private final int REQUEST_CODE_SET = 20;  //for settings
     TripLocation origin;
     TripLocation dest;
+    String stopType;
 
     private SmartFragmentStatePagerAdapter adapterViewPager;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -107,8 +108,13 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
         stops = new ArrayList<>();
+        parseIntent();
+    }
+
+    public void parseIntent() {
         origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
         dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+        stopType = getIntent().getStringExtra("stopType");
     }
 
     public void onComplete() {
@@ -184,7 +190,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
 
     private void getBusinesses() {
         RequestParams params = new RequestParams();
-        params.put("term", "cafe");
+        params.put("term", stopType);
         params.put("latitude", String.valueOf(origin.point.latitude));
         params.put("longitude", String.valueOf(origin.point.longitude));
         params.put("radius","2000");
