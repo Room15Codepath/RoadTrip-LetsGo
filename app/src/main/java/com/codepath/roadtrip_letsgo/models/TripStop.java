@@ -23,6 +23,7 @@ public class TripStop {
     public String phone;
     public String url;
     public int review_count;
+    public String price;
 
     public TripStop() {}
 
@@ -37,6 +38,7 @@ public class TripStop {
             tripStop.rating = json.getDouble("rating");
             tripStop.yelp_id = json.getString("id");
             tripStop.phone= json.getString("phone");
+            tripStop.price = json.getString("price");
             tripStop.review_count = json.getInt("review_count");
             tripStop.url = json.getString("url");
             tripLocation.loc_name = json.getString("name");

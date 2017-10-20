@@ -27,36 +27,60 @@
             android:numStars="5"
             android:stepSize="0.5"
             android:rating="2.0"
-            android:scaleX="0.5"
             android:scaleY="0.5"
+            android:scaleX="0.5"
             android:transformPivotX="0dp"
+            android:transformPivotY="0dp"
+            android:layout_marginRight="-50dp"
+            android:layout_marginBottom="-25dp"
+            android:isIndicator="true"
             android:layout_toEndOf="@+id/ivImage"/>
 
         <TextView
             android:id="@+id/tvReviewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="fill_horizontal"
             tools:text="Reviews"
+            android:layout_alignTop="@+id/ratingBar"
             android:layout_toEndOf="@+id/ratingBar"
             />
 
-        <TextView
-            android:id="@+id/tvInfo"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/llPrice"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autoLink="all"
-            android:linksClickable="true"
-            tools:text="info"
             android:layout_below="@+id/ratingBar"
-            android:layout_toEndOf="@+id/ivImage" />
+            android:layout_toEndOf="@+id/ivImage"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="price"
+                android:layout_weight="1"
+                 />
+            <TextView
+                android:id="@+id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_weight="1"
+                android:text="distance" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/ivImage"
-            android:layout_below="@+id/tvInfo"
-            android:autoLink="all"
-            android:drawableLeft="@drawable/ic_place"
+            android:layout_alignBottom="@+id/ivImage"
+            android:layout_toEndOf="@+id/ivImage"
+            android:layout_below="@+id/llPrice"
+            android:gravity="center_vertical"
+            android:autoLink="phone"
+            android:drawableLeft="@drawable/ic_phone"
             android:linksClickable="true"
             tools:text="phone" />
 
@@ -66,7 +90,7 @@
         android:id="@+id/tvName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="textStart"
+        android:layout_marginLeft="5dp"
         tools:text="name"
         android:textColor="@android:color/black"
         android:layout_below="@+id/rlHeader"
@@ -74,11 +98,12 @@
 
     <TextView
         android:id="@+id/tvAddress"
+        android:layout_marginLeft="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="address"
         android:layout_below="@+id/tvName"
-        android:layout_alignStart="@+id/tvName" />
+        />
 
     <TextView
         android:id="@+id/map_direction"
@@ -86,6 +111,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:layout_marginLeft="5dp"
         android:onClick="onDirection"
         android:text="Direction"
         android:textColor="@color/colorPrimaryDark"/>
@@ -110,5 +136,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="@string/starttrip" />
+
 
 </RelativeLayout>

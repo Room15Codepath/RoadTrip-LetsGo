@@ -5,9 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,16 @@ public class LocationDetailActivity extends AppCompatActivity {
     TextView tvName;
     @BindView(R.id.tvAddress)
     TextView tvAddress;
+    @BindView(R.id.tvPhone)
+    TextView tvPhone;
+    @BindView(R.id.tvReviewCount)
+    TextView tvReviewCount;
+    @BindView(R.id.tvPrice)
+    TextView tvPrice;
+    @BindView(R.id.tvDistance)
+    TextView tvDistance;
+    @BindView(R.id.ratingBar)
+    RatingBar ratingBar;
     @BindView(R.id.ivImage)
     ImageView ivImage;
     @BindView(R.id.btnStart)
@@ -52,8 +63,14 @@ public class LocationDetailActivity extends AppCompatActivity {
         dest = Parcels.unwrap(getIntent().getParcelableExtra("end"));
 
         stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
+        ratingBar.setRating((float)(stop.rating));
+        tvPhone.setText(stop.phone);
+        tvPrice.setText("Price: " + stop.price);
+        tvDistance.setText(String.format( "%.1f", stop.distance_away/1600) +" mile away");
+        tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
         tvAddress.setText(stop.trip_location.address );
+
         //Glide.with(this).from(stop.image_url).into(ivImage);
         GlideApp.with(this).load(stop.image_url).override(300,300).fitCenter().into(ivImage);
 
