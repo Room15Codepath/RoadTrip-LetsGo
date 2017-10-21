@@ -72,7 +72,8 @@
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.HomeActivity"
-            android:label="home">
+            android:label="home"
+            android:theme="@style/AppTheme.NoActionBar">
 
 
         </activity>
