@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,12 +20,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class LocationDetailActivity extends AppCompatActivity {
     @BindView(R.id.tvName)
@@ -45,8 +47,8 @@ public class LocationDetailActivity extends AppCompatActivity {
     RatingBar ratingBar;
     @BindView(R.id.ivImage)
     ImageView ivImage;
-    @BindView(R.id.btnStart)
-    Button btnStart;
+   // @BindView(R.id.btnStart)
+   // Button btnStart;
 
     TripLocation origin;
     TripLocation dest;
@@ -66,7 +68,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         ratingBar.setRating((float)(stop.rating));
         tvPhone.setText(stop.phone);
         tvPrice.setText("Price: " + stop.price);
-        tvDistance.setText(String.format( "%.1f", stop.distance_away/1600) +" mile away");
+        tvDistance.setText(String.format( "%.1f", stop.distance_away/1600) +" mile");
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
         tvAddress.setText(stop.trip_location.address );
@@ -110,9 +112,15 @@ public class LocationDetailActivity extends AppCompatActivity {
             TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("end"));
             map.getUiSettings().setZoomControlsEnabled(true);
             Util.addLocationMarkers(origin, dest, this, map);
-
+            BitmapDescriptor defaultMarker =
+                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+            Marker marker = map.addMarker(new MarkerOptions()
+                    .position(stop.trip_location.point)
+                    .title(stop.trip_location.loc_name)
+                    .snippet(stop.trip_location.address)
+                    .icon(defaultMarker));
             Util.addRoute(origin, dest, this, map);
-            map.moveCamera(CameraUpdateFactory.newLatLng(origin.point));
+            map.moveCamera(CameraUpdateFactory.newLatLng(stop.trip_location.point));
 
             // Zoom in the Google Map
             map.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -122,7 +130,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.btnStart)
+   /* @OnClick(R.id.btnStart)
     public void onButtonClick() {
 
         StringBuilder sb = new StringBuilder();
@@ -135,6 +143,6 @@ public class LocationDetailActivity extends AppCompatActivity {
         i.setPackage("com.google.android.apps.maps");
         startActivity(i);
 
-    }
+    }*/
 
 }
