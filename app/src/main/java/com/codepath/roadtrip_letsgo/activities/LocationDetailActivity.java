@@ -3,8 +3,13 @@ package com.codepath.roadtrip_letsgo.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -47,6 +52,11 @@ public class LocationDetailActivity extends AppCompatActivity {
     RatingBar ratingBar;
     @BindView(R.id.ivImage)
     ImageView ivImage;
+
+    @BindView(R.id.toolbar_detail)
+    Toolbar toolbarDetail;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
    // @BindView(R.id.btnStart)
    // Button btnStart;
 
@@ -60,6 +70,10 @@ public class LocationDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_detail);
         ButterKnife.bind(this);
+
+        if (toolbarDetail != null) {
+            setSupportActionBar(toolbarDetail);
+        }
 
         origin = Parcels.unwrap(getIntent().getParcelableExtra("start"));
         dest = Parcels.unwrap(getIntent().getParcelableExtra("end"));
@@ -85,6 +99,16 @@ public class LocationDetailActivity extends AppCompatActivity {
         });
 
         Log.d("DEBUG", "input location:" + stop.trip_location.loc_name);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the options menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_detail, menu);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void onDirection(View view) {
@@ -128,6 +152,16 @@ public class LocationDetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void onShare(MenuItem item) {
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        String shareText = String.format("%s\n%s\n%s\nShared by Roadtrip LetsGo app", stop.trip_location.loc_name, stop.trip_location.address, stop.phone);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        startActivity(Intent.createChooser(shareIntent, "Share using"));
     }
 
    /* @OnClick(R.id.btnStart)
