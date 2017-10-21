@@ -3,6 +3,7 @@ package com.codepath.roadtrip_letsgo.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -148,10 +149,13 @@ public class HomeActivity extends AppCompatActivity {
 
     public void onTravelMode(MenuItem item) {
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.container_home, travelModeFragment).addToBackStack(null).commit();
-        getSupportFragmentManager().executePendingTransactions();
-        searchContainer.setVisibility(View.GONE);
-
+       // getSupportFragmentManager().beginTransaction().replace(R.id.container_home, travelModeFragment).addToBackStack(null).commit();
+       // getSupportFragmentManager().executePendingTransactions();
+       // searchContainer.setVisibility(View.GONE);
+        TravelModeFragment travelModeFragment;
+        FragmentManager fm = getSupportFragmentManager();
+        travelModeFragment = TravelModeFragment.newInstance();
+        travelModeFragment.show(fm, "fragment_travelmode");
 
     }
 }
