@@ -2,11 +2,13 @@ package com.codepath.roadtrip_letsgo.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -23,6 +25,7 @@ import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
+import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.network.GMapV2Direction;
@@ -195,11 +198,14 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     }
 
     private void getBusinesses() {
+        SharedPreferences settings = getSharedPreferences("settings", 0);
+        int radius = (int) settings.getFloat("range",1.0f) *1600;
+        Log.d("DEBUG:", "Radius:" +radius);
         RequestParams params = new RequestParams();
         params.put("term", stopType);
         params.put("latitude", String.valueOf(origin.point.latitude));
         params.put("longitude", String.valueOf(origin.point.longitude));
-        params.put("radius","2000");
+        params.put("radius",String.valueOf(radius));
         yelpClient.getBusinesses(params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -270,17 +276,19 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_add) {
+/*        if (id == R.id.action_add) {
             Intent i = new Intent(this, AddStopActivity.class);
             i.putExtra("start", Parcels.wrap(origin));
             i.putExtra("end", Parcels.wrap(dest));
             startActivityForResult(i, REQUEST_CODE_ADD);
         }
-
+*/
         if (id == R.id.action_settings) {
-            Intent i = new Intent(this, SettingsActivity.class);
-            i.putExtra("home", "MY HOME");
-            startActivityForResult(i, REQUEST_CODE_SET);
+
+            TravelModeFragment travelModeFragment;
+            FragmentManager fm = getSupportFragmentManager();
+            travelModeFragment = TravelModeFragment.newInstance();
+            travelModeFragment.show(fm, "fragment_travelmode");
         }
 
         return super.onOptionsItemSelected(item);

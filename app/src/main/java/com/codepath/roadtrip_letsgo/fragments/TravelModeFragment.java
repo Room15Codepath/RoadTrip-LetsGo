@@ -1,10 +1,9 @@
 package com.codepath.roadtrip_letsgo.fragments;
 
-import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +14,18 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.activities.HomeActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static android.content.SharedPreferences.Editor;
+
 /**
  * Created by luba on 10/18/17.
  */
 
-public class TravelModeFragment  extends Fragment {
+public class TravelModeFragment  extends DialogFragment {
 
     private static final String TAG_LOG = TravelModeFragment.class.getCanonicalName();
 
@@ -68,6 +68,12 @@ public class TravelModeFragment  extends Fragment {
 
     public TravelModeFragment() {
         // Required empty public constructor
+    }
+
+    public static TravelModeFragment newInstance() {
+        TravelModeFragment fragment = new TravelModeFragment();
+
+        return fragment;
     }
 
     @Override
@@ -155,13 +161,21 @@ public class TravelModeFragment  extends Fragment {
                 Log.d (TAG_LOG, "starsValue="+starsValue);
                 float rangeValue = (float) (range.getProgress()/10.0);
                 Log.d (TAG_LOG, "rangeValue="+rangeValue);
-                Intent i = new Intent(getActivity(), HomeActivity.class);
+                SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
+                Editor editor = settings.edit();
+                editor.putString("mode",mode);
+                editor.putFloat("rating",starsValue);
+                editor.putFloat("range",rangeValue);
+                editor.commit();
+                dismiss();
+          /*      Intent i = new Intent(getActivity(), HomeActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("mode", mode);
                 bundle.putFloat("rating", starsValue);
                 bundle.putFloat("range", rangeValue);
                 i = i.putExtras(bundle);
-                startActivity(i);
+                startActivity(i); */
+
             }
         });
 
@@ -192,26 +206,20 @@ public class TravelModeFragment  extends Fragment {
     }
 
     private void initializeDefaultValues() {
+
+        SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
+        float rangeValue = settings.getFloat("range", 20)*10;
+        float ratingValue = settings.getFloat("rating", 2)*2;
         setTravelMode (TravelMode.MODE_DRIVING);
-        range.setProgress(20);
+        range.setProgress((int)rangeValue);
         range.setMax(250);
         String milesText = String.format("%.1f miles", range.getProgress()/10.0);
         miles.setText(milesText);
 
-        rating.setProgress(2);
+        rating.setProgress((int)ratingValue);
         rating.setMax(10);
         String starsText = String.format("%.1f stars", rating.getProgress()/2.0);
         stars.setText(starsText);
 
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }
