@@ -74,12 +74,12 @@
         <activity android:name=".activities.HomeActivity"
             android:label="home"
             android:theme="@style/AppTheme.NoActionBar">
-
-
         </activity>
         <activity android:name=".activities.AddStopActivity" />
         <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.LocationDetailActivity"></activity>
+        <activity android:name=".activities.LocationDetailActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
