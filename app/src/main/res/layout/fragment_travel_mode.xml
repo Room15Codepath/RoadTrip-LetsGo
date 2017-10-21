@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="SELECT YOUR MODE OF TRAVEL"/>
+
+    <LinearLayout
+        android:id="@+id/travel_mode"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/btnCar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_directions_car"
+            />
+
+        <ImageView
+            android:id="@+id/btnBike"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_directions_bike"
+            />
+
+        <ImageView
+            android:id="@+id/btnWalk"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_directions_walk"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/labelMinimumRating"
+        android:layout_below="@+id/travel_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="16dp"
+        android:text="Minimum Rating"/>
+
+
+    <SeekBar
+        android:id="@+id/ratingSeekBar"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/labelMinimumRating"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/labelStars"
+        android:layout_below="@+id/ratingSeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentRight="true"
+        android:gravity="right"
+        android:textSize="16dp"
+        android:text="Stars"/>
+
+
+    <TextView
+        android:id="@+id/labelSearchRange"
+        android:layout_below="@+id/labelStars"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:text="Search Range"/>
+
+    <SeekBar
+        android:id="@+id/rangeSeekBar"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/labelSearchRange"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/labelMiles"
+        android:layout_below="@+id/rangeSeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentRight="true"
+        android:textSize="16dp"
+        android:text="Miles"/>
+
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/labelMiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"/>
+
+
+
+
+
+</RelativeLayout>

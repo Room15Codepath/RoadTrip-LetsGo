@@ -6,43 +6,71 @@
     android:layout_height="match_parent"
     tools:context="com.codepath.roadtrip_letsgo.activities.HomeActivity">
 
-    <fragment
-        android:id="@+id/origin_autocomplete_fragment"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        />
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <fragment
-        android:id="@+id/destination_autocomplete_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/origin_autocomplete_fragment"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_home"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:focusableInTouchMode="true"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
 
-    <Spinner
-        android:id="@+id/sStopType"
+    <FrameLayout
+        android:id="@+id/container_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/destination_autocomplete_fragment"
-        android:layout_centerHorizontal="true"
-        android:entries="@array/stop_type_array"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp" />
+        android:layout_below="@+id/app_bar_layout">
 
-    <Button
-        android:id="@+id/btnFind"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sStopType"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:padding="20dp"
-        android:text="@string/find_stops"
-        android:textSize="16sp" />
+        <RelativeLayout
+            android:id="@+id/search_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <fragment
+                android:id="@+id/origin_autocomplete_fragment"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <fragment
+                android:id="@+id/destination_autocomplete_fragment"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/origin_autocomplete_fragment" />
+
+            <Spinner
+                android:id="@+id/sStopType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/destination_autocomplete_fragment"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:entries="@array/stop_type_array"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp" />
+
+            <Button
+                android:id="@+id/btnFind"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/sStopType"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:padding="20dp"
+                android:text="@string/find_stops"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>
