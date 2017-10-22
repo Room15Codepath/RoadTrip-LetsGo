@@ -1,9 +1,12 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,6 +24,8 @@ import com.codepath.roadtrip_letsgo.helper.GlideApp;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.utils.Util;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,6 +36,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +73,7 @@ public class LocationDetailActivity extends AppCompatActivity {
     TripLocation dest;
     TripStop stop;
     GoogleMap map;
+    String shareText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,10 +168,43 @@ public class LocationDetailActivity extends AppCompatActivity {
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        String shareText = String.format("%s\n%s\n%s\nShared by Roadtrip LetsGo app", stop.trip_location.loc_name, stop.trip_location.address, stop.phone);
+        shareText = String.format("%s\n%s\n%s\nShared by Roadtrip LetsGo app", stop.trip_location.loc_name, stop.trip_location.address, stop.phone);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-        startActivity(Intent.createChooser(shareIntent, "Share using"));
+
+        final List<ResolveInfo> activities = getPackageManager().queryIntentActivities (shareIntent, 0);
+
+        List<String> appNames = new ArrayList<String>();
+        for (ResolveInfo info : activities) {
+            appNames.add(info.loadLabel(getPackageManager()).toString());
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Share using...");
+        builder.setItems(appNames.toArray(new CharSequence[appNames.size()]), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                ResolveInfo info = activities.get(item);
+                if (info.activityInfo.packageName.equals("com.facebook.katana")) {
+                    setupFacebookShareIntent();
+                }
+                // start the selected activity
+                shareIntent.setPackage(info.activityInfo.packageName);
+                startActivity(shareIntent);
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public void setupFacebookShareIntent() {
+        ShareDialog shareDialog;
+        shareDialog = new ShareDialog(this);
+
+        ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                .setQuote(shareText)
+                .setContentUrl(Uri.parse(stop.url))
+                .build();
+        shareDialog.show(linkContent);
     }
 
     @OnClick(R.id.btnRoute)
