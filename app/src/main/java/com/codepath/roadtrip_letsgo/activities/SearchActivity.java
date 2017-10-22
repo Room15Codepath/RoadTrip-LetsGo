@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -19,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
@@ -39,7 +40,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -114,6 +114,29 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
+                lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
+                lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
+                lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
+
+            }
+        });
+
         stops = new ArrayList<>();
         parseIntent();
     }
@@ -124,14 +147,24 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         stopType = getIntent().getStringExtra("stopType");
     }
 
+    public Fragment getCurrentPagerFragment(int position) {
+
+        FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) viewPager.getAdapter();
+
+        return (Fragment) a.instantiateItem(viewPager, position);
+
+    }
     public void onComplete() {
-        mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
-        lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
-        lvFragment.addTrip(origin, dest);
-        if(stops.size()>0)
-        {
-            lvFragment.addItems(stops);
-        }
+
+        mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
+        lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
+    //    if(lvFragment !=null) {
+            lvFragment.addTrip(origin, dest);
+
+            if (stops.size() > 0) {
+                lvFragment.addItems(stops);
+            }
+      //  }
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -141,7 +174,8 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                 }
             });
         } else {
-            Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", "map fragment is null");
+            //Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -174,7 +208,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                 }
             });
         } else {
-            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+           Log.d("DEBUG", "map is null");// Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -332,16 +366,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
     }
 
-  /*  private void drawPolyline(ArrayList<LatLng> directionPoint) {
-        PolylineOptions rectLine = new PolylineOptions().width(7).color(
-                ContextCompat.getColor(this, R.color.colorPrimary));
-
-        for (int i = 0; i < directionPoint.size(); i++) {
-            rectLine.add(directionPoint.get(i));
-        }
-        Polyline polyline = map.addPolyline(rectLine);
-    }
-*/
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -409,7 +433,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
       //  Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
+/*    @Override
     protected void onResume() {
         super.onResume();
 
@@ -418,12 +442,13 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         if (mCurrentLocation != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
-            map.animateCamera(cameraUpdate);
+ //           CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+//            map.animateCamera(cameraUpdate);
         } else {
-            Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", " current location is null");
+            //Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
         }
         SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
     }
-
+*/
 }
