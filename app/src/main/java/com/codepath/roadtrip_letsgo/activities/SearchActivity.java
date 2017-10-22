@@ -39,12 +39,14 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -73,7 +75,7 @@ import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 @RuntimePermissions
-public class SearchActivity extends AppCompatActivity implements ListViewFragment.OnCompleteListener{
+public class SearchActivity extends AppCompatActivity implements ListViewFragment.OnCompleteListener {
     private SupportMapFragment mapFragment;
     private ListViewFragment lvFragment;
     private GoogleMap map;
@@ -95,9 +97,12 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     String stopType;
 
     private SmartFragmentStatePagerAdapter adapterViewPager;
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.sliding_tabs) TabLayout tabLayout;
-    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.sliding_tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +111,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         ButterKnife.bind(this);
         yelpClient = getYelpClient();
         setSupportActionBar(toolbar);
-        adapterViewPager =new SearchPagerAdapter(getSupportFragmentManager(),this);
+        adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
         stops = new ArrayList<>();
@@ -147,13 +152,12 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
             addLocationMarkers(origin, dest);
-//            LatLng latLng = new LatLng(origin.point.getLatitude(),mCurrentLocation.getLongitude());
-            // Show the current location in Google Map
-            map.moveCamera(CameraUpdateFactory.newLatLng(origin.point));
-            // Zoom in the Google Map
-            map.animateCamera(CameraUpdateFactory.zoomTo(15));
             addRoute(origin, dest);
             getBusinesses();
+            // Zoom in the Google Map
+            LatLng definedLoc = new LatLng(origin.point.latitude,origin.point.longitude);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc).zoom(13.0F).build();
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
@@ -321,6 +325,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("DEBUG:", "permission granted.");
         SearchActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
@@ -378,10 +383,10 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             return;
         }
         mCurrentLocation = location;
-    //    String msg = "Updated Location: " +
+   //     String msg = "Updated Location: " +
      //           Double.toString(location.getLatitude()) + "," +
-     //           Double.toString(location.getLongitude());
-      //  Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+       //         Double.toString(location.getLongitude());
+       // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -393,12 +398,12 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         if (mCurrentLocation != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-  //          CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-  //          map.animateCamera(cameraUpdate);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+            map.animateCamera(cameraUpdate);
         } else {
             Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
         }
-   //     SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+        SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
     }
 
 }
