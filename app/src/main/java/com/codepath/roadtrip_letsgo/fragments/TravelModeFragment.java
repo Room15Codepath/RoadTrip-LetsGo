@@ -196,7 +196,7 @@ public class TravelModeFragment  extends DialogFragment {
         float ratingValue = settings.getFloat("rating", 2)*2;
         setTravelMode (TravelMode.MODE_DRIVING);
         range.setProgress((int)rangeValue);
-        range.setMax(250);
+        range.setMax(60);
         String milesText = String.format("%.1f miles", range.getProgress()/10.0);
         miles.setText(milesText);
 
