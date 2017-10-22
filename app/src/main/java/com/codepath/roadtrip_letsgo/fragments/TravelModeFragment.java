@@ -62,6 +62,9 @@ public class TravelModeFragment  extends DialogFragment {
 
     @BindView(R.id.btnSave)
     Button btnSave;
+    @BindView(R.id.btnCancel)
+    Button btnCancel;
+
     private Unbinder unbinder;
 
 
@@ -128,57 +131,38 @@ public class TravelModeFragment  extends DialogFragment {
             }
         });
 
-        btnCar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTravelMode (TravelMode.MODE_DRIVING);
-                mode = "driving";
-            }
+        btnCar.setOnClickListener(v -> {
+            setTravelMode (TravelMode.MODE_DRIVING);
+            mode = "driving";
         });
 
-        btnBike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTravelMode (TravelMode.MODE_BICYCLING);
-                mode = "bicycling";
-            }
+        btnBike.setOnClickListener(v -> {
+            setTravelMode (TravelMode.MODE_BICYCLING);
+            mode = "bicycling";
         });
 
-        btnWalk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTravelMode (TravelMode.MODE_WALKING);
-                mode="walking";
+        btnWalk.setOnClickListener(v -> {
+            setTravelMode (TravelMode.MODE_WALKING);
+            mode="walking";
 
-            }
         });
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d (TAG_LOG, "mode="+mode);
-                float starsValue = (float) (rating.getProgress()/2.0);
-                Log.d (TAG_LOG, "starsValue="+starsValue);
-                float rangeValue = (float) (range.getProgress()/10.0);
-                Log.d (TAG_LOG, "rangeValue="+rangeValue);
-                SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
-                Editor editor = settings.edit();
-                editor.putString("mode",mode);
-                editor.putFloat("rating",starsValue);
-                editor.putFloat("range",rangeValue);
-                editor.commit();
-                dismiss();
-          /*      Intent i = new Intent(getActivity(), HomeActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("mode", mode);
-                bundle.putFloat("rating", starsValue);
-                bundle.putFloat("range", rangeValue);
-                i = i.putExtras(bundle);
-                startActivity(i); */
-
-            }
+        btnSave.setOnClickListener(v -> {
+            Log.d (TAG_LOG, "mode="+mode);
+            float starsValue = (float) (rating.getProgress()/2.0);
+            Log.d (TAG_LOG, "starsValue="+starsValue);
+            float rangeValue = (float) (range.getProgress()/10.0);
+            Log.d (TAG_LOG, "rangeValue="+rangeValue);
+            SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
+            Editor editor = settings.edit();
+            editor.putString("mode",mode);
+            editor.putFloat("rating",starsValue);
+            editor.putFloat("range",rangeValue);
+            editor.commit();
+            dismiss();
         });
 
+        btnCancel.setOnClickListener(v -> dismiss());
         return view;
     }
 

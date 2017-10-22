@@ -39,7 +39,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -183,6 +182,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
+                            Log.d("DEBUG:", "draw route for origin/dest");
                             Document doc = Util.byteToDocument(responseBody);
                             ArrayList<LatLng> directionPoint = md.getDirection(doc);
                             drawPolyline(directionPoint);
@@ -393,12 +393,12 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         if (mCurrentLocation != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            map.animateCamera(cameraUpdate);
+  //          CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+  //          map.animateCamera(cameraUpdate);
         } else {
             Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
         }
-        SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+   //     SearchActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
     }
 
 }

@@ -34,6 +34,7 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class LocationDetailActivity extends AppCompatActivity {
     @BindView(R.id.tvName)
@@ -88,7 +89,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         tvAddress.setText(stop.trip_location.address );
 
         //Glide.with(this).from(stop.image_url).into(ivImage);
-        GlideApp.with(this).load(stop.image_url).override(300,300).fitCenter().into(ivImage);
+        GlideApp.with(this).load(stop.image_url).override(350,350).fitCenter().into(ivImage);
 
         SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         fm.getMapAsync(new OnMapReadyCallback() {
@@ -164,19 +165,20 @@ public class LocationDetailActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(shareIntent, "Share using"));
     }
 
-   /* @OnClick(R.id.btnStart)
+    @OnClick(R.id.btnRoute)
     public void onButtonClick() {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("https://www.google.com/maps/dir");
-        sb.append("/" + origin.point.latitude +","+ origin.point.longitude );
-        sb.append("/" + stop.trip_location.point.latitude +","+ stop.trip_location.point.longitude);
-        sb.append("/" + dest.point.latitude +","+ dest.point.longitude);
+        Log.d("DEBUG:", "add route clicked");
+        //StringBuilder sb = new StringBuilder();
+      //  sb.append("https://www.google.com/maps/dir");
+    //    sb.append("/" + origin.point.latitude +","+ origin.point.longitude );
+  //      sb.append("/" + stop.trip_location.point.latitude +","+ stop.trip_location.point.longitude);
+//        sb.append("/" + dest.point.latitude +","+ dest.point.longitude);
 
-        Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
-        i.setPackage("com.google.android.apps.maps");
-        startActivity(i);
+     //   Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
+     //   i.setPackage("com.google.android.apps.maps");
+     //   startActivity(i);
 
-    }*/
+    }
 
 }

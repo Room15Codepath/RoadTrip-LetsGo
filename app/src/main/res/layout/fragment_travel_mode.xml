@@ -111,6 +111,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"/>
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@+id/btnSave"
+        android:layout_below="@+id/labelMiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"/>
 
 
 

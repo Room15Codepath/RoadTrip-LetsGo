@@ -148,13 +148,13 @@
         android:layout_below="@+id/map_direction"
         />
 
-    <!--Button
-        android:id="@+id/btnStart"
+    <Button
+        android:id="@+id/btnRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/starttrip" /-->
+        android:text="Add to route" />
 
 
 </RelativeLayout>
