@@ -153,7 +153,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             map.getUiSettings().setZoomControlsEnabled(true);
             addLocationMarkers(origin, dest);
             addRoute(origin, dest);
-            getBusinesses();
+            //getBusinesses();
             // Zoom in the Google Map
             LatLng definedLoc = new LatLng(origin.point.latitude,origin.point.longitude);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc).zoom(13.0F).build();
@@ -332,7 +332,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
     }
 
-    private void drawPolyline(ArrayList<LatLng> directionPoint) {
+  /*  private void drawPolyline(ArrayList<LatLng> directionPoint) {
         PolylineOptions rectLine = new PolylineOptions().width(7).color(
                 ContextCompat.getColor(this, R.color.colorPrimary));
 
@@ -341,7 +341,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         }
         Polyline polyline = map.addPolyline(rectLine);
     }
-
+*/
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
