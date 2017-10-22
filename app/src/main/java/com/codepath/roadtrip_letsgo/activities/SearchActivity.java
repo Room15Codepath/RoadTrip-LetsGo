@@ -153,7 +153,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             // Zoom in the Google Map
             map.animateCamera(CameraUpdateFactory.zoomTo(15));
             addRoute(origin, dest);
-            getBusinesses();
 
             map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
@@ -186,6 +185,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                             Document doc = Util.byteToDocument(responseBody);
                             ArrayList<LatLng> directionPoint = md.getDirection(doc);
                             drawPolyline(directionPoint);
+                            getBusinesses(directionPoint);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -197,14 +197,33 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                 });
     }
 
-    private void getBusinesses() {
+    private void drawPolyline(ArrayList<LatLng> directionPoint) {
+        PolylineOptions rectLine = new PolylineOptions().width(7).color(
+                ContextCompat.getColor(this, R.color.colorPrimary));
+
+        for (int i = 0; i < directionPoint.size(); i++) {
+            rectLine.add(directionPoint.get(i));
+        }
+        Polyline polyline = map.addPolyline(rectLine);
+    }
+
+    private void getBusinesses(ArrayList<LatLng> directionPoint) {
         SharedPreferences settings = getSharedPreferences("settings", 0);
         int radius = (int) settings.getFloat("range",1.0f) *1600;
         Log.d("DEBUG:", "Radius:" +radius);
+        if (directionPoint.size() <= 10) {
+            getYelpBusinessesFromPoint(origin.point, radius);
+        }
+        for (int i=0; i<directionPoint.size(); i+=10) {
+            getYelpBusinessesFromPoint(directionPoint.get(i), radius);
+        }
+    }
+
+    private void getYelpBusinessesFromPoint(LatLng point, int radius) {
         RequestParams params = new RequestParams();
         params.put("term", stopType);
-        params.put("latitude", String.valueOf(origin.point.latitude));
-        params.put("longitude", String.valueOf(origin.point.longitude));
+        params.put("latitude", String.valueOf(point.latitude));
+        params.put("longitude", String.valueOf(point.longitude));
         params.put("radius",String.valueOf(radius));
         yelpClient.getBusinesses(params, new JsonHttpResponseHandler() {
             @Override
@@ -306,16 +325,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         super.onRestoreInstanceState(savedInstanceState);
         viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
         mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-    }
-
-    private void drawPolyline(ArrayList<LatLng> directionPoint) {
-        PolylineOptions rectLine = new PolylineOptions().width(7).color(
-                ContextCompat.getColor(this, R.color.colorPrimary));
-
-        for (int i = 0; i < directionPoint.size(); i++) {
-            rectLine.add(directionPoint.get(i));
-        }
-        Polyline polyline = map.addPolyline(rectLine);
     }
 
     @Override
