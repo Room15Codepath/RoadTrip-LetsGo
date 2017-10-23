@@ -73,10 +73,9 @@
 
         <activity
             android:name=".activities.SearchActivity"
-            android:label="@string/title_activity_search"
+            android:label="Find a Stop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.HomeActivity"
-            android:label="home"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activities.AddStopActivity" />

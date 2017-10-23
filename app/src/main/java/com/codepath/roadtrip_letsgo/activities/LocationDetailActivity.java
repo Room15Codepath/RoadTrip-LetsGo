@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -219,7 +220,13 @@ public class LocationDetailActivity extends AppCompatActivity {
 
      //   Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
      //   i.setPackage("com.google.android.apps.maps");
-     //   startActivity(i);
+        Intent i = new Intent(LocationDetailActivity.this, AddStopActivity.class);
+        ArrayList<Parcelable> tList = new ArrayList<>();
+        tList.add(Parcels.wrap(origin));
+        tList.add(Parcels.wrap(stop.trip_location));
+        tList.add(Parcels.wrap(dest));
+        i.putParcelableArrayListExtra("stops", tList);
+        startActivity(i);
 
     }
 

@@ -1,6 +1,7 @@
 package com.codepath.roadtrip_letsgo.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentManager;
@@ -49,8 +50,13 @@ public class HomeActivity extends AppCompatActivity {
     TravelModeFragment travelModeFragment;
     @BindView(R.id.search_container)
     RelativeLayout searchContainer;
-    String mode;
-    Float rating, range;
+    @BindView(R.id.btnStart)
+    Button btnStart;
+
+    //String mode;
+    //Float rating, range;
+    String userId;
+    boolean permission;
 
     public static final String USER = "USER";
     public static final String PERMISSION = "PERMISSION";
@@ -72,15 +78,17 @@ public class HomeActivity extends AppCompatActivity {
         setupDestListener();
         setupFindListener();
         parseIntent();
+        setupStartListener();
     }
 
     public void parseIntent() {
         Bundle bundle = getIntent().getExtras();
-        mode = bundle.getString("mode");
-        rating = bundle.getFloat("rating");
-        range = bundle.getFloat("range");
+        userId = bundle.getString(USER);
+        permission = bundle.getBoolean(PERMISSION);
+      //  rating = bundle.getFloat("rating");
+      //  range = bundle.getFloat("range");
 
-        Log.d("DEBUG:", "bundle="+mode+rating+range);
+        //Log.d("DEBUG:", "bundle="+mode+rating+range);
     }
 
     @Override
@@ -138,10 +146,28 @@ public class HomeActivity extends AppCompatActivity {
         btnFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(origin ==null || destination == null) return;
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
                 i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
                 i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
                 i.putExtra("stopType", sStopType.getSelectedItem().toString());
+                startActivity(i);
+            }
+        });
+    }
+
+    private void setupStartListener() {
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(origin ==null || destination == null) return;
+                StringBuilder sb = new StringBuilder();
+                sb.append("https://www.google.com/maps/dir");
+                sb.append("/" + origin.getLatLng().latitude +","+ origin.getLatLng().longitude );
+                sb.append("/" + destination.getLatLng().latitude +","+ destination.getLatLng().longitude);
+
+                Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
+                i.setPackage("com.google.android.apps.maps");
                 startActivity(i);
             }
         });
