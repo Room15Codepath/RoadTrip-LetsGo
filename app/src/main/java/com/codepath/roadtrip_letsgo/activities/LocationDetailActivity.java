@@ -33,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -150,12 +151,12 @@ public class LocationDetailActivity extends AppCompatActivity {
             BitmapDescriptor defaultMarker =
                     BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
             Marker marker = map.addMarker(new MarkerOptions()
-                    .position(stop.trip_location.point)
+                    .position(new LatLng(stop.trip_location.lat, stop.trip_location.lng))
                     .title(stop.trip_location.loc_name)
                     .snippet(stop.trip_location.address)
                     .icon(defaultMarker));
             Util.addRoute(origin, dest, this, map);
-            map.moveCamera(CameraUpdateFactory.newLatLng(stop.trip_location.point));
+            map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(stop.trip_location.lat, stop.trip_location.lng)));
 
             // Zoom in the Google Map
             map.animateCamera(CameraUpdateFactory.zoomTo(15));

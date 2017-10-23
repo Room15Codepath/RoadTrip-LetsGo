@@ -1,7 +1,6 @@
 package com.codepath.roadtrip_letsgo.models;
 
 import com.codepath.roadtrip_letsgo.utils.StopType;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,9 +48,8 @@ public class TripStop {
             tripLocation.loc_name = json.getString("name");
             tripLocation.address = getAddressStr(
                     json.getJSONObject("location").getJSONArray("display_address"));
-            tripLocation.point = new LatLng(
-                    json.getJSONObject("coordinates").getDouble("latitude"),
-                    json.getJSONObject("coordinates").getDouble("longitude"));
+            tripLocation.lat  = json.getJSONObject("coordinates").getDouble("latitude");
+            tripLocation.lng = json.getJSONObject("coordinates").getDouble("longitude");
             tripStop.trip_location = tripLocation;
         } catch (Exception e) {
             e.printStackTrace();

@@ -106,7 +106,7 @@ public class AddStopActivity extends AppCompatActivity {
                 sb.append("https://www.google.com/maps/dir");
                 for(int i =0; i< trips.size();i=i+2) {
 
-                    sb.append("/" + trips.get(i).point.latitude +","+ trips.get(i).point.longitude );
+                    sb.append("/" + trips.get(i).lat +","+ trips.get(i).lng );
                 }
 
 //                sb.append("/" + origin.getLatLng().latitude +","+ origin.getLatLng().longitude );

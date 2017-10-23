@@ -170,7 +170,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             addRoute(origin, dest);
             //getBusinesses();
             // Zoom in the Google Map
-            LatLng definedLoc = new LatLng(origin.point.latitude,origin.point.longitude);
+            LatLng definedLoc = new LatLng(origin.lat,origin.lng);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc).zoom(13.0F).build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -195,8 +195,9 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
 
     private void addRoute(TripLocation origin, TripLocation dest) {
         final GMapV2Direction md = new GMapV2Direction();
-
-        md.getDocument(origin.point, dest.point, GMapV2Direction.MODE_DRIVING,
+        LatLng pnt1 = new LatLng(origin.lat, origin.lng);
+        LatLng pnt2 = new LatLng(dest.lat, dest.lng);
+        md.getDocument( pnt1, pnt2, GMapV2Direction.MODE_DRIVING,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -232,7 +233,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         int radius = (int) settings.getFloat("range",1.0f) *1600;
         Log.d("DEBUG:", "Radius:" +radius);
         if (directionPoint.size() <= 10) {
-            getYelpBusinessesFromPoint(origin.point, radius);
+            getYelpBusinessesFromPoint(new LatLng(origin.lat, origin.lng), radius);
         }
         for (int i=0; i<directionPoint.size(); i+=10) {
             getYelpBusinessesFromPoint(directionPoint.get(i), radius);
@@ -256,7 +257,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                         BitmapDescriptor defaultMarker =
                                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
                         Marker marker = map.addMarker(new MarkerOptions()
-                                .position(tripStop.trip_location.point)
+                                .position(new LatLng(tripStop.trip_location.lat, tripStop.trip_location.lng))
                                 .title(tripStop.trip_location.loc_name)
                                 .snippet(tripStop.trip_location.address)
                                 .icon(defaultMarker));
@@ -279,9 +280,9 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
 
     private void addLocationMarkers(TripLocation origin, TripLocation dest) {
         BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = Util.addMarker(map, origin.point, origin.loc_name, origin.address, icon_origin);
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
         BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = Util.addMarker(map, dest.point, dest.loc_name, dest.address, icon_dest);
+        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
     }
 
 

@@ -43,8 +43,9 @@ public class Util {
 
     public static void addRoute(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
         final GMapV2Direction md = new GMapV2Direction();
-
-        md.getDocument(origin.point, dest.point, GMapV2Direction.MODE_DRIVING,
+        LatLng pnt1 = new LatLng(origin.lat, origin.lng);
+        LatLng pnt2 = new LatLng(dest.lat, dest.lng);
+        md.getDocument(pnt1, pnt2, GMapV2Direction.MODE_DRIVING,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -75,9 +76,9 @@ public class Util {
 
     public static void addLocationMarkers(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
         BitmapDescriptor icon_origin = Util.createBubble(context, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = addMarker(map, origin.point, origin.loc_name, origin.address, icon_origin);
+        Marker marker_origin = addMarker(map, new LatLng(origin.lat,origin.lng), origin.loc_name, origin.address, icon_origin);
         BitmapDescriptor icon_dest = Util.createBubble(context, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = addMarker(map, dest.point, dest.loc_name, dest.address, icon_dest);
+        Marker marker_dest = addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
     }
 
     public static BitmapDescriptor createBubble(Context context, int style, String title) {
