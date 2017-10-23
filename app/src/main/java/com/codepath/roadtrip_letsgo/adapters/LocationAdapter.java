@@ -6,9 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
+import com.codepath.roadtrip_letsgo.helper.GlideApp;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 
 import java.util.List;
@@ -44,6 +46,11 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         holder.tvName.setText(location.trip_location.loc_name);
         holder.tvAddress.setText(location.trip_location.address);
+        String miles = String.format("%.2f mi", location.distance_away /1600);
+        holder.tvMiles.setText(miles);
+
+        GlideApp.with(holder.ivStopType.getContext()).load(location.image_url).into(holder.ivStopType);
+
     }
 
     @Override
@@ -61,6 +68,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         TextView tvAddress;
         @BindView(R.id.tvName)
         TextView tvName;
+
+        @BindView(R.id.tvMiles)
+        TextView tvMiles;
+
+        @BindView(R.id.iv_stop_type)
+        ImageView ivStopType;
+
  //       @BindView(R.id.ibAdd)
    //     ImageButton ibAdd;
 
