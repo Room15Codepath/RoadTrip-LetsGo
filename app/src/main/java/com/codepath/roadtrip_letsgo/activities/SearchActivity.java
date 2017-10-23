@@ -114,28 +114,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
-                lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
-                lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                mapFragment = (SupportMapFragment) adapterViewPager.getRegisteredFragment(0);
-                lvFragment = (ListViewFragment) adapterViewPager.getRegisteredFragment(1);
-
-            }
-        });
 
         stops = new ArrayList<>();
         parseIntent();
@@ -145,6 +123,9 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
         dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
         stopType = getIntent().getStringExtra("stopType");
+        if(stopType == null){
+            stopType = StopType.CAFE.toString();
+        }
     }
 
     public Fragment getCurrentPagerFragment(int position) {

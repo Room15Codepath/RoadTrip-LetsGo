@@ -4,6 +4,7 @@ import com.codepath.roadtrip_letsgo.utils.StopType;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
@@ -38,7 +39,11 @@ public class TripStop {
             tripStop.rating = json.getDouble("rating");
             tripStop.yelp_id = json.getString("id");
             tripStop.phone= json.getString("phone");
-            tripStop.price = json.getString("price");
+            try {
+                tripStop.price = json.getString("price");
+            }catch (JSONException x){
+                //skip.
+            }
             tripStop.review_count = json.getInt("review_count");
             tripStop.url = json.getString("url");
             tripLocation.loc_name = json.getString("name");

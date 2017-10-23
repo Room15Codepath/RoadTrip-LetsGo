@@ -71,6 +71,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             ibAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+//                    Intent intent = new Intent();
+  //                  intent.putExtra("stop", );
+    //                ((SearchActivity)view.getContext()).setResult(RESULT_OK, intent);
+      //              ((SearchActivity)view.getContext()).finish();
                     Log.d("DEBUG:", "add route button clicked");
                 }
             });

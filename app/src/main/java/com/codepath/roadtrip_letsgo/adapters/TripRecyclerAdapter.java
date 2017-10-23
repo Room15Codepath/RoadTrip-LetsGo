@@ -2,6 +2,7 @@ package com.codepath.roadtrip_letsgo.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return items.size()*2 -1;
+        return items.size();
     }
 
     @Override
@@ -88,7 +89,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
         }
     }
     public void configureViewHolder1(ViewHolder1 holder, int position){
-        TripLocation stop = items.get(position/2);
+        TripLocation stop = items.get(position);
 
         // set items
         TextView tvName = holder.tvName;
@@ -100,7 +101,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
 
     public void configureViewHolder2(ViewHolder2 holder, int position){
         //Doc article = items.get(position);
-
+        Log.d("STOP", "button line: " + position);
         // set items
     }
 
