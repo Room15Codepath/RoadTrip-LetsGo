@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -62,22 +61,12 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         TextView tvAddress;
         @BindView(R.id.tvName)
         TextView tvName;
-        @BindView(R.id.ibAdd)
-        ImageButton ibAdd;
+ //       @BindView(R.id.ibAdd)
+   //     ImageButton ibAdd;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            ibAdd.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-//                    Intent intent = new Intent();
-  //                  intent.putExtra("stop", );
-    //                ((SearchActivity)view.getContext()).setResult(RESULT_OK, intent);
-      //              ((SearchActivity)view.getContext()).finish();
-                    Log.d("DEBUG:", "add route button clicked");
-                }
-            });
         }
     }
 
