@@ -30,4 +30,17 @@ public class TripLocation {
         return tripLocation;
     }
 
+    public LatLng getPoint() {
+        return point;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getLoc_name() {
+        return loc_name;
+    }
+
+
 }
