@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
@@ -64,6 +65,8 @@ import org.parceler.Parcels;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -261,8 +264,20 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                                 .snippet(tripStop.trip_location.address)
                                 .icon(defaultMarker));
                         marker.setTag(tripStop);
-                        stops.add(tripStop);
+
+                        if (stops == null) {
+                            stops = new ArrayList<>();
+                        }
+                        if (stops.contains(tripStop)) {
+                            stops.set(stops.indexOf(tripStop), tripStop);
+                        } else {
+                            stops.add(tripStop);
+                        }
                     }
+
+                    Collections.sort(stops, TripStop.COMPARE_BY_DISTANCE);
+
+                    lvFragment.cleanList();
                     lvFragment.addItems(stops);
 
                 } catch (Exception e) {
@@ -328,6 +343,18 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             FragmentManager fm = getSupportFragmentManager();
             travelModeFragment = TravelModeFragment.newInstance();
             travelModeFragment.show(fm, "fragment_travelmode");
+        }
+
+        if (id == R.id.action_sort) {
+            Toast.makeText(this, "founded"+stops.size(), Toast.LENGTH_LONG).show();
+            Collections.sort(stops, new Comparator<TripStop>() {
+                public int compare(TripStop o1, TripStop o2) {
+                    return o1.getTripLocation_Name().compareTo(o2.getTripLocation_Name());
+                }
+        });
+            lvFragment.cleanList();
+            lvFragment.addItems(stops);
+
         }
 
         return super.onOptionsItemSelected(item);

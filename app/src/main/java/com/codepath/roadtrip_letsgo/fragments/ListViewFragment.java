@@ -113,6 +113,11 @@ RecyclerView rvLocations;
         return view;
     }
 
+    public void cleanList(){
+        locations.clear();
+        adapter.notifyDataSetChanged();
+    }
+
     public void addItems(List<TripStop> bList){
         locations.addAll(bList);
         adapter.notifyItemInserted(locations.size() - 1);

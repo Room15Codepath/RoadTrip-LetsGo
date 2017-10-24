@@ -12,4 +12,10 @@
         android:title="setting"
         android:icon="@drawable/ic_settings"
         />
+    <item
+        android:id="@+id/action_sort"
+        app:showAsAction="ifRoom"
+        android:title="sort alphabetically"
+        android:icon="@drawable/ic_sort"
+        />
 </menu>

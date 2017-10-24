@@ -8,12 +8,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
+import java.util.Comparator;
+
 /**
  * Created by tessavoon on 10/12/17.
  */
 
 @Parcel
 public class TripStop {
+
     public TripLocation trip_location;
     public String yelp_id;
     public StopType stop_type;
@@ -70,6 +73,38 @@ public class TripStop {
             e.printStackTrace();
         }
         return str.toString();
+    }
+
+    public double getDistance_away() {
+        return distance_away;
+    }
+
+    public TripLocation getTrip_location() {
+        return trip_location;
+    }
+
+    public String getTripLocation_Name() {
+        return trip_location.getLoc_name();
+    }
+
+    public String getYelp_id() {
+        return yelp_id;
+    }
+
+    public static final Comparator<TripStop> COMPARE_BY_DISTANCE = new Comparator<TripStop>() {
+        @Override
+        public int compare(TripStop lhs, TripStop rhs) {
+            return Double.compare(lhs.getDistance_away(), rhs.getDistance_away());
+        }
+    };
+
+    @Override
+    public boolean equals(Object object) {
+        if (object != null && object instanceof TripStop) {
+            TripStop tripStop = (TripStop) object;
+            return this.getYelp_id().equals(tripStop.getYelp_id());
+        }
+        return false;
     }
 
 }

@@ -47,7 +47,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         holder.tvName.setText(location.trip_location.loc_name);
         holder.tvAddress.setText(location.trip_location.address);
-        String miles = String.format("%.2f mi", location.distance_away /1600);
+        String miles = String.format("%.1f mi", location.distance_away * 0.0006213719);
         holder.tvMiles.setText(miles);
 
         GlideApp.with(holder.ivStopType.getContext()).load(location.image_url).into(holder.ivStopType);
