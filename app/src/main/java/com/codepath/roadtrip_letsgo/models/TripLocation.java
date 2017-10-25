@@ -30,9 +30,6 @@ public class TripLocation {
         return tripLocation;
     }
 
-    public LatLng getPoint() {
-        return point;
-    }
 
     public String getAddress() {
         return address;
