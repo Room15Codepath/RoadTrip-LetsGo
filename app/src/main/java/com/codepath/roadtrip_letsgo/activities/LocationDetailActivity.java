@@ -15,13 +15,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.helper.GlideApp;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.utils.Util;
@@ -61,9 +59,6 @@ public class LocationDetailActivity extends AppCompatActivity {
     TextView tvDistance;
     @BindView(R.id.ratingBar)
     RatingBar ratingBar;
-    @BindView(R.id.ivImage)
-    ImageView ivImage;
-
     @BindView(R.id.toolbar_detail)
     Toolbar toolbarDetail;
     @BindView(R.id.app_bar_layout)
@@ -97,10 +92,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         tvDistance.setText(String.format( "%.1f", stop.distance_away/1600) +" mile");
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
-        tvAddress.setText(stop.trip_location.address );
-
-        //Glide.with(this).from(stop.image_url).into(ivImage);
-        GlideApp.with(this).load(stop.image_url).override(350,350).fitCenter().into(ivImage);
+        tvAddress.setText(stop.trip_location.address);
 
         SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         fm.getMapAsync(new OnMapReadyCallback() {

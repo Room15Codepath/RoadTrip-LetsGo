@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.activities.LocationDetailActivity;
+import com.codepath.roadtrip_letsgo.activities.PlaceDetailActivity;
 import com.codepath.roadtrip_letsgo.adapters.LocationAdapter;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
@@ -98,7 +98,7 @@ RecyclerView rvLocations;
         ItemClickSupport.addTo(rvLocations).setOnItemClickListener(
                 (recyclerView, position, vw) -> {
                     //create intent
-                    Intent intent = new Intent(getContext(), LocationDetailActivity.class);
+                    Intent intent = new Intent(getContext(), PlaceDetailActivity.class);
                     TripStop loc = locations.get(position);
                     intent.putExtra("start", Parcels.wrap(origin));
                     intent.putExtra("end", Parcels.wrap(dest));

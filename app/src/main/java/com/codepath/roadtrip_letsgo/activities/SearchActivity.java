@@ -181,7 +181,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                 @Override
                 public void onInfoWindowClick(Marker marker) {
                     Log.d("DEBUG:", "info window clicked");
-                    Intent intent = new Intent(SearchActivity.this, LocationDetailActivity.class);
+                    Intent intent = new Intent(SearchActivity.this, PlaceDetailActivity.class);
                     if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
                     TripStop loc = (TripStop) marker.getTag();
                     intent.putExtra("start", Parcels.wrap(origin));

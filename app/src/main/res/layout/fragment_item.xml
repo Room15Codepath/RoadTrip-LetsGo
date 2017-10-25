@@ -65,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/stop_info"
+        android:layout_marginTop="5dp"
         android:layout_weight="0.2"
         android:background="@android:color/transparent"
         android:tint="@color/colorAccent"

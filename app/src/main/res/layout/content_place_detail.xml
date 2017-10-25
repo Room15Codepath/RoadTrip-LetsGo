@@ -8,10 +8,159 @@
     tools:context="com.codepath.roadtrip_letsgo.activities.PlaceDetailActivity"
     tools:showIn="@layout/activity_place_detail">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        tools:context="com.codepath.roadtrip_letsgo.activities.LocationDetailActivity">
+
+
+        <RelativeLayout
+            android:id="@+id/rlHeader"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/app_bar_layout"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingRight="10dp"
+            android:layout_height="wrap_content">
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:rating="2.0"
+                android:scaleY="1"
+                android:scaleX="1"
+                android:transformPivotX="0dp"
+                android:transformPivotY="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="-10dp"
+                android:layout_marginBottom="-10dp"
+                android:isIndicator="true"/>
+
+            <TextView
+                android:id="@+id/tvReviewCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                tools:text="Reviews"
+                android:textSize="17sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_below="@id/ratingBar"
+                />
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="price"
+                    android:paddingLeft="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@id/tvReviewCount"
+                    android:textSize="17sp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:id="@+id/tvDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@id/tvPrice"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="17sp"
+                    android:layout_marginRight="2sp"
+                    android:text="distance" />
+
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:paddingLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvDistance"
+                android:gravity="center_vertical"
+                android:autoLink="phone"
+                android:textSize="17sp"
+                android:layout_marginBottom="15dp"
+                android:drawableLeft="@drawable/ic_phone"
+                android:linksClickable="true"
+                tools:text="phone" />
+
+        </RelativeLayout>
+
+        <View style="@style/Divider"
+            android:id="@+id/divider"
+            android:layout_below="@id/rlHeader"
+            android:layout_margin="10dp"/>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginTop="15dp"
+            android:textSize="17sp"
+            android:layout_marginBottom="5dp"
+            tools:text="name"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/divider"
+            />
+
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_marginStart="10dp"
+            android:textSize="17sp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            tools:text="address"
+            android:layout_below="@+id/tvName"
+            />
+
+        <TextView
+            android:id="@+id/map_direction"
+            android:layout_below="@+id/tvAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="17sp"
+            android:onClick="onDirection"
+            android:text="Direction"
+            android:textColor="@color/colorPrimaryDark"/>
+
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_height="200dp"
+            android:layout_below="@+id/map_direction"
+            />
+
+
+    </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
