@@ -10,9 +10,10 @@
         android:name="android.permission.ACCESS_COARSE_LOCATION"
         android:protectionLevel="dangerous" />
 
-    <provider android:authorities="com.facebook.app.FacebookContentProvider127523021241004"
+    <provider
         android:name="com.facebook.FacebookContentProvider"
-        android:exported="true"/>
+        android:authorities="com.facebook.app.FacebookContentProvider127523021241004"
+        android:exported="true" />
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -58,13 +59,13 @@
 
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <meta-data
@@ -75,13 +76,17 @@
             android:name=".activities.SearchActivity"
             android:label="Find a Stop"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+        <activity
+            android:name=".activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".activities.AddStopActivity" />
-        <activity android:name=".activities.LocationDetailActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+        <activity
+            android:name=".activities.LocationDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activities.PlaceDetailActivity"
+            android:label="@string/title_activity_place_detail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

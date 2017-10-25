@@ -31,7 +31,7 @@ import butterknife.Unbinder;
  * A fragment representing a list of Items.
  *
  */
-public class ListViewFragment extends Fragment {
+public class ListViewFragment extends Fragment { // need to add view holder
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";

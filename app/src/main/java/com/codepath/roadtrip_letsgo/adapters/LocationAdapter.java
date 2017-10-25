@@ -17,6 +17,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 /**
  * Created by yingbwan on 10/14/2017.
@@ -49,7 +52,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         String miles = String.format("%.1f mi", location.distance_away * 0.0006213719);
         holder.tvMiles.setText(miles);
 
-        GlideApp.with(holder.ivStopType.getContext()).load(location.image_url).into(holder.ivStopType);
+        GlideApp.with(holder.ivStopType.getContext()).load(location.image_url)
+                .apply(bitmapTransform(new RoundedCornersTransformation(25, 0,
+                        RoundedCornersTransformation.CornerType.ALL)))
+                .into(holder.ivStopType);
 
     }
 

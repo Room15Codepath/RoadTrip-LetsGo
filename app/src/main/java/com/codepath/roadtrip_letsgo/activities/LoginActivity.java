@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
-        //Fabric is from project requirement.
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
 
@@ -94,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void gotoHomeActivity(String userID, boolean allowed) {
-        Toast.makeText(this, "gotoHomeActivity__"+allowed, Toast.LENGTH_LONG).show();
         Intent i = new Intent(LoginActivity.this, HomeActivity.class);
         i.putExtra(HomeActivity.USER, userID);
         i.putExtra(HomeActivity.PERMISSION, allowed);

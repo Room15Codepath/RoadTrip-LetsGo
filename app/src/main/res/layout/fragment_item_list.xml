@@ -14,8 +14,6 @@
     android:name="Locations"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintHorizontal_bias="0.6"
     app:layout_constraintLeft_toLeftOf="parent"

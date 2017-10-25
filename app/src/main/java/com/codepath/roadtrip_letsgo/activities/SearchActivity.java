@@ -258,7 +258,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                         TripStop tripStop = TripStop.fromJSON(
                                 response.getJSONArray("businesses").getJSONObject(i), StopType.CAFE);
                         BitmapDescriptor defaultMarker =
-                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
                         Marker marker = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(tripStop.trip_location.lat, tripStop.trip_location.lng))
                                 .title(tripStop.trip_location.loc_name)

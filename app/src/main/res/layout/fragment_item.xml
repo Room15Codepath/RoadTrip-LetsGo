@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:layout_marginTop="@dimen/activity_vertical_margin_half"
     android:layout_marginBottom="@dimen/activity_vertical_margin_half">
 
@@ -14,7 +16,9 @@
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY" />
 
     <RelativeLayout
         android:id="@+id/stop_info"
@@ -41,6 +45,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:layout_toRightOf="@+id/tvName"
+            android:layout_marginLeft="10dp"
             android:layout_alignBaseline="@+id/tvName"
             android:textStyle="italic"
             android:textSize="14sp"/>
@@ -55,12 +60,13 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <!--ImageButton
+    <ImageButton
         android:id="@+id/ibAdd"
-        app:srcCompat="@drawable/ic_add_location"
-        android:layout_toRightOf="@+id/stop_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/stop_info"
         android:layout_weight="0.2"
-        app:srcCompat="@drawable/ic_add_location" /-->
+        android:background="@android:color/transparent"
+        android:tint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_add_location" />
 </RelativeLayout>
