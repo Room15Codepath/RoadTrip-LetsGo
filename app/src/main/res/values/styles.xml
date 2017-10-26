@@ -23,4 +23,8 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
+    <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

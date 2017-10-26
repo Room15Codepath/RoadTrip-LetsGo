@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -101,10 +100,15 @@ public class SearchActivity extends AppCompatActivity {
     String stopType=null;
 
     private SmartFragmentStatePagerAdapter adapterViewPager;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+//    @BindView(R.id.toolbar)
+//    Toolbar toolbar;
+
+    @BindView(R.id.btn_filter)
+    ImageView btnFilter;
+
     @BindView(R.id.sliding_tabs)
     TabLayout tabLayout;
+
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
@@ -135,7 +139,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
         yelpClient = getYelpClient();
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
@@ -143,8 +147,8 @@ public class SearchActivity extends AppCompatActivity {
         mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
         lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
         parseIntent();
-
         setupTabs();
+        setFilterListener();
         searchStops.setQueryHint("search stop");
         searchStops.setIconifiedByDefault(false);
         searchStops.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -283,6 +287,18 @@ public class SearchActivity extends AppCompatActivity {
             map.clear();
         }
 
+    }
+
+    private void setFilterListener() {
+        btnFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TravelModeFragment travelModeFragment;
+                FragmentManager fm = getSupportFragmentManager();
+                travelModeFragment = TravelModeFragment.newInstance();
+                travelModeFragment.show(fm, "fragment_travelmode");
+            }
+        });
     }
 
 
@@ -454,7 +470,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("yelpbusinesses", errorResponse.toString());
+
             }
         });
     }
@@ -514,6 +530,8 @@ public class SearchActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

@@ -10,14 +10,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -25,7 +21,6 @@ import android.widget.RelativeLayout;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -70,7 +65,6 @@ public class HomeActivity extends AppCompatActivity {
     AppBarLayout appBarLayout;
     @BindView(R.id.container_home)
     FrameLayout containerFragments;
-    TravelModeFragment travelModeFragment;
     @BindView(R.id.search_container)
     RelativeLayout searchContainer;
     @BindView(R.id.btnStart)
@@ -93,8 +87,6 @@ public class HomeActivity extends AppCompatActivity {
             setSupportActionBar(toolbarHome);
             setTitle("Road Trip");
         }
-        travelModeFragment = new TravelModeFragment();
-
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -115,14 +107,14 @@ public class HomeActivity extends AppCompatActivity {
         //Log.d("DEBUG:", "bundle="+mode+rating+range);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the options menu from XML
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_home, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the options menu from XML
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu_home, menu);
+//
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     private void setupOriginListener() {
         originFragment = (PlaceAutocompleteFragment)
@@ -134,11 +126,9 @@ public class HomeActivity extends AppCompatActivity {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-
             } else {
 
                 ActivityCompat.requestPermissions(HomeActivity.this,
@@ -147,13 +137,11 @@ public class HomeActivity extends AppCompatActivity {
             }
         } else {
             Task locationResult = mFusedLocationProviderClient.getLastLocation();
-
             locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         setCurrentLocationAddress(task);
-
                     } else {
                         Log.d("gps", "location not returned");
                     }
@@ -164,15 +152,12 @@ public class HomeActivity extends AppCompatActivity {
         originFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-
                 Log.i("place", "Place: " + place.getName());
                 origin = place;
             }
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
                 Log.i("error", "An error occurred: " + status);
             }
         });
@@ -191,12 +176,9 @@ public class HomeActivity extends AppCompatActivity {
                         Task locationResult = mFusedLocationProviderClient.getLastLocation();
                         setCurrentLocationAddress(locationResult);
                     }
-
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-
                 }
                 return;
             }
@@ -210,53 +192,60 @@ public class HomeActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
                     Location mLastKnownLocation = (Location) task.getResult();
+                    if (mLastKnownLocation != null) {
 
-                    LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude());
-                    Geocoder geocoder;
-                    List<Address> addresses;
-                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-                    try {
-                        addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
-                                mLastKnownLocation.getLongitude(), 1);
-                        // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                        String address = addresses.get(0).getAddressLine(0);
-                        originFragment.setText(address);
-                        LatLngBounds mBounds = new LatLngBounds(latlng, latlng);
-                        mGeoDataClient.getAutocompletePredictions(address, mBounds, null).addOnCompleteListener(
-                                new OnCompleteListener<AutocompletePredictionBufferResponse>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AutocompletePredictionBufferResponse> task) {
-                                        if (task.isSuccessful()) {
-                                            AutocompletePredictionBufferResponse predictedPlaces = task.getResult();
-                                            String currentPlaceId = predictedPlaces.get(0).getPlaceId();
-                                            mGeoDataClient.getPlaceById(currentPlaceId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
-                                                    if (task.isSuccessful()) {
-                                                        PlaceBufferResponse retrievedPlaces = task.getResult();
-                                                        Place currentPlace = retrievedPlaces.get(0);
-                                                        origin = currentPlace.freeze();
-                                                        Log.i("currentplace", "Place found: " + currentPlace.getName());
-                                                        retrievedPlaces.release();
-                                                    } else {
-                                                        Log.e("currentplace", "Place not found.");
-                                                    }
-                                                }
-                                            });
-                                            predictedPlaces.release();
-                                        }
-                                    }
-                                });
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude());
+                        Geocoder geocoder;
+                        List<Address> addresses;
+                        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                        try {
+                            addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
+                                    mLastKnownLocation.getLongitude(), 1);
+                            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                            String address = addresses.get(0).getAddressLine(0);
+                            LatLngBounds mBounds = new LatLngBounds(latlng, latlng);
+                            setPlaceFromGivenAddress(address, mBounds);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d("get last known location", "failed");
                     }
-                } else {
-                    Log.d("task", "failed");
                 }
             }
         });
+    }
+
+    private void setPlaceFromGivenAddress(String address, LatLngBounds mBounds) {
+        mGeoDataClient.getAutocompletePredictions(address, mBounds, null).addOnCompleteListener(
+                new OnCompleteListener<AutocompletePredictionBufferResponse>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AutocompletePredictionBufferResponse> task) {
+                        if (task.isSuccessful()) {
+                            AutocompletePredictionBufferResponse predictedPlaces = task.getResult();
+                            if (predictedPlaces.getCount() > 0) {
+                                String currentPlaceId = predictedPlaces.get(0).getPlaceId();
+                                mGeoDataClient.getPlaceById(currentPlaceId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+                                        if (task.isSuccessful()) {
+                                            PlaceBufferResponse retrievedPlaces = task.getResult();
+                                            Place currentPlace = retrievedPlaces.get(0);
+                                            origin = currentPlace.freeze();
+                                            originFragment.setText(address);
+                                            Log.i("currentplace", "Place found: " + currentPlace.getName());
+                                            retrievedPlaces.release();
+                                        } else {
+                                            Log.e("currentplace", "Place not found.");
+                                        }
+                                    }
+                                });
+                            }
+                            predictedPlaces.release();
+                        }
+                    }
+                });
     }
 
     private void setupDestListener() {
@@ -308,17 +297,5 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-    }
-
-    public void onTravelMode(MenuItem item) {
-
-       // getSupportFragmentManager().beginTransaction().replace(R.id.container_home, travelModeFragment).addToBackStack(null).commit();
-       // getSupportFragmentManager().executePendingTransactions();
-       // searchContainer.setVisibility(View.GONE);
-        TravelModeFragment travelModeFragment;
-        FragmentManager fm = getSupportFragmentManager();
-        travelModeFragment = TravelModeFragment.newInstance();
-        travelModeFragment.show(fm, "fragment_travelmode");
-
     }
 }
