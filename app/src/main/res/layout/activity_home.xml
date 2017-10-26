@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context="com.codepath.roadtrip_letsgo.activities.HomeActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -33,25 +34,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <fragment
-                android:id="@+id/origin_autocomplete_fragment"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            <android.support.v7.widget.CardView
+                android:id="@+id/cvOrigin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content">
+                <fragment
+                    android:id="@+id/origin_autocomplete_fragment"
+                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cvDest"
+                android:layout_width="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/cvOrigin"
+                android:layout_height="wrap_content">
 
             <fragment
                 android:id="@+id/destination_autocomplete_fragment"
                 android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/origin_autocomplete_fragment" />
+                 />
+
+            </android.support.v7.widget.CardView>
 
             <Button
                 android:id="@+id/btnFind"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/destination_autocomplete_fragment"
+                android:layout_below="@+id/cvDest"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:padding="20dp"

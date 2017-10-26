@@ -1,10 +1,17 @@
 package com.codepath.roadtrip_letsgo.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,32 +23,50 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompletePredictionBufferResponse;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBufferResponse;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.parceler.Parcels;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
+
 public class HomeActivity extends AppCompatActivity {
 
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
+    protected FusedLocationProviderClient mFusedLocationProviderClient;
     Place origin;
     Place destination;
-    @BindView(R.id.btnFind) Button btnFind;
+    PlaceAutocompleteFragment originFragment;
+    @BindView(R.id.btnFind)
+    Button btnFind;
     @BindView(R.id.toolbar_home)
     Toolbar toolbarHome;
     @BindView(R.id.app_bar_layout)
@@ -75,6 +100,7 @@ public class HomeActivity extends AppCompatActivity {
 
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupOriginListener();
         setupDestListener();
         setupFindListener();
@@ -86,8 +112,8 @@ public class HomeActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         userId = bundle.getString(USER);
         permission = bundle.getBoolean(PERMISSION);
-      //  rating = bundle.getFloat("rating");
-      //  range = bundle.getFloat("range");
+        //  rating = bundle.getFloat("rating");
+        //  range = bundle.getFloat("range");
 
         //Log.d("DEBUG:", "bundle="+mode+rating+range);
     }
@@ -102,9 +128,41 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupOriginListener() {
-        PlaceAutocompleteFragment originFragment = (PlaceAutocompleteFragment)
+        originFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.origin_autocomplete_fragment);
         originFragment.setHint("Enter Origin");
+        if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                ActivityCompat.requestPermissions(HomeActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        } else {
+            Task locationResult = mFusedLocationProviderClient.getLastLocation();
+
+            locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        setCurrentLocationAddress(task);
+
+                    } else {
+                        Log.d("gps", "location not returned");
+                    }
+                }
+            });
+        }
 
         originFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -119,6 +177,87 @@ public class HomeActivity extends AppCompatActivity {
             public void onError(Status status) {
                 // TODO: Handle the error.
                 Log.i("error", "An error occurred: " + status);
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        Task locationResult = mFusedLocationProviderClient.getLastLocation();
+                        setCurrentLocationAddress(locationResult);
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                }
+                return;
+            }
+
+        }
+    }
+
+    private void setCurrentLocationAddress(Task locationResult) {
+        locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if (task.isSuccessful()) {
+                    Location mLastKnownLocation = (Location) task.getResult();
+
+                    LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude());
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                    try {
+                        addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude(), 1);
+                        // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                        String address = addresses.get(0).getAddressLine(0);
+                        originFragment.setText(address);
+                        LatLngBounds mBounds = new LatLngBounds(latlng, latlng);
+                        mGeoDataClient.getAutocompletePredictions(address, mBounds, null).addOnCompleteListener(
+                                new OnCompleteListener<AutocompletePredictionBufferResponse>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AutocompletePredictionBufferResponse> task) {
+                                        if (task.isSuccessful()) {
+                                            AutocompletePredictionBufferResponse predictedPlaces = task.getResult();
+                                            String currentPlaceId = predictedPlaces.get(0).getPlaceId();
+                                            mGeoDataClient.getPlaceById(currentPlaceId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+                                                    if (task.isSuccessful()) {
+                                                        PlaceBufferResponse retrievedPlaces = task.getResult();
+                                                        Place currentPlace = retrievedPlaces.get(0);
+                                                        origin = currentPlace.freeze();
+                                                        Log.i("currentplace", "Place found: " + currentPlace.getName());
+                                                        retrievedPlaces.release();
+                                                    } else {
+                                                        Log.e("currentplace", "Place not found.");
+                                                    }
+                                                }
+                                            });
+                                            predictedPlaces.release();
+                                        }
+                                    }
+                                });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d("task", "failed");
+                }
             }
         });
     }
