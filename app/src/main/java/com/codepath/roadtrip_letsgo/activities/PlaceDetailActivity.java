@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -226,11 +225,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
         //   Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
         //   i.setPackage("com.google.android.apps.maps");
         Intent i = new Intent(PlaceDetailActivity.this, AddStopActivity.class);
-        ArrayList<Parcelable> tList = new ArrayList<>();
-        tList.add(Parcels.wrap(origin));
-        tList.add(Parcels.wrap(stop.trip_location));
-        tList.add(Parcels.wrap(dest));
-        i.putParcelableArrayListExtra("stops", tList);
+     //   ArrayList<Parcelable> tList = new ArrayList<>();
+    //    tList.add(Parcels.wrap(origin));
+    //    tList.add(Parcels.wrap(stop.trip_location));
+    //    tList.add(Parcels.wrap(dest));
+    //    i.putParcelableArrayListExtra("stops", tList);
+        i.putExtra("stop", Parcels.wrap(stop.trip_location));
+
         startActivity(i);
 
     }

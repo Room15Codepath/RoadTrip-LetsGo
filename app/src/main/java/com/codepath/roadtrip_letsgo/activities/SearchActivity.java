@@ -98,6 +98,7 @@ public class SearchActivity extends AppCompatActivity {
     TripLocation origin;
     TripLocation dest;
     String stopType=null;
+    int pos =-1;
 
     private SmartFragmentStatePagerAdapter adapterViewPager;
 //    @BindView(R.id.toolbar)
@@ -305,6 +306,7 @@ public class SearchActivity extends AppCompatActivity {
     public void parseIntent() {
         origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
         dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+        pos = getIntent().getIntExtra("position",-1);
     }
 
     public Fragment getCurrentPagerFragment(int position) {
