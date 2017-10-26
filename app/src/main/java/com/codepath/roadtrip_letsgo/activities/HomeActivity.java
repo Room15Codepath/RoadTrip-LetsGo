@@ -1,10 +1,15 @@
 package com.codepath.roadtrip_letsgo.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,30 +22,42 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
+import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
+
 public class HomeActivity extends AppCompatActivity {
 
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
+    protected FusedLocationProviderClient mFusedLocationProviderClient;
     Place origin;
     Place destination;
-    @BindView(R.id.sStopType) Spinner sStopType;
-    @BindView(R.id.btnFind) Button btnFind;
+    PlaceAutocompleteFragment originFragment;
+    @BindView(R.id.sStopType)
+    Spinner sStopType;
+    @BindView(R.id.btnFind)
+    Button btnFind;
     @BindView(R.id.toolbar_home)
     Toolbar toolbarHome;
     @BindView(R.id.app_bar_layout)
@@ -74,6 +91,7 @@ public class HomeActivity extends AppCompatActivity {
 
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setupOriginListener();
         setupDestListener();
         setupFindListener();
@@ -85,8 +103,8 @@ public class HomeActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         userId = bundle.getString(USER);
         permission = bundle.getBoolean(PERMISSION);
-      //  rating = bundle.getFloat("rating");
-      //  range = bundle.getFloat("range");
+        //  rating = bundle.getFloat("rating");
+        //  range = bundle.getFloat("range");
 
         //Log.d("DEBUG:", "bundle="+mode+rating+range);
     }
@@ -101,9 +119,44 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupOriginListener() {
-        PlaceAutocompleteFragment originFragment = (PlaceAutocompleteFragment)
+        originFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.origin_autocomplete_fragment);
         originFragment.setHint("Enter Origin");
+        if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                ActivityCompat.requestPermissions(HomeActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        } else {
+            Task locationResult = mFusedLocationProviderClient.getLastLocation();
+            locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        Location mLastKnownLocation = (Location) task.getResult();
+
+                        LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude());
+                        originFragment.setText(latlng.toString());
+                    } else {
+                        Log.d("failed", "fails");
+                    }
+                }
+            });
+        }
 
         originFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -120,6 +173,54 @@ public class HomeActivity extends AppCompatActivity {
                 Log.i("error", "An error occurred: " + status);
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        //Request location updates:
+//                        locationManager.requestLocationUpdates(provider, 400, 1, this);
+                        originFragment.setText("Current Location");
+                        Task locationResult = mFusedLocationProviderClient.getLastLocation();
+                        locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+                            @Override
+                            public void onComplete(@NonNull Task task) {
+                                if (task.isSuccessful()) {
+                                    // Set the map's camera position to the current location of the device.
+                                    Location mLastKnownLocation = (Location) task.getResult();
+
+                                    LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
+                                                    mLastKnownLocation.getLongitude());
+                                    originFragment.setText(latlng.toString());
+                                } else {
+                                    Log.d("failed", "fails");
+                                }
+                            }
+                        });
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                }
+                return;
+            }
+
+        }
     }
 
     private void setupDestListener() {
@@ -184,4 +285,36 @@ public class HomeActivity extends AppCompatActivity {
         travelModeFragment.show(fm, "fragment_travelmode");
 
     }
+
+//    private void getDeviceLocation() {
+//    /*
+//     * Get the best and most recent location of the device, which may be null in rare
+//     * cases when a location is not available.
+//     */
+//        try {
+//            if (mLocationPermissionGranted) {
+//                Task locationResult = mFusedLocationProviderClient.getLastLocation();
+//                locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+//                    @Override
+//                    public void onComplete(@NonNull Task task) {
+//                        if (task.isSuccessful()) {
+//                            // Set the map's camera position to the current location of the device.
+//                            mLastKnownLocation = task.getResult();
+//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+//                                    new LatLng(mLastKnownLocation.getLatitude(),
+//                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+//                        } else {
+//                            Log.d(TAG, "Current location is null. Using defaults.");
+//                            Log.e(TAG, "Exception: %s", task.getException());
+//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+//                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+//                        }
+//                    }
+//                });
+//            }
+//        } catch(SecurityException e)  {
+//            Log.e("Exception: %s", e.getMessage());
+//        }
+//    }
+//
 }
