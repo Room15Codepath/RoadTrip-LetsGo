@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
+import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
@@ -28,6 +29,8 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -145,6 +148,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(origin ==null || destination == null) return;
+                ArrayList<TripLocation> list = new ArrayList<>();
+                list.add(TripLocation.fromPlace(origin));
+                list.add(TripLocation.fromPlace(destination));
+                Util.saveTrip(getApplicationContext(),list);
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
                 i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
                 i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));

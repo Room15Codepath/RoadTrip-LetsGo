@@ -3,7 +3,6 @@ package com.codepath.roadtrip_letsgo.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,7 @@ import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
-import com.codepath.roadtrip_letsgo.utils.StopType;
+import com.codepath.roadtrip_letsgo.utils.Util;
 
 import org.parceler.Parcels;
 
@@ -53,49 +52,77 @@ public class AddStopActivity extends AppCompatActivity {
         rvResults.setLayoutManager(linearLayoutManager);
      //   parseIntent();
         getData();
+        parseIntent();
         setButtonAction();
         ItemClickSupport.addTo(rvResults).setOnItemClickListener(
                 (recyclerView, position, v) -> {
                     //create intent
-                    Intent i = new Intent(getApplicationContext(), SearchActivity.class);
-                    i.putExtra("origin", Parcels.wrap(origin));
-                    i.putExtra("destination", Parcels.wrap(dest));
-                    i.putExtra("stopType", stopType);
-                    //launch activity
-                    startActivityForResult(i, SEARCH);
+                    if(position%2 ==1) {
+                        Intent i = new Intent(getApplicationContext(), SearchActivity.class);
+                        i.putExtra("origin", Parcels.wrap(origin));
+                        i.putExtra("destination", Parcels.wrap(dest));
+                        i.putExtra("stopType", stopType);
+                        i.putExtra("position", position);
+                        //launch activity
+                        startActivity(i);
+                    }
                 }
         );
+        compactToSave();
 
     }
     public void parseIntent() {
-        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
-        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
-        stopType = getIntent().getStringExtra("stopType");
-        if(stopType == null){
-            stopType = StopType.CAFE.toString();
+        TripLocation stop = Parcels.unwrap(getIntent().getParcelableExtra("stop"));
+        Log.d("DEBUG", "new stop:" + stop.loc_name);
+ //       dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+        int pos = getIntent().getIntExtra("position", -1);
+        if(pos>=0){
+            trips.add(pos,new TripLocation());
+            trips.add(pos+1, stop);
+            adapter.notifyDataSetChanged();
+        }else{
+            if(stop !=null){
+                Log.d("DEBUG", "size before:" + trips.size());
+                trips.add(trips.size()-1, stop);
+                trips.add(trips.size()-1,new TripLocation());
+                adapter.notifyDataSetChanged();
+                Log.d("DEBUG", "size after:" + trips.size());
+
+            }
         }
+        compactToSave();
     }
 
     private void getData(){
-        ArrayList<Parcelable> pList= getIntent().getParcelableArrayListExtra("stops");
-        for( int i=0; i< pList.size();i++) {
-            Parcelable p = pList.get(i);
-            TripLocation tp = Parcels.unwrap(p);
-            trips.add(tp);
+        ArrayList<TripLocation> list = Util.getTrip(getApplicationContext());
+        //trips.addAll(list);
+        Log.d("DEBUG", "saved list size" + list.size());
+     //   ArrayList<Parcelable> pList= getIntent().getParcelableArrayListExtra("stops");
+        for( int i=0; i< list.size();i++) {
+        //    Parcelable p = pList.get(i);
+        //    TripLocation tp = Parcels.unwrap(p);
+            trips.add(list.get(i));
             TripLocation bt = new TripLocation();
             trips.add(bt);
             if(i==0){
-                origin = tp;
+                origin = list.get(i);
             }
-            if(i==pList.size()-1) {
-                dest =tp;
+            if(i==list.size()-1) {
+                dest =list.get(i);
             }
-            Log.d("LOAD", "stop:" + tp.loc_name );
-            Log.d("LOAD", "stop:" + tp.address );
-
         }
         trips.remove(trips.size()-1);
         adapter.notifyDataSetChanged();
+        Log.d("DEBUG", "after loading from pref:" + trips.size());
+    }
+
+    public void compactToSave(){
+        ArrayList<TripLocation> list = new ArrayList<>();
+     for(int i = 0;i<trips.size();i=i+2){
+         list.add(trips.get(i));
+     }
+     Util.saveTrip(getApplicationContext(),list);
+
     }
 
     private void setButtonAction() {
@@ -126,8 +153,15 @@ public class AddStopActivity extends AppCompatActivity {
         if(requestCode == SEARCH) {
             if(requestCode ==200) {
                 TripLocation tp = Parcels.unwrap(data.getParcelableExtra("stop"));
-             //   trips.add(cPosition,tp);
-            //    adapter.notifyDataSetChanged();
+                int position = data.getIntExtra("position", -1);
+                if(position >=0) {
+                    trips.add(position,new TripLocation());
+                    trips.add(position+1, tp);
+                    adapter.notifyDataSetChanged();
+                }else {
+
+   //                 adapter.notifyDataSetChanged();
+                }
             }
         }
     }
