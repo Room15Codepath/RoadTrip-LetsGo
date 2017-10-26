@@ -1,6 +1,7 @@
 package com.codepath.roadtrip_letsgo.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 
@@ -15,6 +16,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -22,6 +25,7 @@ import org.w3c.dom.Document;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -99,5 +103,28 @@ public class Util {
         return marker;
     }
 
+    public  static void saveTrip(Context context,List<TripLocation> list){
 
+        String JSONList = new Gson().toJson(list);
+
+        SharedPreferences prefs = context.getSharedPreferences("MyRoadTrip", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("MyList", JSONList);
+
+        editor.commit();
+    }
+
+    public static ArrayList<TripLocation> getTrip(Context context){
+        SharedPreferences prefs = context.getSharedPreferences("MyRoadTrip", Context.MODE_PRIVATE);
+        if(prefs.contains("MyList")) {
+            String JSONList = prefs.getString("MyList", "");
+
+            List<TripLocation> list =
+                    new Gson().fromJson(JSONList, new TypeToken<List<TripLocation>>() {
+                    }.getType());
+            return new ArrayList<TripLocation>(list);
+        }else{
+            return null;
+        }
+    }
 }

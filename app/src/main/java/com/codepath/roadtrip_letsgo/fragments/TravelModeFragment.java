@@ -153,7 +153,7 @@ public class TravelModeFragment  extends DialogFragment {
             Log.d (TAG_LOG, "starsValue="+starsValue);
             float rangeValue = (float) (range.getProgress()/10.0);
             Log.d (TAG_LOG, "rangeValue="+rangeValue);
-            SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
+            SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
             Editor editor = settings.edit();
             editor.putString("mode",mode);
             editor.putFloat("rating",starsValue);
@@ -191,7 +191,7 @@ public class TravelModeFragment  extends DialogFragment {
 
     private void initializeDefaultValues() {
 
-        SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
+        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
         float rangeValue = settings.getFloat("range", 20)*10;
         float ratingValue = settings.getFloat("rating", 2)*2;
         setTravelMode (TravelMode.MODE_DRIVING);
