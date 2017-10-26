@@ -67,24 +67,12 @@
 
             </android.support.v7.widget.CardView>
 
-            <Spinner
-                android:id="@+id/sStopType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/cvDest"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:entries="@array/stop_type_array"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="10dp" />
-
             <Button
                 android:id="@+id/btnFind"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/sStopType"
+                android:layout_below="@+id/cvDest"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:padding="20dp"

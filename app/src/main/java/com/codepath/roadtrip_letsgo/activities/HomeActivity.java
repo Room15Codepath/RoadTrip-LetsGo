@@ -54,8 +54,6 @@ public class HomeActivity extends AppCompatActivity {
     Place origin;
     Place destination;
     PlaceAutocompleteFragment originFragment;
-    @BindView(R.id.sStopType)
-    Spinner sStopType;
     @BindView(R.id.btnFind)
     Button btnFind;
     @BindView(R.id.toolbar_home)
@@ -152,7 +150,7 @@ public class HomeActivity extends AppCompatActivity {
                                 mLastKnownLocation.getLongitude());
                         originFragment.setText(latlng.toString());
                     } else {
-                        Log.d("failed", "fails");
+                        Log.d("gps", "location not returned");
                     }
                 }
             });
@@ -190,15 +188,12 @@ public class HomeActivity extends AppCompatActivity {
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
-                        //Request location updates:
-//                        locationManager.requestLocationUpdates(provider, 400, 1, this);
                         originFragment.setText("Current Location");
                         Task locationResult = mFusedLocationProviderClient.getLastLocation();
                         locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                             @Override
                             public void onComplete(@NonNull Task task) {
                                 if (task.isSuccessful()) {
-                                    // Set the map's camera position to the current location of the device.
                                     Location mLastKnownLocation = (Location) task.getResult();
 
                                     LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
@@ -251,7 +246,7 @@ public class HomeActivity extends AppCompatActivity {
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
                 i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
                 i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
-                i.putExtra("stopType", sStopType.getSelectedItem().toString());
+                //i.putExtra("stopType", sStopType.getSelectedItem().toString());
                 startActivity(i);
             }
         });
