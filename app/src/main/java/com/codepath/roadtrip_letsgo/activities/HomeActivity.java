@@ -30,13 +30,16 @@ import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompletePredictionBufferResponse;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBufferResponse;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -220,6 +223,32 @@ public class HomeActivity extends AppCompatActivity {
                         // Here 1 represent max location result to returned, by documents it recommended 1 to 5
                         String address = addresses.get(0).getAddressLine(0);
                         originFragment.setText(address);
+                        LatLngBounds mBounds = new LatLngBounds(latlng, latlng);
+                        mGeoDataClient.getAutocompletePredictions(address, mBounds, null).addOnCompleteListener(
+                                new OnCompleteListener<AutocompletePredictionBufferResponse>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AutocompletePredictionBufferResponse> task) {
+                                        if (task.isSuccessful()) {
+                                            AutocompletePredictionBufferResponse predictedPlaces = task.getResult();
+                                            String currentPlaceId = predictedPlaces.get(0).getPlaceId();
+                                            mGeoDataClient.getPlaceById(currentPlaceId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+                                                    if (task.isSuccessful()) {
+                                                        PlaceBufferResponse retrievedPlaces = task.getResult();
+                                                        Place currentPlace = retrievedPlaces.get(0);
+                                                        origin = currentPlace.freeze();
+                                                        Log.i("currentplace", "Place found: " + currentPlace.getName());
+                                                        retrievedPlaces.release();
+                                                    } else {
+                                                        Log.e("currentplace", "Place not found.");
+                                                    }
+                                                }
+                                            });
+                                            predictedPlaces.release();
+                                        }
+                                    }
+                                });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -292,36 +321,4 @@ public class HomeActivity extends AppCompatActivity {
         travelModeFragment.show(fm, "fragment_travelmode");
 
     }
-
-//    private void getDeviceLocation() {
-//    /*
-//     * Get the best and most recent location of the device, which may be null in rare
-//     * cases when a location is not available.
-//     */
-//        try {
-//            if (mLocationPermissionGranted) {
-//                Task locationResult = mFusedLocationProviderClient.getLastLocation();
-//                locationResult.addOnCompleteListener(this, new OnCompleteListener() {
-//                    @Override
-//                    public void onComplete(@NonNull Task task) {
-//                        if (task.isSuccessful()) {
-//                            // Set the map's camera position to the current location of the device.
-//                            mLastKnownLocation = task.getResult();
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                                    new LatLng(mLastKnownLocation.getLatitude(),
-//                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-//                        } else {
-//                            Log.d(TAG, "Current location is null. Using defaults.");
-//                            Log.e(TAG, "Exception: %s", task.getException());
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-//                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-//                        }
-//                    }
-//                });
-//            }
-//        } catch(SecurityException e)  {
-//            Log.e("Exception: %s", e.getMessage());
-//        }
-//    }
-//
 }
