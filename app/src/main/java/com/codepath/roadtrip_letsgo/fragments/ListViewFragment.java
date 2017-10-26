@@ -108,7 +108,7 @@ RecyclerView rvLocations;
                     startActivity(intent);
                 }
         );
-        mListener.onComplete();
+        //mListener.onComplete();
 
         return view;
     }
@@ -119,6 +119,7 @@ RecyclerView rvLocations;
     }
 
     public void addItems(List<TripStop> bList){
+        locations.clear();
         locations.addAll(bList);
         adapter.notifyItemInserted(locations.size() - 1);
         Log.d("DEBUG", "after insertion, total:" + locations.size() );
@@ -140,11 +141,11 @@ RecyclerView rvLocations;
 
             activity=(Activity) context;
 
-            try {
+            /*try {
                 this.mListener = (OnCompleteListener)activity;
             } catch (final ClassCastException e) {
                 throw new ClassCastException(activity.toString() + " must implement OnCompleteListener");
-            }
+            }*/
         }
     }
 
