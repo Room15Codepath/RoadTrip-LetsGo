@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
@@ -39,7 +38,6 @@ public class HomeActivity extends AppCompatActivity {
     protected PlaceDetectionClient mPlaceDetectionClient;
     Place origin;
     Place destination;
-    @BindView(R.id.sStopType) Spinner sStopType;
     @BindView(R.id.btnFind) Button btnFind;
     @BindView(R.id.toolbar_home)
     Toolbar toolbarHome;
@@ -150,7 +148,7 @@ public class HomeActivity extends AppCompatActivity {
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
                 i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
                 i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
-                i.putExtra("stopType", sStopType.getSelectedItem().toString());
+                //i.putExtra("stopType", sStopType.getSelectedItem().toString());
                 startActivity(i);
             }
         });

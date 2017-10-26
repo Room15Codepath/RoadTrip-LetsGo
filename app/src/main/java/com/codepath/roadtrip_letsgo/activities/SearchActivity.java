@@ -7,21 +7,22 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.SearchView;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
@@ -78,7 +79,7 @@ import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 @RuntimePermissions
-public class SearchActivity extends AppCompatActivity implements ListViewFragment.OnCompleteListener {
+public class SearchActivity extends AppCompatActivity {
     private SupportMapFragment mapFragment;
     private ListViewFragment lvFragment;
     private GoogleMap map;
@@ -97,7 +98,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     private final int REQUEST_CODE_SET = 20;  //for settings
     TripLocation origin;
     TripLocation dest;
-    String stopType;
+    String stopType=null;
 
     private SmartFragmentStatePagerAdapter adapterViewPager;
     @BindView(R.id.toolbar)
@@ -106,6 +107,27 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     TabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
+
+    @BindView(R.id.btn_coffee_cup)
+    ImageView btnCoffeCup;
+
+    @BindView(R.id.btn_gas_station)
+    ImageView btnGasStation;
+
+    @BindView(R.id.btn_shopping_cart)
+    ImageView btnShoppingCart;
+
+    @BindView(R.id.btn_restaurant)
+    ImageView btnRastaurant;
+
+    @BindView(R.id.btn_atm)
+    ImageView btnAtm;
+
+    @BindView(R.id.search_stops)
+    SearchView searchStops;
+
+    @BindView(R.id.fabSort)
+    FloatingActionButton fabSort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,18 +139,156 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
-
         stops = new ArrayList<>();
+        mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
+        lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
         parseIntent();
+
+        setupTabs();
+        searchStops.setQueryHint("search stop");
+        searchStops.setIconifiedByDefault(false);
+        searchStops.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                stopType = query;
+                searchStops.setQuery(query, false);
+                Log.d("STRING", stopType);
+                cleanTabs();
+                onComplete();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                fabSort.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        btnCoffeCup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Log.d("search activity", "cofee cup");
+                searchStops.setQuery("cafe", false);
+                stopType = "" + searchStops.getQuery();
+                Log.d("STRING", stopType);
+                cleanTabs();
+                onComplete();
+
+            }
+        });
+
+        btnGasStation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("search activity", "cofee cup");
+                searchStops.setQuery("gas station", true);
+                stopType = "" + searchStops.getQuery();
+                Log.d("STRING", stopType);
+                cleanTabs();
+                onComplete();
+
+
+            }
+        });
+        btnShoppingCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchStops.setQuery("mall", true);
+                stopType = "" + searchStops.getQuery();
+                Log.d("STRING", stopType);
+                cleanTabs();
+                onComplete();
+
+            }
+        });
+
+        btnRastaurant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchStops.setQuery("restaurant", true);
+                stopType = "" + searchStops.getQuery();
+                Log.d("STRING", stopType);
+                cleanTabs();
+                onComplete();
+
+            }
+        });
+
+        btnAtm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchStops.setQuery("atm", true);
+                stopType = "" + searchStops.getQuery();
+                Log.d("STRING", stopType);
+                cleanTabs();
+                onComplete();
+
+            }
+        });
+
+        fabSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(stops, new Comparator<TripStop>() {
+                    public int compare(TripStop o1, TripStop o2) {
+                        return o1.getTripLocation_Name().compareTo(o2.getTripLocation_Name());
+                    }
+                });
+                lvFragment.cleanList();
+                lvFragment.addItems(stops);
+
+            }
+        });
+
+
     }
+
+    public void setupTabs() {
+        fabSort.setVisibility(View.GONE);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    loadMap(map);
+                }
+            });
+        } else {
+            Log.d("DEBUG", "map fragment is null");
+        }
+
+    }
+
+
+    public void cleanTabs(){
+        if (lvFragment!=null && map != null) {
+            lvFragment.cleanList();
+            map.clear();
+        }
+
+    }
+
 
     public void parseIntent() {
         origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
         dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
-        stopType = getIntent().getStringExtra("stopType");
-        if(stopType == null){
-            stopType = StopType.CAFE.toString();
-        }
     }
 
     public Fragment getCurrentPagerFragment(int position) {
@@ -140,14 +300,14 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     }
     public void onComplete() {
 
-        mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
-        lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
+        //mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
+        //lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
     //    if(lvFragment !=null) {
             lvFragment.addTrip(origin, dest);
 
-            if (stops.size() > 0) {
+            /*if (stops.size() > 0) {
                 lvFragment.addItems(stops);
-            }
+            }*/
       //  }
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -209,7 +369,9 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                             Document doc = Util.byteToDocument(responseBody);
                             ArrayList<LatLng> directionPoint = md.getDirection(doc);
                             drawPolyline(directionPoint);
-                            getBusinesses(directionPoint);
+                            if (stopType != null) {
+                                 getBusinesses(directionPoint);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -244,11 +406,13 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     }
 
     private void getYelpBusinessesFromPoint(LatLng point, int radius) {
+        Log.d("search activity", "stopType"+stopType);
         RequestParams params = new RequestParams();
         params.put("term", stopType);
         params.put("latitude", String.valueOf(point.latitude));
         params.put("longitude", String.valueOf(point.longitude));
         params.put("radius",String.valueOf(radius));
+        stops = new ArrayList<>();
         yelpClient.getBusinesses(params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -275,6 +439,8 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
                             stops.add(tripStop);
                         }
                     }
+                    Log.d("stop", stops.toString());
+                    Log.d("response length", ""+response.getJSONArray("businesses").length());
 
                     Collections.sort(stops, TripStop.COMPARE_BY_DISTANCE);
 
@@ -305,8 +471,8 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        //MenuItem searchItem = menu.findItem(R.id.action_search);
+        /*final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -318,7 +484,7 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-        });
+        });*/
 
         return super.onCreateOptionsMenu(menu);
 
@@ -344,18 +510,6 @@ public class SearchActivity extends AppCompatActivity implements ListViewFragmen
             FragmentManager fm = getSupportFragmentManager();
             travelModeFragment = TravelModeFragment.newInstance();
             travelModeFragment.show(fm, "fragment_travelmode");
-        }
-
-        if (id == R.id.action_sort) {
-            Toast.makeText(this, "founded"+stops.size(), Toast.LENGTH_LONG).show();
-            Collections.sort(stops, new Comparator<TripStop>() {
-                public int compare(TripStop o1, TripStop o2) {
-                    return o1.getTripLocation_Name().compareTo(o2.getTripLocation_Name());
-                }
-        });
-            lvFragment.cleanList();
-            lvFragment.addItems(stops);
-
         }
 
         return super.onOptionsItemSelected(item);
