@@ -2,6 +2,8 @@ package com.codepath.roadtrip_letsgo.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +22,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
@@ -40,6 +41,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import org.parceler.Parcels;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -139,16 +144,13 @@ public class HomeActivity extends AppCompatActivity {
             }
         } else {
             Task locationResult = mFusedLocationProviderClient.getLastLocation();
+
             locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
-                        // Set the map's camera position to the current location of the device.
-                        Location mLastKnownLocation = (Location) task.getResult();
+                        setCurrentLocationAddress(task);
 
-                        LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
-                                mLastKnownLocation.getLongitude());
-                        originFragment.setText(latlng.toString());
                     } else {
                         Log.d("gps", "location not returned");
                     }
@@ -178,32 +180,13 @@ public class HomeActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-
-                        originFragment.setText("Current Location");
                         Task locationResult = mFusedLocationProviderClient.getLastLocation();
-                        locationResult.addOnCompleteListener(this, new OnCompleteListener() {
-                            @Override
-                            public void onComplete(@NonNull Task task) {
-                                if (task.isSuccessful()) {
-                                    Location mLastKnownLocation = (Location) task.getResult();
-
-                                    LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
-                                                    mLastKnownLocation.getLongitude());
-                                    originFragment.setText(latlng.toString());
-                                } else {
-                                    Log.d("failed", "fails");
-                                }
-                            }
-                        });
+                        setCurrentLocationAddress(locationResult);
                     }
 
                 } else {
@@ -216,6 +199,35 @@ public class HomeActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    private void setCurrentLocationAddress(Task locationResult) {
+        locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if (task.isSuccessful()) {
+                    Location mLastKnownLocation = (Location) task.getResult();
+
+                    LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude());
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                    try {
+                        addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude(), 1);
+                        // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                        String address = addresses.get(0).getAddressLine(0);
+                        originFragment.setText(address);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d("task", "failed");
+                }
+            }
+        });
     }
 
     private void setupDestListener() {
