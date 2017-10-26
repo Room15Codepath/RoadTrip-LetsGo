@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:baselineAligned="true"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/btn_coffee_cup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_coffee_cup"/>
+
+    <ImageView
+        android:id="@+id/btn_gas_station"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_gas_station"/>
+
+    <ImageView
+        android:id="@+id/btn_shopping_cart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_shopping_cart"/>
+
+    <ImageView
+        android:id="@+id/btn_restaurant"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_restaurant"/>
+
+    <ImageView
+        android:id="@+id/btn_atm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_atm"/>
+
+
+</LinearLayout>
