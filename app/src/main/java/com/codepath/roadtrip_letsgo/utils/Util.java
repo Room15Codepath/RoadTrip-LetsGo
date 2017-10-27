@@ -38,6 +38,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class Util {
 
+    public static final String SHARED_PREF = "MyRoadTrip";
+    public static final String ORIGIN_PARAM = "origin";
+    public static final String DESTINATION_PARAM = "destination";
+    public static final String STOP_LIST_PARAM = "stopList";
+
     public static Document byteToDocument(byte[] documentoXml) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -103,28 +108,79 @@ public class Util {
         return marker;
     }
 
-    public  static void saveTrip(Context context,List<TripLocation> list){
-
-        String JSONList = new Gson().toJson(list);
-
-        SharedPreferences prefs = context.getSharedPreferences("MyRoadTrip", Context.MODE_PRIVATE);
+    public static void saveOrigin(Context context, TripLocation tripLocation) {
+        String tripJSON = new Gson().toJson(tripLocation);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("MyList", JSONList);
-
-        editor.commit();
+        editor.putString(ORIGIN_PARAM, tripJSON);
+        editor.apply();
     }
 
-    public static ArrayList<TripLocation> getTrip(Context context){
-        SharedPreferences prefs = context.getSharedPreferences("MyRoadTrip", Context.MODE_PRIVATE);
-        if(prefs.contains("MyList")) {
-            String JSONList = prefs.getString("MyList", "");
+    public static TripLocation getOrigin(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        if(prefs.contains(ORIGIN_PARAM)) {
+            String originJSON = prefs.getString(ORIGIN_PARAM, "");
+
+            TripLocation origin =
+                    new Gson().fromJson(originJSON, new TypeToken<TripLocation>() {
+                    }.getType());
+            return origin;
+        }else{
+            return null;
+        }
+    }
+
+    public static void saveDestination(Context context, TripLocation tripLocation) {
+        String tripJSON = new Gson().toJson(tripLocation);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(DESTINATION_PARAM, tripJSON);
+        editor.apply();
+    }
+
+    public static TripLocation getDestination(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        if(prefs.contains(DESTINATION_PARAM)) {
+            String originJSON = prefs.getString(DESTINATION_PARAM, "");
+
+            TripLocation destination =
+                    new Gson().fromJson(originJSON, new TypeToken<TripLocation>() {
+                    }.getType());
+            return destination;
+        }else{
+            return null;
+        }
+    }
+
+    public static ArrayList<TripLocation> getStops(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        if(prefs.contains(STOP_LIST_PARAM)) {
+            String JSONList = prefs.getString(STOP_LIST_PARAM, "");
 
             List<TripLocation> list =
                     new Gson().fromJson(JSONList, new TypeToken<List<TripLocation>>() {
                     }.getType());
             return new ArrayList<TripLocation>(list);
-        }else{
+        } else {
             return null;
         }
+    }
+
+    public static void saveStops(Context context,List<TripLocation> list){
+        String JSONList = new Gson().toJson(list);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(STOP_LIST_PARAM, JSONList);
+        editor.apply();
+    }
+
+    public static void saveStop(Context context, TripLocation stop) {
+        ArrayList<TripLocation> trips = getStops(context);
+        trips.add(stop);
+        String stopJSON = new Gson().toJson(trips);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(STOP_LIST_PARAM, stopJSON);
+        editor.apply();
     }
 }
