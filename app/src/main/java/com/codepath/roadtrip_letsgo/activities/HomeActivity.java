@@ -1,5 +1,6 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -39,13 +40,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import org.parceler.Parcels;
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected FusedLocationProviderClient mFusedLocationProviderClient;
+    Context mContext;
     Place origin;
     Place destination;
     PlaceAutocompleteFragment originFragment;
@@ -93,6 +92,7 @@ public class HomeActivity extends AppCompatActivity {
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mContext = getApplicationContext();
         setupOriginListener();
         setupDestListener();
         setupFindListener();
@@ -157,6 +157,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onPlaceSelected(Place place) {
                 Log.i("place", "Place: " + place.getName());
                 origin = place;
+                Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
             }
 
             @Override
@@ -164,6 +165,15 @@ public class HomeActivity extends AppCompatActivity {
                 Log.i("error", "An error occurred: " + status);
             }
         });
+        originFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        originFragment.setText("");
+                        view.setVisibility(View.GONE);
+                        Util.saveOrigin(mContext, null);
+                    }
+                });
     }
 
     @Override
@@ -261,6 +271,7 @@ public class HomeActivity extends AppCompatActivity {
                 // TODO: Get info about the selected place.
                 destination = place;
                 Log.i("place", "Place: " + place.getName());
+                Util.saveDestination(mContext, TripLocation.fromPlace(destination));
             }
 
             @Override
@@ -269,6 +280,15 @@ public class HomeActivity extends AppCompatActivity {
                 Log.i("error", "An error occurred: " + status);
             }
         });
+        destFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        destFragment.setText("");
+                        view.setVisibility(View.GONE);
+                        Util.saveDestination(mContext, null);
+                    }
+                });
     }
 
     private void setupFindListener() {
@@ -281,8 +301,8 @@ public class HomeActivity extends AppCompatActivity {
                 list.add(TripLocation.fromPlace(destination));
                 Util.saveStops(getApplicationContext(),list);
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
+//                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
+//                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
                 //i.putExtra("stopType", sStopType.getSelectedItem().toString());
                 startActivity(i);
             }

@@ -1,6 +1,7 @@
 package com.codepath.roadtrip_letsgo.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -91,7 +92,7 @@ public class SearchActivity extends AppCompatActivity {
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     ArrayList<TripStop> stops;
 
-
+    Context mContext;
     public static String POSITION = "POSITION";
     private final int REQUEST_CODE_ADD = 10;  //for add stop
     private final int REQUEST_CODE_SET = 20;  //for settings
@@ -139,6 +140,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+        mContext = getApplicationContext();
         yelpClient = getYelpClient();
         //setSupportActionBar(toolbar);
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
@@ -147,7 +149,8 @@ public class SearchActivity extends AppCompatActivity {
         stops = new ArrayList<>();
         mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
         lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
-        parseIntent();
+        // parseIntent();
+        getOriginAndDestination();
         setupTabs();
         setFilterListener();
         searchStops.setQueryHint("search stop");
@@ -302,12 +305,17 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-
-    public void parseIntent() {
-        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
-        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
-        pos = getIntent().getIntExtra("position",-1);
+    public void getOriginAndDestination() {
+        origin = Util.getOrigin(mContext);
+        dest = Util.getDestination(mContext);
     }
+
+
+//    public void parseIntent() {
+//        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
+//        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+//        pos = getIntent().getIntExtra("position",-1);
+//    }
 
     public Fragment getCurrentPagerFragment(int position) {
 
@@ -362,8 +370,6 @@ public class SearchActivity extends AppCompatActivity {
                     Intent intent = new Intent(SearchActivity.this, PlaceDetailActivity.class);
                     if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
                     TripStop loc = (TripStop) marker.getTag();
-                    intent.putExtra("start", Parcels.wrap(origin));
-                    intent.putExtra("end", Parcels.wrap(dest));
                     intent.putExtra("location", Parcels.wrap(loc));
                     startActivity(intent);
 
