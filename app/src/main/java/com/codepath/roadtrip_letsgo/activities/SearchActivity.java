@@ -421,10 +421,10 @@ public class SearchActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences("settings", 0);
         int radius = (int) settings.getFloat("range",1.0f) *1600;
         Log.d("DEBUG:", "Radius:" +radius);
-        if (directionPoint.size() <= 10) {
+        if (directionPoint.size() <= 20) {
             getYelpBusinessesFromPoint(new LatLng(origin.lat, origin.lng), radius);
         }
-        for (int i=0; i<directionPoint.size(); i+=10) {
+        for (int i=0; i<directionPoint.size(); i+=20) {
             getYelpBusinessesFromPoint(directionPoint.get(i), radius);
         }
     }

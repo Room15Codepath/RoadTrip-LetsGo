@@ -27,6 +27,7 @@ import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -78,6 +80,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     GoogleMap map;
     String shareText;
     Context mContext;
+    SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +110,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
         GlideApp.with(this).load(stop.image_url).fitCenter().into(header);
         tvAddress.setText(stop.trip_location.address);
 
-        SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        fm.getMapAsync(new OnMapReadyCallback() {
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 loadMap(googleMap);
@@ -150,8 +153,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
-            TripLocation origin = Parcels.unwrap(getIntent().getParcelableExtra("start"));
-            TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("end"));
             map.getUiSettings().setZoomControlsEnabled(true);
             Util.addLocationMarkers(origin, dest, this, map);
             BitmapDescriptor defaultMarker =
@@ -162,10 +163,22 @@ public class PlaceDetailActivity extends AppCompatActivity {
                     .snippet(stop.trip_location.address)
                     .icon(defaultMarker));
             Util.addRoute(origin, dest, this, map);
-            map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(stop.trip_location.lat, stop.trip_location.lng)));
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(marker.getPosition());
+            builder.include(new LatLng(origin.lat, origin.lng));
+            builder.include(new LatLng(dest.lat, dest.lng));
+            LatLngBounds bounds = builder.build();
+
+           int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+           // CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+         //   map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(stop.trip_location.lat, stop.trip_location.lng)));
 
             // Zoom in the Google Map
-            map.animateCamera(CameraUpdateFactory.zoomTo(15));
+            map.animateCamera(cu);
 
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
