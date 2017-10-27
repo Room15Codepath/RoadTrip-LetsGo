@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -105,6 +106,9 @@ public class SearchActivity extends AppCompatActivity {
 //    @BindView(R.id.toolbar)
 //    Toolbar toolbar;
 
+    @BindView(R.id.llRoot)
+    LinearLayout llRoot;
+
     @BindView(R.id.btn_filter)
     ImageView btnFilter;
 
@@ -154,7 +158,9 @@ public class SearchActivity extends AppCompatActivity {
         setupTabs();
         setFilterListener();
         searchStops.setQueryHint("search stop");
+        searchStops.setFocusable(false);
         searchStops.setIconifiedByDefault(false);
+        searchStops.clearFocus();
         searchStops.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
