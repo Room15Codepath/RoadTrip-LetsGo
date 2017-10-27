@@ -27,6 +27,15 @@
     <string name="facebook_application_id" translatable="false">127523021241004</string>
     <string name="map_fragment">map_fragment</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="snackbar_home">You need to choose start and end of trip first</string>
+
+    <array name="dummy_items">
+        <item>One</item>
+        <item>Two</item>
+        <item>Three</item>
+        <item>Four</item>
+        <item>Five</item>
+    </array>
 
     <!-- Strings related to Settings -->
 
