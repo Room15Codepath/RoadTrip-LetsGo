@@ -49,13 +49,21 @@
 
             </android.support.v7.widget.CardView>
 
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_below="@+id/cvOrigin"
+                android:id="@+id/rvStops"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
             <android.support.v7.widget.CardView
                 android:id="@+id/cvDest"
                 android:layout_width="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_below="@+id/cvOrigin"
+                android:layout_below="@+id/rvStops"
                 android:layout_height="wrap_content">
 
             <fragment
@@ -68,7 +76,7 @@
             </android.support.v7.widget.CardView>
 
             <Button
-                android:id="@+id/btnFind"
+                android:id="@+id/btnStart"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,17 +84,10 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:padding="20dp"
-                android:text="@string/find_stops"
+                android:text="Start Trip"
                 android:textSize="16sp" />
 
         </RelativeLayout>
     </FrameLayout>
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Start Trip" />
 
 </RelativeLayout>

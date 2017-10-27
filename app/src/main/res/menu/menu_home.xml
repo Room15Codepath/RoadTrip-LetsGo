@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_filter"
-        android:orderInCategory="200"
-        android:icon="@drawable/ic_filter"
+        android:id="@+id/action_add_stop"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_add"
         android:visible="true"
-        android:onClick="onTravelMode"
+        android:onClick="onAddStop"
         app:showAsAction="always"
-        android:title="" />
+        android:title="Add Stop" />
 
 </menu>
