@@ -94,7 +94,7 @@ public class AddStopActivity extends AppCompatActivity {
     }
 
     private void getData(){
-        ArrayList<TripLocation> list = Util.getTrip(getApplicationContext());
+        ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
         //trips.addAll(list);
         Log.d("DEBUG", "saved list size" + list.size());
      //   ArrayList<Parcelable> pList= getIntent().getParcelableArrayListExtra("stops");
@@ -121,7 +121,7 @@ public class AddStopActivity extends AppCompatActivity {
      for(int i = 0;i<trips.size();i=i+2){
          list.add(trips.get(i));
      }
-     Util.saveTrip(getApplicationContext(),list);
+     Util.saveStops(getApplicationContext(),list);
 
     }
 
