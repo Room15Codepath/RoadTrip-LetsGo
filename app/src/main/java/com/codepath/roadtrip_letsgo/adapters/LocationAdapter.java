@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -86,12 +87,19 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         @BindView(R.id.iv_stop_type)
         ImageView ivStopType;
 
- //       @BindView(R.id.ibAdd)
-   //     ImageButton ibAdd;
+        @BindView(R.id.ibAdd)
+        ImageButton ibAdd;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            ibAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
     }
 
