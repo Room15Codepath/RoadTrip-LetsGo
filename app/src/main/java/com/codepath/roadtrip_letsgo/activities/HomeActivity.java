@@ -369,8 +369,8 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         list.add(TripLocation.fromPlace(destination));
         Util.saveStops(getApplicationContext(),list);
         Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-        i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-        i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
+        //i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
+        //i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
         //i.putExtra("stopType", sStopType.getSelectedItem().toString());
         startActivity(i);
     }
