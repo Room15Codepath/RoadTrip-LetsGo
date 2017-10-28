@@ -42,14 +42,15 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -174,6 +175,7 @@ public class SearchActivity extends AppCompatActivity {
                 searchStops.setQuery(query, false);
                 Log.d("STRING", stopType);
                 cleanTabs();
+                searchStops.clearFocus();
                 onComplete();
                 return true;
             }
@@ -390,9 +392,20 @@ public class SearchActivity extends AppCompatActivity {
             addRoute(origin, dest);
             //getBusinesses();
             // Zoom in the Google Map
-            LatLng definedLoc = new LatLng(origin.lat,origin.lng);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc).zoom(13.0F).build();
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+           // LatLng definedLoc = new LatLng(origin.lat,origin.lng);
+
+        //    CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc).zoom(13.0F).build();
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(new LatLng(origin.lat, origin.lng));
+            builder.include(new LatLng(dest.lat, dest.lng));
+            LatLngBounds bounds = builder.build();
+
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+            map.animateCamera(cu);
 
             map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
