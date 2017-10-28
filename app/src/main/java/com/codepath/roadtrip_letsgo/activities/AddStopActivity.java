@@ -73,7 +73,7 @@ public class AddStopActivity extends AppCompatActivity {
         compactToSave();
         View bottomSheet = findViewById( R.id.bottom_sheet );
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        mBottomSheetBehavior.setPeekHeight(100);
+        mBottomSheetBehavior.setPeekHeight(60);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
     }
