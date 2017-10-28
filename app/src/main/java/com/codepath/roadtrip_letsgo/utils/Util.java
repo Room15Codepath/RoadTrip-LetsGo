@@ -65,6 +65,10 @@ public class Util {
         return new Float(distance * meterConversion).floatValue();
     }
 
+    public static float convertKmToMiles(float km) {
+        return new Float(0.621 * km).floatValue();
+    }
+
     public static void addRoute(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
         final GMapV2Direction md = new GMapV2Direction();
         LatLng pnt1 = new LatLng(origin.lat, origin.lng);
