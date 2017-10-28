@@ -201,4 +201,7 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="enter_starting_location">ENTER STARTING LOCATION</string>
+    <string name="enter_destination">ENTER DESTINATION</string>
+    <string name="snackbar_add_stop">added to stop list</string>
 </resources>
