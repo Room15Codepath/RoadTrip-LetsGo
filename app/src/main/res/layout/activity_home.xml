@@ -34,9 +34,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/labelStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textSize="20sp"
+                android:text="@string/enter_starting_location"/>
+
             <android.support.v7.widget.CardView
                 android:id="@+id/cvOrigin"
                 android:layout_width="match_parent"
+                android:layout_below="@+id/labelStart"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="20dp"
@@ -55,7 +65,17 @@
                 android:id="@+id/rvStops"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"/>
+                />
+
+            <TextView
+                android:id="@+id/labelDestination"
+                android:layout_below="@+id/rvStops"
+                android:layout_width="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textSize="20sp"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_destination"/>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/cvDest"
@@ -63,7 +83,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_below="@+id/rvStops"
+                android:layout_below="@+id/labelDestination"
                 android:layout_height="wrap_content">
 
             <fragment
