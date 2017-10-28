@@ -10,6 +10,7 @@
         android:id="@+id/btn_coffee_cup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:tint="@android:color/white"
         android:layout_weight="1"
         app:srcCompat="@drawable/ic_coffee_cup"/>
 
@@ -17,6 +18,7 @@
         android:id="@+id/btn_gas_station"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:tint="@android:color/white"
         android:layout_weight="1"
         app:srcCompat="@drawable/ic_gas_station"/>
 
@@ -25,6 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:tint="@android:color/white"
         app:srcCompat="@drawable/ic_shopping_cart"/>
 
     <ImageView
@@ -32,6 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:tint="@android:color/white"
         app:srcCompat="@drawable/ic_restaurant"/>
 
     <ImageView
@@ -39,6 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:tint="@android:color/white"
         app:srcCompat="@drawable/ic_atm"/>
 
 
