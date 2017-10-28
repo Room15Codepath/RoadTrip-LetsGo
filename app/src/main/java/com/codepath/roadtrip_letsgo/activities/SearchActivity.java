@@ -337,7 +337,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public float getDistanceFromOrigin(TripLocation loc) {
-        return Util.getDistance(origin.lat, origin.lng, loc.lat, loc.lng);
+        float km = Util.getDistance(origin.lat, origin.lng, loc.lat, loc.lng);
+        return Util.convertKmToMiles(km);
     }
 
 
