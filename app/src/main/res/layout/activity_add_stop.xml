@@ -10,18 +10,26 @@
     android:paddingRight="16dp"
     tools:context="com.codepath.roadtrip_letsgo.activities.AddStopActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvResults"
+    <LinearLayout
+        android:id="@+id/llTopLayout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvResults"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Start Trip" />
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="right"
+            android:text="Start Trip" />
+
+    </LinearLayout>
+
 
 
 </android.support.design.widget.CoordinatorLayout>
