@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
@@ -61,12 +62,13 @@ public class Util {
         double distance = earthRadius * c;
 
         int meterConversion = 1609;
+        Log.d("conversion", String.valueOf(distance * meterConversion));
 
         return new Float(distance * meterConversion).floatValue();
     }
 
     public static float convertKmToMiles(float km) {
-        return new Float(0.621 * km).floatValue();
+        return new Float(0.621 * km * 0.001).floatValue();
     }
 
     public static void addRoute(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
