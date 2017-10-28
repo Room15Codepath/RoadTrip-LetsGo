@@ -8,17 +8,24 @@
     android:paddingBottom="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
+    android:fitsSystemWindows="true"
     tools:context="com.codepath.roadtrip_letsgo.activities.AddStopActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
     <LinearLayout
         android:id="@+id/llTopLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvResults"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
 
         <Button
             android:id="@+id/btnStart"
@@ -29,7 +36,24 @@
             android:text="Start Trip" />
 
     </LinearLayout>
+    </ScrollView>
 
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:clipToPadding="true"
+        android:background="@android:color/holo_orange_light"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        >
 
+        <fragment
+            android:id="@+id/map"
+            android:name="Trip Map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

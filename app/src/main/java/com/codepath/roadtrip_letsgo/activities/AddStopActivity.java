@@ -3,6 +3,7 @@ package com.codepath.roadtrip_letsgo.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,7 @@ public class AddStopActivity extends AppCompatActivity {
     ArrayList<TripLocation> trips;
 
     TripRecyclerAdapter adapter;
+    private BottomSheetBehavior mBottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,10 @@ public class AddStopActivity extends AppCompatActivity {
                 }
         );
         compactToSave();
+        View bottomSheet = findViewById( R.id.bottom_sheet );
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        mBottomSheetBehavior.setPeekHeight(100);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
     }
     public void parseIntent() {
@@ -129,16 +135,16 @@ public class AddStopActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+       //         mBottomSheetBehavior.setPeekHeight(300);
+         //       mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
                 StringBuilder sb = new StringBuilder();
                 sb.append("https://www.google.com/maps/dir");
                 for(int i =0; i< trips.size();i=i+2) {
 
                     sb.append("/" + trips.get(i).lat +","+ trips.get(i).lng );
                 }
-
-//                sb.append("/" + origin.getLatLng().latitude +","+ origin.getLatLng().longitude );
-
-  //              sb.append("/" + destination.getLatLng().latitude +","+ destination.getLatLng().longitude);
 
                 Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
                 i.setPackage("com.google.android.apps.maps");
