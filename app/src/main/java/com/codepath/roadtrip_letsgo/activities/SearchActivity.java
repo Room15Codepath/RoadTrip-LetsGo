@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.codepath.roadtrip_letsgo.R;
+import com.codepath.roadtrip_letsgo.adapters.MapInfoAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
@@ -497,6 +498,7 @@ public class SearchActivity extends AppCompatActivity {
                                 .title(tripStop.trip_location.loc_name)
                                 .snippet(tripStop.trip_location.address)
                                 .icon(defaultMarker));
+                        map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
                         marker.setTag(tripStop);
 
                         if (stops == null) {
