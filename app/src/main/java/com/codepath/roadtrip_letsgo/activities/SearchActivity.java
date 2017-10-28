@@ -8,7 +8,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -137,7 +136,13 @@ public class SearchActivity extends AppCompatActivity {
     SearchView searchStops;
 
     @BindView(R.id.fabSort)
-    FloatingActionButton fabSort;
+    com.getbase.floatingactionbutton.FloatingActionButton fabSort;
+
+    @BindView(R.id.fabDistSort)
+    com.getbase.floatingactionbutton.FloatingActionButton fabDistSort;
+
+    @BindView(R.id.multiple_sort)
+    com.getbase.floatingactionbutton.FloatingActionsMenu fabMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +153,7 @@ public class SearchActivity extends AppCompatActivity {
         yelpClient = getYelpClient();
         //setSupportActionBar(toolbar);
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
+        fabMenu.setVisibility(View.GONE);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
         stops = new ArrayList<>();
@@ -185,8 +191,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                fabSort.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
-
+                fabMenu.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
             }
 
             @Override
@@ -272,11 +277,26 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        fabDistSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(stops, new Comparator<TripStop>() {
+                    public int compare(TripStop o1, TripStop o2) {
+                        float o1Distance = getDistanceFromOrigin(o1.getTrip_location());
+                        float o2Distance = getDistanceFromOrigin(o2.getTrip_location());
+                        return Float.compare(o1Distance, o2Distance);
+                    }
+                });
+                lvFragment.cleanList();
+                lvFragment.addItems(stops);
+
+            }
+        });
+
 
     }
 
     public void setupTabs() {
-        fabSort.setVisibility(View.GONE);
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -314,6 +334,10 @@ public class SearchActivity extends AppCompatActivity {
     public void getOriginAndDestination() {
         origin = Util.getOrigin(mContext);
         dest = Util.getDestination(mContext);
+    }
+
+    public float getDistanceFromOrigin(TripLocation loc) {
+        return Util.getDistance(origin.lat, origin.lng, loc.lat, loc.lng);
     }
 
 

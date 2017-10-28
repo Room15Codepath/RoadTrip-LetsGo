@@ -274,6 +274,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                                             Place currentPlace = retrievedPlaces.get(0);
                                             origin = currentPlace.freeze();
                                             originFragment.setText(address);
+                                            Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
                                             Log.i("currentplace", "Place found: " + currentPlace.getName());
                                             retrievedPlaces.release();
                                         } else {
