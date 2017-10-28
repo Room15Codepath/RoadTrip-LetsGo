@@ -37,5 +37,14 @@ public class TripLocation {
         return loc_name;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object != null && object instanceof TripLocation) {
+            TripLocation tripLocation = (TripLocation) object;
+            return this.address.equals(tripLocation.getAddress());
+        }
+        return false;
+    }
+
 
 }

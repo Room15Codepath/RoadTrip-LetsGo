@@ -91,18 +91,25 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     public static final String USER = "USER";
     public static final String PERMISSION = "PERMISSION";
     private ItemTouchHelper mItemTouchHelper;
+    StopsRecyclerAdapter adapter;
+    ArrayList<TripLocation> listFromShared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+        Log.d("home", "onCreate()");
         if (toolbarHome != null) {
             setSupportActionBar(toolbarHome);
             setTitle("Road Trip");
         }
+        listFromShared = Util.getStops(getApplicationContext());
+        if (!listFromShared.isEmpty()) {
+            Util.deleteStops(getApplicationContext(), Util.getStops(getApplicationContext()));
+        }
 
-        StopsRecyclerAdapter adapter = new StopsRecyclerAdapter(getApplicationContext(), this);
+        adapter = new StopsRecyclerAdapter(getApplicationContext(), this);
         rvStops.setHasFixedSize(true);
         rvStops.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -120,6 +127,17 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         //setupFindListener();
         parseIntent();
         setupStartListener();
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("home", "onStart()");
+        listFromShared = Util.getStops(getApplicationContext());
+        Log.d("home", "listFromShared="+listFromShared.toString());
+        adapter.customNotifyDataSetChanged(listFromShared);
+
     }
 
     public void parseIntent() {
@@ -368,7 +386,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         ArrayList<TripLocation> list = new ArrayList<>();
         list.add(TripLocation.fromPlace(origin));
         list.add(TripLocation.fromPlace(destination));
-        Util.saveStops(getApplicationContext(),list);
+        //Util.saveStops(getApplicationContext(),list);
         Intent i = new Intent(HomeActivity.this, SearchActivity.class);
         //i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
         //i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
