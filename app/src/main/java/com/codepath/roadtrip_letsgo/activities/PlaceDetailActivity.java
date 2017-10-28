@@ -103,7 +103,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
         ratingBar.setRating((float)(stop.rating));
         tvPhone.setText(stop.phone);
         tvPrice.setText("Price: " + stop.price);
-        tvDistance.setText(String.format( "%.1f", stop.distance_away/1600) +" mile");
+        float distance = Util.getDistance(origin.lat, origin.lng, stop.trip_location.lat, stop.trip_location.lng);
+        tvDistance.setText(String.format("%.1f", distance * 0.0006213719) +" mile");
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
         toolbar.setTitle(stop.trip_location.loc_name);

@@ -450,7 +450,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private void getBusinesses(ArrayList<LatLng> directionPoint) {
         SharedPreferences settings = getSharedPreferences("settings", 0);
-        int radius = (int) settings.getFloat("range",1.0f) *1600;
+        Log.d("radius fl", String.valueOf(settings.getFloat("range", 1.0f)));
+        float radius = settings.getFloat("range",1.0f) * 1609;
         Log.d("DEBUG:", "Radius:" +radius);
         if (directionPoint.size() <= 20) {
             getYelpBusinessesFromPoint(new LatLng(origin.lat, origin.lng), radius);
@@ -460,13 +461,13 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void getYelpBusinessesFromPoint(LatLng point, int radius) {
+    private void getYelpBusinessesFromPoint(LatLng point, float radius) {
         Log.d("search activity", "stopType"+stopType);
         RequestParams params = new RequestParams();
         params.put("term", stopType);
         params.put("latitude", String.valueOf(point.latitude));
         params.put("longitude", String.valueOf(point.longitude));
-        params.put("radius",String.valueOf(radius));
+        params.put("radius",String.valueOf(Math.round(radius)));
         stops = new ArrayList<>();
         yelpClient.getBusinesses(params, new JsonHttpResponseHandler() {
             @Override
