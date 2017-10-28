@@ -1,13 +1,13 @@
 package com.codepath.roadtrip_letsgo.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -92,7 +93,7 @@ public class SearchActivity extends AppCompatActivity {
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     ArrayList<TripStop> stops;
 
-
+    Context mContext;
     public static String POSITION = "POSITION";
     private final int REQUEST_CODE_ADD = 10;  //for add stop
     private final int REQUEST_CODE_SET = 20;  //for settings
@@ -104,6 +105,9 @@ public class SearchActivity extends AppCompatActivity {
     private SmartFragmentStatePagerAdapter adapterViewPager;
 //    @BindView(R.id.toolbar)
 //    Toolbar toolbar;
+
+    @BindView(R.id.llRoot)
+    LinearLayout llRoot;
 
     @BindView(R.id.btn_filter)
     ImageView btnFilter;
@@ -133,27 +137,37 @@ public class SearchActivity extends AppCompatActivity {
     SearchView searchStops;
 
     @BindView(R.id.fabSort)
-    FloatingActionButton fabSort;
+    com.getbase.floatingactionbutton.FloatingActionButton fabSort;
+
+    @BindView(R.id.fabDistSort)
+    com.getbase.floatingactionbutton.FloatingActionButton fabDistSort;
+
+    @BindView(R.id.multiple_sort)
+    com.getbase.floatingactionbutton.FloatingActionsMenu fabMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+        mContext = getApplicationContext();
         yelpClient = getYelpClient();
         //setSupportActionBar(toolbar);
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
+        fabMenu.setVisibility(View.GONE);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
         stops = new ArrayList<>();
         mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
         lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
-        parseIntent();
+        // parseIntent();
+        getOriginAndDestination();
         setupTabs();
         setFilterListener();
         searchStops.setQueryHint("search stop");
+        searchStops.setFocusable(false);
         searchStops.setIconifiedByDefault(false);
-        searchStops.clearFocus();;
+        searchStops.clearFocus();
         searchStops.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -179,8 +193,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                fabSort.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
-
+                fabMenu.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
             }
 
             @Override
@@ -266,11 +279,26 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        fabDistSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(stops, new Comparator<TripStop>() {
+                    public int compare(TripStop o1, TripStop o2) {
+                        float o1Distance = getDistanceFromOrigin(o1.getTrip_location());
+                        float o2Distance = getDistanceFromOrigin(o2.getTrip_location());
+                        return Float.compare(o1Distance, o2Distance);
+                    }
+                });
+                lvFragment.cleanList();
+                lvFragment.addItems(stops);
+
+            }
+        });
+
 
     }
 
     public void setupTabs() {
-        fabSort.setVisibility(View.GONE);
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -305,12 +333,21 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-
-    public void parseIntent() {
-        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
-        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
-        pos = getIntent().getIntExtra("position",-1);
+    public void getOriginAndDestination() {
+        origin = Util.getOrigin(mContext);
+        dest = Util.getDestination(mContext);
     }
+
+    public float getDistanceFromOrigin(TripLocation loc) {
+        return Util.getDistance(origin.lat, origin.lng, loc.lat, loc.lng);
+    }
+
+
+//    public void parseIntent() {
+//        origin = Parcels.unwrap(getIntent().getParcelableExtra("origin"));
+//        dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
+//        pos = getIntent().getIntExtra("position",-1);
+//    }
 
     public Fragment getCurrentPagerFragment(int position) {
 
@@ -376,8 +413,6 @@ public class SearchActivity extends AppCompatActivity {
                     Intent intent = new Intent(SearchActivity.this, PlaceDetailActivity.class);
                     if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
                     TripStop loc = (TripStop) marker.getTag();
-                    intent.putExtra("start", Parcels.wrap(origin));
-                    intent.putExtra("end", Parcels.wrap(dest));
                     intent.putExtra("location", Parcels.wrap(loc));
                     startActivity(intent);
 
@@ -429,10 +464,10 @@ public class SearchActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences("settings", 0);
         int radius = (int) settings.getFloat("range",1.0f) *1600;
         Log.d("DEBUG:", "Radius:" +radius);
-        if (directionPoint.size() <= 10) {
+        if (directionPoint.size() <= 20) {
             getYelpBusinessesFromPoint(new LatLng(origin.lat, origin.lng), radius);
         }
-        for (int i=0; i<directionPoint.size(); i+=10) {
+        for (int i=0; i<directionPoint.size(); i+=20) {
             getYelpBusinessesFromPoint(directionPoint.get(i), radius);
         }
     }

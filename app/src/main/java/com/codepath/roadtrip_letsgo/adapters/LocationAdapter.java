@@ -6,12 +6,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.helper.GlideApp;
+import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
+import com.codepath.roadtrip_letsgo.utils.Util;
 
 import java.util.List;
 
@@ -28,6 +31,7 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
     List<TripStop> mLocations;
     Context context;
+    TripLocation origin;
 
     public LocationAdapter(List<TripStop> locations) {
         mLocations = locations;
@@ -36,6 +40,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
+        origin = Util.getOrigin(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
@@ -49,8 +54,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         holder.tvName.setText(location.trip_location.loc_name);
         holder.tvAddress.setText(location.trip_location.address);
-
-        String miles = String.format("%.1f mi", location.distance_away * 0.0006213719);
+        float distance = Util.getDistance(origin.lat, origin.lng, location.trip_location.lat, location.trip_location.lng);
+        String miles = String.format("%.1f mi", distance * 0.0006213719);
         holder.tvMiles.setText(miles);
 
         GlideApp.with(holder.ivStopType.getContext()).load(location.image_url)
@@ -82,12 +87,19 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         @BindView(R.id.iv_stop_type)
         ImageView ivStopType;
 
- //       @BindView(R.id.ibAdd)
-   //     ImageButton ibAdd;
+        @BindView(R.id.ibAdd)
+        ImageButton ibAdd;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            ibAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
     }
 

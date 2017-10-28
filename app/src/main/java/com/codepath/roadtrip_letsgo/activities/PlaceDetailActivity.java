@@ -1,5 +1,6 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -78,6 +79,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     TripStop stop;
     GoogleMap map;
     String shareText;
+    Context mContext;
     SupportMapFragment mapFragment;
 
     @Override
@@ -85,6 +87,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_detail);
         ButterKnife.bind(this);
+        mContext = getApplicationContext();
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -93,8 +96,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
 //            }
 //        });
 
-        origin = Parcels.unwrap(getIntent().getParcelableExtra("start"));
-        dest = Parcels.unwrap(getIntent().getParcelableExtra("end"));
+        origin = Util.getOrigin(mContext);
+        dest = Util.getDestination(mContext);
 
         stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
         ratingBar.setRating((float)(stop.rating));
@@ -150,8 +153,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
-            TripLocation origin = Parcels.unwrap(getIntent().getParcelableExtra("start"));
-            TripLocation dest = Parcels.unwrap(getIntent().getParcelableExtra("end"));
             map.getUiSettings().setZoomControlsEnabled(true);
             Util.addLocationMarkers(origin, dest, this, map);
             BitmapDescriptor defaultMarker =

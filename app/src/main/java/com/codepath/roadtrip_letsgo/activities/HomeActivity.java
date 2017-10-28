@@ -1,5 +1,6 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -9,11 +10,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -21,6 +29,9 @@ import android.widget.RelativeLayout;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
+import com.codepath.roadtrip_letsgo.adapters.StopsRecyclerAdapter;
+import com.codepath.roadtrip_letsgo.helper.OnStartDragListener;
+import com.codepath.roadtrip_letsgo.helper.SimpleItemTouchHelperCallback;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.common.api.Status;
@@ -39,29 +50,25 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import org.parceler.Parcels;
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements OnStartDragListener {
 
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected FusedLocationProviderClient mFusedLocationProviderClient;
+    Context mContext;
     Place origin;
     Place destination;
     PlaceAutocompleteFragment originFragment;
-    @BindView(R.id.btnFind)
-    Button btnFind;
     @BindView(R.id.toolbar_home)
     Toolbar toolbarHome;
     @BindView(R.id.app_bar_layout)
@@ -73,6 +80,9 @@ public class HomeActivity extends AppCompatActivity {
     @BindView(R.id.btnStart)
     Button btnStart;
 
+    @BindView(R.id.rvStops)
+    RecyclerView rvStops;
+
     //String mode;
     //Float rating, range;
     String userId;
@@ -80,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public static final String USER = "USER";
     public static final String PERMISSION = "PERMISSION";
+    private ItemTouchHelper mItemTouchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +101,23 @@ public class HomeActivity extends AppCompatActivity {
             setSupportActionBar(toolbarHome);
             setTitle("Road Trip");
         }
+
+        StopsRecyclerAdapter adapter = new StopsRecyclerAdapter(getApplicationContext(), this);
+        rvStops.setHasFixedSize(true);
+        rvStops.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvStops.setLayoutManager(linearLayoutManager);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(rvStops);
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mContext = getApplicationContext();
         setupOriginListener();
         setupDestListener();
-        setupFindListener();
+        //setupFindListener();
         parseIntent();
         setupStartListener();
     }
@@ -110,14 +132,19 @@ public class HomeActivity extends AppCompatActivity {
         //Log.d("DEBUG:", "bundle="+mode+rating+range);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the options menu from XML
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_home, menu);
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the options menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        return super.onOptionsItemSelected(item);
+    }
 
     private void setupOriginListener() {
         originFragment = (PlaceAutocompleteFragment)
@@ -157,6 +184,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onPlaceSelected(Place place) {
                 Log.i("place", "Place: " + place.getName());
                 origin = place;
+                Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
             }
 
             @Override
@@ -164,6 +192,15 @@ public class HomeActivity extends AppCompatActivity {
                 Log.i("error", "An error occurred: " + status);
             }
         });
+        originFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        originFragment.setText("");
+                        view.setVisibility(View.GONE);
+                        Util.saveOrigin(mContext, null);
+                    }
+                });
     }
 
     @Override
@@ -237,6 +274,7 @@ public class HomeActivity extends AppCompatActivity {
                                             Place currentPlace = retrievedPlaces.get(0);
                                             origin = currentPlace.freeze();
                                             originFragment.setText(address);
+                                            Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
                                             Log.i("currentplace", "Place found: " + currentPlace.getName());
                                             retrievedPlaces.release();
                                         } else {
@@ -261,6 +299,7 @@ public class HomeActivity extends AppCompatActivity {
                 // TODO: Get info about the selected place.
                 destination = place;
                 Log.i("place", "Place: " + place.getName());
+                Util.saveDestination(mContext, TripLocation.fromPlace(destination));
             }
 
             @Override
@@ -269,9 +308,18 @@ public class HomeActivity extends AppCompatActivity {
                 Log.i("error", "An error occurred: " + status);
             }
         });
+        destFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        destFragment.setText("");
+                        view.setVisibility(View.GONE);
+                        Util.saveDestination(mContext, null);
+                    }
+                });
     }
 
-    private void setupFindListener() {
+    /*private void setupFindListener() {
         btnFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -281,13 +329,13 @@ public class HomeActivity extends AppCompatActivity {
                 list.add(TripLocation.fromPlace(destination));
                 Util.saveStops(getApplicationContext(),list);
                 Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
+//                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
+//                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
                 //i.putExtra("stopType", sStopType.getSelectedItem().toString());
                 startActivity(i);
             }
         });
-    }
+    }*/
 
     private void setupStartListener() {
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -304,5 +352,27 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
+    }
+
+    public void onAddStop(MenuItem item) {
+        if (origin == null || destination == null) {
+            Snackbar.make(toolbarHome, R.string.snackbar_home, Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        ArrayList<TripLocation> list = new ArrayList<>();
+        list.add(TripLocation.fromPlace(origin));
+        list.add(TripLocation.fromPlace(destination));
+        Util.saveStops(getApplicationContext(),list);
+        Intent i = new Intent(HomeActivity.this, SearchActivity.class);
+        //i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
+        //i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
+        //i.putExtra("stopType", sStopType.getSelectedItem().toString());
+        startActivity(i);
     }
 }
