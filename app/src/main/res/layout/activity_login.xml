@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_login_bg"
+    android:background="@drawable/ic_mapbg2"
     tools:context=".activities.LoginActivity" >
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/btn_facevook_login"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_below="@+id/roadtrip_title"
+        android:layout_below="@+id/roadtrip_subtitle"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:padding="20dp"
@@ -34,11 +34,11 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="120dp"
         app:srcCompat="@drawable/ic_logo" />
 
     <TextView
@@ -47,10 +47,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="30dp"
+        android:textColor="@color/colorPrimary"
         android:text="RoadTrip"
         android:textAppearance="@android:style/TextAppearance.Material.Title"
-        android:textSize="35sp" />
+        android:textSize="30sp" />
+    <TextView
+        android:id="@+id/roadtrip_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/roadtrip_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp"
+        android:text="Let's go!"
+        android:textStyle="italic"
+        android:textSize="20sp" />
 
 </RelativeLayout>
