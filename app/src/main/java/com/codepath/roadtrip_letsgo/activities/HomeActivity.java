@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,8 +25,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
@@ -45,6 +48,11 @@ import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,16 +81,24 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     Toolbar toolbarHome;
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
-    @BindView(R.id.container_home)
-    FrameLayout containerFragments;
+//    @BindView(R.id.container_home)
+//    FrameLayout containerFragments;
     @BindView(R.id.search_container)
     RelativeLayout searchContainer;
     @BindView(R.id.btnStart)
     Button btnStart;
 
+  //  @BindView(R.id.tvFrom)
+  //  PlacesAutocompleteTextView tvFrom;
+    //@BindView(R.id.tvTo)
+   // PlacesAutocompleteTextView tvTo;
+
     @BindView(R.id.rvStops)
     RecyclerView rvStops;
 
+    private BottomSheetBehavior mBottomSheetBehavior;
+    SupportMapFragment mapFragment;
+    GoogleMap map;
     //String mode;
     //Float rating, range;
     String userId;
@@ -127,6 +143,39 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         //setupFindListener();
         parseIntent();
         setupStartListener();
+        View bottomSheet = findViewById( R.id.bottom_sheet );
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+        mBottomSheetBehavior.setPeekHeight(60);  // show top title
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+                Log.d("DEBUG", "state change: " + newState);
+                TextView tvTitle = bottomSheet.findViewById(R.id.bsTitle);
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    tvTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward, 0, 0, 0);
+                }
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    tvTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward, 0, 0, 0);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+                Log.d("DEBUG", "slide : " + slideOffset);
+            }
+        });
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                loadMap(googleMap);
+            }
+        });
+
     }
 
 
@@ -168,6 +217,8 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         originFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.origin_autocomplete_fragment);
         originFragment.setHint("Enter Origin");
+        ((EditText)originFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14.0f);
+
         if (ContextCompat.checkSelfPermission(HomeActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -307,10 +358,11 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 });
     }
 
-    private void setupDestListener() {
+   private void setupDestListener() {
         PlaceAutocompleteFragment destFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.destination_autocomplete_fragment);
         destFragment.setHint("Enter Destination");
+       ((EditText)destFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14.0f);
         destFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -393,4 +445,51 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         //i.putExtra("stopType", sStopType.getSelectedItem().toString());
         startActivity(i);
     }
+
+    private void loadMap(GoogleMap googleMap) {
+        map = googleMap;
+        if (map != null) {
+            // Map is ready
+            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
+            //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+            map.getUiSettings().setZoomControlsEnabled(true);
+            ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
+            if ( list != null && list.size()>0) {
+                TripLocation origin = list.get(0);
+                TripLocation dest = list.get(list.size() - 1);
+                Util.addLocationMarkers(origin, dest, this, map);
+                Util.addRoute(origin, dest, this, map);
+
+/*            BitmapDescriptor defaultMarker =
+                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+            Marker marker = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(stop.trip_location.lat, stop.trip_location.lng))
+                    .title(stop.trip_location.loc_name)
+                    .snippet(stop.trip_location.address)
+                    .icon(defaultMarker));
+*/
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                //   builder.include(marker.getPosition());
+                builder.include(new LatLng(origin.lat, origin.lng));
+                builder.include(new LatLng(dest.lat, dest.lng));
+                LatLngBounds bounds = builder.build();
+
+                int width = getResources().getDisplayMetrics().widthPixels;
+                int height = getResources().getDisplayMetrics().heightPixels;
+                int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                // Zoom in the Google Map
+                map.animateCamera(cu);
+            }
+        } else {
+            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void drawRoute(GoogleMap map, List<TripLocation> list){
+
+
+    }
+
 }
