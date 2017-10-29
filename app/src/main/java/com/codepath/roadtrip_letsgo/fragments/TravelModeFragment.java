@@ -32,8 +32,8 @@ import static android.content.SharedPreferences.Editor;
 public class TravelModeFragment  extends DialogFragment {
 
     private static final String TAG_LOG = TravelModeFragment.class.getCanonicalName();
-    private static final int MODAL_WIDTH = 1300;
-    private static final int MODAL_HEIGHT = 1750;
+    private static final int MODAL_WIDTH = 1000;
+    private static final int MODAL_HEIGHT = 1300;
 
     public static String mode = "driving";
 
