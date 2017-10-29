@@ -30,64 +30,60 @@
 
         <RelativeLayout
             android:id="@+id/search_container"
+            android:layout_margin="2sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/llStart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/labelStart"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_height="30dp"
+                    android:gravity="end"
+                    android:layout_marginTop="2sp"
+                    android:layout_marginLeft="2sp"
                     android:text="From"/>
 
                 <fragment
                     android:id="@+id/origin_autocomplete_fragment"
                     android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    android:layout_toEndOf="@id/labelStart"
+                    android:layout_height="30dp" />
 
             <android.support.v7.widget.RecyclerView
                 xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_below="@id/llStart"
+                android:layout_below="@id/labelStart"
                 android:id="@+id/rvStops"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
 
-            <LinearLayout
-                android:id="@+id/llEnd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/rvStops"
-                android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/labelDestination"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_height="30dp"
+                    android:gravity="end"
+                    android:layout_marginTop="2sp"
+                    android:layout_marginLeft="2sp"
+                    android:layout_below="@id/rvStops"
+                    android:layout_alignStart="@id/labelStart"
+                    android:layout_alignEnd="@id/labelStart"
                     android:text="To"
                     />
                 <fragment
                     android:id="@+id/destination_autocomplete_fragment"
                     android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_below="@id/rvStops"
+                    android:layout_toEndOf="@id/labelDestination"
                     />
-            </LinearLayout>
             <Button
                 android:id="@+id/btnStart"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/llEnd"
+                android:layout_below="@id/labelDestination"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:padding="20dp"
@@ -108,7 +104,7 @@
             android:id="@+id/bsTitle"
             android:text="trip map"
             android:gravity="center_horizontal"
-            android:drawableLeft="@drawable/ic_arrow_upward"
+            android:drawableStart="@drawable/ic_arrow_upward"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
