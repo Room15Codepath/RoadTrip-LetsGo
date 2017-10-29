@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,84 +23,71 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/container_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_bar_layout">
+    <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
             android:id="@+id/search_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/labelStart"
+            <LinearLayout
+                android:id="@+id/llStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:textSize="20sp"
-                android:text="@string/enter_starting_location"/>
+                android:orientation="horizontal">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cvOrigin"
-                android:layout_width="match_parent"
-                android:layout_below="@+id/labelStart"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/labelStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="From"/>
+
                 <fragment
                     android:id="@+id/origin_autocomplete_fragment"
                     android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-            </android.support.v7.widget.CardView>
+            </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
                 xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_below="@+id/cvOrigin"
+                android:layout_below="@id/llStart"
                 android:id="@+id/rvStops"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
 
-            <TextView
-                android:id="@+id/labelDestination"
+            <LinearLayout
+                android:id="@+id/llEnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/rvStops"
-                android:layout_width="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:textSize="20sp"
-                android:layout_height="wrap_content"
-                android:text="@string/enter_destination"/>
+                android:orientation="horizontal">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cvDest"
-                android:layout_width="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/labelDestination"
-                android:layout_height="wrap_content">
-
-            <fragment
-                android:id="@+id/destination_autocomplete_fragment"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                 />
-
-            </android.support.v7.widget.CardView>
-
+                <TextView
+                    android:id="@+id/labelDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="To"
+                    />
+                <fragment
+                    android:id="@+id/destination_autocomplete_fragment"
+                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
             <Button
                 android:id="@+id/btnStart"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/cvDest"
+                android:layout_below="@id/llEnd"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:padding="20dp"
@@ -108,6 +95,29 @@
                 android:textSize="16sp" />
 
         </RelativeLayout>
-    </FrameLayout>
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/holo_green_light"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        >
+        <TextView
+            android:id="@+id/bsTitle"
+            android:text="trip map"
+            android:gravity="center_horizontal"
+            android:drawableLeft="@drawable/ic_arrow_upward"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</RelativeLayout>
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

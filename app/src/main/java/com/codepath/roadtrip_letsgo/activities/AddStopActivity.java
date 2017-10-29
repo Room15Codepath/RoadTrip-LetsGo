@@ -3,6 +3,7 @@ package com.codepath.roadtrip_letsgo.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,16 +11,26 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.utils.Util;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +51,8 @@ public class AddStopActivity extends AppCompatActivity {
 
     TripRecyclerAdapter adapter;
     private BottomSheetBehavior mBottomSheetBehavior;
+    SupportMapFragment mapFragment;
+    GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +86,37 @@ public class AddStopActivity extends AppCompatActivity {
         compactToSave();
         View bottomSheet = findViewById( R.id.bottom_sheet );
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        mBottomSheetBehavior.setPeekHeight(60);
+
+        mBottomSheetBehavior.setPeekHeight(60);  // show top title
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+                Log.d("DEBUG", "state change: " + newState);
+                TextView tvTitle = bottomSheet.findViewById(R.id.bsTitle);
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    tvTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward, 0, 0, 0);
+                }
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    tvTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward, 0, 0, 0);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+                Log.d("DEBUG", "slide : " + slideOffset);
+            }
+        });
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                loadMap(googleMap);
+            }
+        });
+
 
     }
     public void parseIntent() {
@@ -154,7 +196,7 @@ public class AddStopActivity extends AppCompatActivity {
         });
     }
 
-    @Override
+/*    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == SEARCH) {
             if(requestCode ==200) {
@@ -170,5 +212,51 @@ public class AddStopActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+*/
+
+    private void loadMap(GoogleMap googleMap) {
+        map = googleMap;
+        if (map != null) {
+            // Map is ready
+            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
+            //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+            map.getUiSettings().setZoomControlsEnabled(true);
+            ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
+            TripLocation origin = list.get(0);
+            TripLocation dest = list.get(list.size()-1);
+            Util.addLocationMarkers(origin, dest, this, map);
+            Util.addRoute(origin, dest, this, map);
+
+/*            BitmapDescriptor defaultMarker =
+                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+            Marker marker = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(stop.trip_location.lat, stop.trip_location.lng))
+                    .title(stop.trip_location.loc_name)
+                    .snippet(stop.trip_location.address)
+                    .icon(defaultMarker));
+*/
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+         //   builder.include(marker.getPosition());
+            builder.include(new LatLng(origin.lat, origin.lng));
+            builder.include(new LatLng(dest.lat, dest.lng));
+            LatLngBounds bounds = builder.build();
+
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+            // Zoom in the Google Map
+            map.animateCamera(cu);
+
+        } else {
+            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void drawRoute(GoogleMap map, List<TripLocation> list){
+
+
     }
 }
