@@ -4,10 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -28,6 +32,8 @@ import static android.content.SharedPreferences.Editor;
 public class TravelModeFragment  extends DialogFragment {
 
     private static final String TAG_LOG = TravelModeFragment.class.getCanonicalName();
+    private static final int MODAL_WIDTH = 1300;
+    private static final int MODAL_HEIGHT = 1750;
 
     public static String mode = "driving";
 
@@ -87,10 +93,13 @@ public class TravelModeFragment  extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getDialog().setCanceledOnTouchOutside(true);
         View view = inflater.inflate(R.layout.fragment_travel_mode, container, false);
         unbinder = ButterKnife.bind(this, view);
         initializeDefaultValues();
-
+        btnCar.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_car));
+        btnBike.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bike));
+        btnWalk.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk));
 
         rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -171,21 +180,26 @@ public class TravelModeFragment  extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Window window = getDialog().getWindow();
+        window.setLayout(MODAL_WIDTH, MODAL_HEIGHT);
+        window.setGravity(Gravity.CENTER);
+    }
+
     private void setTravelMode (TravelMode type) {
+        DrawableCompat.setTint(btnCar.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+        DrawableCompat.setTint(btnBike.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+        DrawableCompat.setTint(btnWalk.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         if (type == TravelMode.MODE_DRIVING) {
-            btnCar.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_car_clicked));
-            btnBike.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bike));
-            btnWalk.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk));
+            DrawableCompat.setTint(btnCar.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
         else if (type == TravelMode.MODE_BICYCLING) {
-            btnBike.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bike_clicked));
-            btnCar.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_car));
-            btnWalk.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk));
+            DrawableCompat.setTint(btnBike.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
         else {
-            btnWalk.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk_clicked));
-            btnCar.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_car));
-            btnBike.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bike));
+            DrawableCompat.setTint(btnWalk.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
     }
 

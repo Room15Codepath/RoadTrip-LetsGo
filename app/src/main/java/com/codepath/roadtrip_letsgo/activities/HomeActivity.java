@@ -106,7 +106,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             setTitle("Road Trip");
         }
         listFromShared = getStops(getApplicationContext());
-        if (!listFromShared.isEmpty()) {
+        if (listFromShared != null) {
             Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
         }
 

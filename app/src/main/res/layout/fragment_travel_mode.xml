@@ -4,16 +4,17 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp">
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingBottom="30dp"
+    android:paddingTop="30dp">
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:text="SELECT YOUR MODE OF TRAVEL"/>
+        android:textSize="16dp"
+        android:text="Travel Mode"/>
 
     <LinearLayout
         android:id="@+id/travel_mode"
@@ -101,24 +102,31 @@
         android:layout_marginTop="16dp"
         android:layout_alignParentRight="true"
         android:textSize="16dp"
+        android:layout_marginBottom="40dp"
         android:text="Miles"/>
 
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/labelMiles"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"/>
+        android:text="Save"
+        android:gravity="right"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
+        android:textColor="@color/colorAccent"
+        android:layout_below="@+id/labelMiles"
+        android:layout_alignParentEnd="true" />
+
     <Button
         android:id="@+id/btnCancel"
-        android:layout_marginTop="20dp"
-        android:layout_toRightOf="@+id/btnSave"
-        android:layout_below="@+id/labelMiles"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"/>
+        android:layout_below="@+id/labelMiles"
+        android:layout_toLeftOf="@+id/btnSave"
+        android:text="Cancel"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored" />
 
 
 

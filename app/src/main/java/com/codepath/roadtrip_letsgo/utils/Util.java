@@ -183,7 +183,7 @@ public class Util {
                     }.getType());
             return new ArrayList<TripLocation>(list);
         } else {
-            return null;
+            return new ArrayList<TripLocation>();
         }
     }
 
