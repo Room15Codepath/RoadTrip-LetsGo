@@ -24,8 +24,22 @@
             android:layout_below="@+id/app_bar_layout"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
             android:paddingRight="10dp"
             android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_marginRight="50dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Name"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorPrimary"
+                android:textSize="25sp" />
 
             <RatingBar
                 android:id="@+id/ratingBar"
@@ -38,16 +52,17 @@
                 android:scaleX="0.5"
                 android:transformPivotX="0dp"
                 android:transformPivotY="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="-20dp"
-                android:layout_marginBottom="-10dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="-110dp"
+                android:layout_marginBottom="-30dp"
                 android:isIndicator="true"/>
 
             <TextView
                 android:id="@+id/tvReviewCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="40dp"
                 tools:text="Reviews"
                 android:textSize="17sp"
                 android:layout_marginBottom="5dp"
@@ -61,8 +76,8 @@
                     android:layout_height="wrap_content"
                     android:text="price"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_below="@id/tvReviewCount"
+                    android:layout_alignBottom="@+id/tvReviewCount"
+                    android:layout_alignParentRight="true"
                     android:textSize="17sp"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_weight="1"
@@ -73,61 +88,84 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_below="@id/tvPrice"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="17sp"
                     android:layout_marginRight="2sp"
-                    android:text="distance" />
-
-
+                    android:text="distance"
+                    android:layout_alignBaseline="@+id/tvName"
+                    android:layout_alignBottom="@+id/tvName"
+                    android:layout_alignParentEnd="true" />
             <TextView
-                android:id="@+id/tvPhone"
-                android:paddingLeft="10dp"
+                android:id="@+id/tvCategories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDistance"
-                android:gravity="center_vertical"
-                android:autoLink="phone"
+                android:text="categories"
+                android:layout_below="@id/ratingBar"
+                android:paddingLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:textSize="17sp"
-                android:layout_marginBottom="15dp"
-                android:drawableLeft="@drawable/ic_phone"
-                android:linksClickable="true"
-                tools:text="phone" />
+                android:textColor="@android:color/darker_gray"
+                />
 
         </RelativeLayout>
 
         <View style="@style/Divider"
-            android:id="@+id/divider"
+            android:id="@+id/divider1"
             android:layout_below="@id/rlHeader"
             android:layout_margin="10dp"/>
 
         <TextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_below="@id/divider1"
+            android:paddingLeft="20dp"
+            android:textSize="19sp"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/tvPhoneLabel"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:text="Phone"/>
+
+        <TextView
+            android:id="@+id/tvPhone"
+            android:paddingLeft="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:autoLink="phone"
             android:textSize="17sp"
-            android:layout_marginBottom="5dp"
-            tools:text="name"
-            android:textColor="@android:color/black"
-            android:layout_below="@+id/divider"
-            />
+            android:linksClickable="true"
+            tools:text="phone"
+            android:layout_below="@+id/tvPhoneLabel"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPhone"
+            android:paddingLeft="20dp"
+            android:textSize="19sp"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/tvLocationLabel"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:text="Location"/>
 
         <TextView
             android:id="@+id/tvAddress"
-            android:layout_marginStart="10dp"
             android:textSize="17sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
+            android:textColor="@color/colorPrimaryDark"
             tools:text="address"
-            android:layout_below="@+id/tvName"
+            android:layout_below="@+id/tvLocationLabel"
             />
 
         <TextView
@@ -136,14 +174,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginStart="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:layout_marginBottom="20dp"
             android:textSize="17sp"
             android:onClick="onDirection"
-            android:text="Direction"
-            android:textColor="@color/colorPrimaryDark"/>
+            android:text="Get Directions"
+            android:textColor="@color/colorAccent"/>
 
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -158,6 +195,13 @@
             android:layout_height="200dp"
             android:layout_below="@+id/map_direction"
             />
+
+        <!--<View style="@style/Divider"-->
+            <!--android:id="@+id/divider2"-->
+            <!--android:layout_below="@id/map"-->
+            <!--android:layout_margin="10dp"/>-->
+
+
 
 
     </RelativeLayout>

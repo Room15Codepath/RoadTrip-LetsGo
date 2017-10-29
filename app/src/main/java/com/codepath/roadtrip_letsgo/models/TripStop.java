@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -27,6 +28,7 @@ public class TripStop {
     public String url;
     public int review_count;
     public String price;
+    public ArrayList<String> categories;
 
     public TripStop() {}
 
@@ -44,7 +46,12 @@ public class TripStop {
             try {
                 tripStop.price = json.getString("price");
             }catch (JSONException x){
-                //skip.
+                tripStop.price = "N/A";
+            }
+            tripStop.categories = new ArrayList<String>();
+            JSONArray categoryList = json.getJSONArray("categories");
+            for (int i=0; i<categoryList.length(); i++) {
+                tripStop.categories.add(categoryList.getJSONObject(i).getString("title"));
             }
             tripStop.review_count = json.getInt("review_count");
             tripStop.url = json.getString("url");
@@ -69,6 +76,15 @@ public class TripStop {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return str.toString();
+    }
+
+    public String getCategoriesStr() {
+        StringBuilder str = new StringBuilder();
+        for (int i=0; i<categories.size(); i++) {
+            str.append(categories.get(i));
+            str.append((i == categories.size()-1) ? " " : ", ");
         }
         return str.toString();
     }

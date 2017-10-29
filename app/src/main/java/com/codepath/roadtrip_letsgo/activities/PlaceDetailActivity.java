@@ -66,6 +66,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
     TextView tvDistance;
     @BindView(R.id.ratingBar)
     RatingBar ratingBar;
+    @BindView(R.id.tvCategories)
+    TextView tvCategories;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_layout)
@@ -107,11 +109,12 @@ public class PlaceDetailActivity extends AppCompatActivity {
         stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
         ratingBar.setRating((float)(stop.rating));
         tvPhone.setText(stop.phone);
-        tvPrice.setText("Price: " + stop.price);
+        tvPrice.setText(stop.price);
         float distance = Util.getDistance(origin.lat, origin.lng, stop.trip_location.lat, stop.trip_location.lng);
-        tvDistance.setText(String.format("%.1f", distance * 0.0006213719) +" mile");
+        tvDistance.setText(String.format("%.1f", distance * 0.0006213719) +" mi");
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
+        tvCategories.setText(stop.getCategoriesStr());
         toolbarLayout.setTitle(stop.trip_location.loc_name);
         toolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent));
         toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
