@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -65,6 +68,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
     RatingBar ratingBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.toolbar_layout)
+    CollapsingToolbarLayout toolbarLayout;
     @BindView(R.id.fab)
     FloatingActionButton fab;
     @BindView(R.id.header)
@@ -107,7 +112,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
         tvDistance.setText(String.format("%.1f", distance * 0.0006213719) +" mile");
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
-        toolbar.setTitle(stop.trip_location.loc_name);
+        toolbarLayout.setTitle(stop.trip_location.loc_name);
+        toolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent));
+        toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
         GlideApp.with(this).load(stop.image_url).fitCenter().into(header);
         tvAddress.setText(stop.trip_location.address);
 
@@ -151,7 +158,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         map = googleMap;
         if (map != null) {
             // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
@@ -231,25 +238,15 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab)
     public void onButtonClick() {
+        ArrayList<TripLocation> listFromShared = Util.getStops(getApplicationContext());
 
-        Log.d("DEBUG:", "add route clicked");
-        //StringBuilder sb = new StringBuilder();
-        //  sb.append("https://www.google.com/maps/dir");
-        //    sb.append("/" + origin.point.latitude +","+ origin.point.longitude );
-        //      sb.append("/" + stop.trip_location.point.latitude +","+ stop.trip_location.point.longitude);
-//        sb.append("/" + dest.point.latitude +","+ dest.point.longitude);
-
-        //   Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
-        //   i.setPackage("com.google.android.apps.maps");
-        Intent i = new Intent(PlaceDetailActivity.this, AddStopActivity.class);
-     //   ArrayList<Parcelable> tList = new ArrayList<>();
-    //    tList.add(Parcels.wrap(origin));
-    //    tList.add(Parcels.wrap(stop.trip_location));
-    //    tList.add(Parcels.wrap(dest));
-    //    i.putParcelableArrayListExtra("stops", tList);
-        i.putExtra("stop", Parcels.wrap(stop.trip_location));
-
-        startActivity(i);
+        if (listFromShared.contains(stop.trip_location)) {
+            listFromShared.set(listFromShared.indexOf(stop.trip_location), stop.trip_location);
+        } else {
+            Util.saveStop(mContext, stop.trip_location);
+        }
+        Snackbar.make(fab, R.string.snackbar_add_stop, Snackbar.LENGTH_LONG)
+                .show();
 
     }
 }

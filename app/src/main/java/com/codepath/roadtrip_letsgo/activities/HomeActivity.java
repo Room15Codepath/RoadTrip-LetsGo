@@ -67,6 +67,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
+import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
 
 public class HomeActivity extends AppCompatActivity implements OnStartDragListener {
 
@@ -120,9 +121,9 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             setSupportActionBar(toolbarHome);
             setTitle("Road Trip");
         }
-        listFromShared = Util.getStops(getApplicationContext());
+        listFromShared = getStops(getApplicationContext());
         if (!listFromShared.isEmpty()) {
-            Util.deleteStops(getApplicationContext(), Util.getStops(getApplicationContext()));
+            Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
         }
 
         adapter = new StopsRecyclerAdapter(getApplicationContext(), this);
@@ -183,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     protected void onStart() {
         super.onStart();
         Log.d("home", "onStart()");
-        listFromShared = Util.getStops(getApplicationContext());
+        listFromShared = getStops(getApplicationContext());
         Log.d("home", "listFromShared="+listFromShared.toString());
         adapter.customNotifyDataSetChanged(listFromShared);
 
@@ -414,9 +415,12 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 if(origin ==null || destination == null) return;
                 StringBuilder sb = new StringBuilder();
                 sb.append("https://www.google.com/maps/dir");
-                sb.append("/" + origin.getLatLng().latitude +","+ origin.getLatLng().longitude );
-                sb.append("/" + destination.getLatLng().latitude +","+ destination.getLatLng().longitude);
-
+                sb.append("/" + origin.getAddress());
+                ArrayList<TripLocation> trips = Util.getStops(mContext);
+                for (int i=0; i<trips.size(); i++) {
+                    sb.append("/" + trips.get(i).getAddress());
+                }
+                sb.append("/" + destination.getAddress());
                 Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
                 i.setPackage("com.google.android.apps.maps");
                 startActivity(i);

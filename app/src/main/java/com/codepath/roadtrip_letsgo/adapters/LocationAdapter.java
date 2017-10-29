@@ -17,6 +17,7 @@ import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.utils.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by yingbwan on 10/14/2017.
@@ -102,10 +104,15 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
                     int position = getAdapterPosition(); // gets item position
                     if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
                         TripStop tripStop = mLocations.get(position);
+                        ArrayList<TripLocation> listFromShared = Util.getStops(getApplicationContext());
+
+                        if (listFromShared.contains(tripStop.getTrip_location())) {
+                            listFromShared.set(listFromShared.indexOf(tripStop.getTrip_location()), tripStop.getTrip_location());
+                        } else {
+                            Util.saveStop(context, tripStop.getTrip_location());
+                        }
                         Snackbar.make(itemView, R.string.snackbar_add_stop, Snackbar.LENGTH_LONG)
                                 .show();
-                        //Toast.makeText(context, tvName.getText(), Toast.LENGTH_SHORT).show();
-                        Util.saveStop(context, tripStop.getTrip_location());
                 }}
             });
         }
