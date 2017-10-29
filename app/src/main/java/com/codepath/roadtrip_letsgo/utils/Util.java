@@ -204,4 +204,25 @@ public class Util {
         editor.putString(STOP_LIST_PARAM, stopJSON);
         editor.apply();
     }
+
+
+    public static void deleteStop(Context context, TripLocation stop) {
+        Log.d ("DEBUG", "stop="+stop.getLoc_name());
+        ArrayList<TripLocation> trips = getStops(context);
+        trips.remove(stop);
+        String stopJSON = new Gson().toJson(trips);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(STOP_LIST_PARAM, stopJSON);
+        editor.apply();
+    }
+
+    public static void deleteStops(Context context,List<TripLocation> list){
+        list.clear();
+        String JSONList = new Gson().toJson(list);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(STOP_LIST_PARAM, JSONList);
+        editor.apply();
+    }
 }
