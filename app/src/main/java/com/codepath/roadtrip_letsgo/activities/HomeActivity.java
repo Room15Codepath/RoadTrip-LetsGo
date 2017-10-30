@@ -9,12 +9,15 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
@@ -31,6 +34,8 @@ import android.widget.Toast;
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
+import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
+import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
 import com.codepath.roadtrip_letsgo.helper.OnStartDragListener;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.utils.Util;
@@ -76,10 +81,10 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     Place origin;
     Place destination;
     PlaceAutocompleteFragment originFragment;
-   // @BindView(R.id.toolbar_home)
-  //  Toolbar toolbarHome;
-  //  @BindView(R.id.app_bar_layout)
- //   AppBarLayout appBarLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.app_bar_layout)
+   AppBarLayout appBarLayout;
 //    @BindView(R.id.container_home)
 //    FrameLayout containerFragments;
     @BindView(R.id.search_container)
@@ -126,10 +131,10 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         Log.d("home", "onCreate()");
-  //      if (toolbarHome != null) {
-   //         setSupportActionBar(toolbarHome);
-     //       setTitle("Road Trip");
-     //   }
+        if (toolbar != null) {
+           setSupportActionBar(toolbar);
+            setTitle("Road Trip");
+        }
         //listFromShared = getStops(getApplicationContext());
        // if (listFromShared != null) {
        //     Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
@@ -140,6 +145,21 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         rvResults.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvResults.setLayoutManager(linearLayoutManager);
+        ItemClickSupport.addTo(rvResults).setOnItemClickListener(
+                (recyclerView, position, v) -> {
+                    //create intent
+                    if(position%2 ==0) {
+                        Intent i = new Intent(getApplicationContext(), SearchActivity.class);
+                     //   i.putExtra("origin", Parcels.wrap(origin));
+                   //     i.putExtra("destination", Parcels.wrap(destination));
+                   //     i.putExtra("stopType", stopType);
+                        i.putExtra("position", position/2);
+                        //launch activity
+                        startActivity(i);
+                    }
+                }
+        );
+
 //        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
 //        mItemTouchHelper = new ItemTouchHelper(callback);
 //        mItemTouchHelper.attachToRecyclerView(rvStops);
@@ -192,6 +212,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     public void setupViews(){
         tvHint.setVisibility(View.INVISIBLE);
         llBottom.setVisibility(View.INVISIBLE);
+        btnStart.setEnabled(false);
     }
 
     public void enableDest(){
@@ -230,8 +251,19 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+
+            TravelModeFragment travelModeFragment;
+            FragmentManager fm = getSupportFragmentManager();
+            travelModeFragment = TravelModeFragment.newInstance();
+            travelModeFragment.show(fm, "fragment_travelmode");
+        }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private void setupOriginListener() {
         originFragment = (PlaceAutocompleteFragment)
@@ -404,6 +436,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 Util.saveDestination(mContext, TripLocation.fromPlace(destination));
 
                 tvHint.setVisibility(View.GONE);
+                btnStart.setEnabled(true);
                 //add empty stop into list to indicate stops are enabled
                 TripLocation stop = new TripLocation();
                 stops.add(stop);
@@ -432,24 +465,6 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 });
     }
 
-    /*private void setupFindListener() {
-        btnFind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(origin ==null || destination == null) return;
-                ArrayList<TripLocation> list = new ArrayList<>();
-                list.add(TripLocation.fromPlace(origin));
-                list.add(TripLocation.fromPlace(destination));
-                Util.saveStops(getApplicationContext(),list);
-                Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-//                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-//                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
-                //i.putExtra("stopType", sStopType.getSelectedItem().toString());
-                startActivity(i);
-            }
-        });
-    }*/
-
     private void setupStartListener() {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -473,24 +488,6 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
-    }
-
-    public void onAddStop(MenuItem item) {
-    /*    if (origin == null || destination == null) {
-            Snackbar.make(toolbarHome, R.string.snackbar_home, Snackbar.LENGTH_LONG)
-                    .show();
-            return;
-        }
-        ArrayList<TripLocation> list = new ArrayList<>();
-        list.add(TripLocation.fromPlace(origin));
-        list.add(TripLocation.fromPlace(destination));
-        //Util.saveStops(getApplicationContext(),list);
-        Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-        //i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-        //i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
-        //i.putExtra("stopType", sStopType.getSelectedItem().toString());
-        startActivity(i);
-        */
     }
 
     private void loadMap(GoogleMap googleMap) {

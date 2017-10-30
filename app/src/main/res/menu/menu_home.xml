@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_add_stop"
+        android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_add_location"
+        android:icon="@drawable/ic_settings"
         android:visible="true"
-        android:onClick="onAddStop"
         app:showAsAction="always"
-        android:title="Add Stop"/>
+        android:title="Settings"/>
 
 </menu>
