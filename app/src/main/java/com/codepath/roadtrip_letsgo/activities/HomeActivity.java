@@ -582,11 +582,13 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             }
     }
 
+    // call back from recyclerView adapter for deleting stop.
     public void onAdapterCallback(int position) {
         TripLocation loc =  stops.get(position);
         stops.remove(position);
         stops.remove(position);
         adapter.notifyDataSetChanged();
         Util.deleteStop(getApplicationContext(), loc);
+        //update map
     }
 }
