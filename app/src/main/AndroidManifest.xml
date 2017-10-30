@@ -78,6 +78,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.HomeActivity"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".activities.AddStopActivity" />
         <activity

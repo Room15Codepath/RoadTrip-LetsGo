@@ -598,4 +598,21 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         Util.deleteStop(getApplicationContext(), loc);
         //update map
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        //will get called from detail page if we set this activity as singleTask mode
+        boolean isAddStop = intent.getBooleanExtra("addstop", false);
+        if (isAddStop) {
+            listFromShared = getStops(getApplicationContext());
+            stops.clear();
+            loadStops(listFromShared);
+            adapter.notifyDataSetChanged();
+
+            Log.d("DEBUG", "stop added.");
+        }else {
+            Log.d("DEBUG", "no stop.");
+        }
+        super.onNewIntent(intent);
+    }
 }
