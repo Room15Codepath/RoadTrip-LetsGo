@@ -52,6 +52,6 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:rippleColor="@android:color/white"
-        app:srcCompat="@drawable/ic_add" />
+        app:srcCompat="@drawable/ic_add_location" />
 
 </android.support.design.widget.CoordinatorLayout>

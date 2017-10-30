@@ -66,8 +66,15 @@ public class YelpClient {
     }
 
     public void getBusinesses(RequestParams params, AsyncHttpResponseHandler handler) {
-
         client.get(getAbsoluteUrl("/businesses/search"), params, handler);
+    }
+
+    public void getBusinessDetails(String businessId, AsyncHttpResponseHandler handler) {
+        client.get(getAbsoluteUrl("/businesses/" + businessId), handler);
+    }
+
+    public void getBusinessReviews(String businessId, AsyncHttpResponseHandler handler) {
+        client.get(getAbsoluteUrl("/businesses/" + businessId + "/reviews"), handler);
     }
 
     private String getAbsoluteUrl(String relativeUrl) {

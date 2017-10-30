@@ -42,7 +42,8 @@ public class TripStop {
             tripStop.is_closed = json.getBoolean("is_closed");
             tripStop.rating = json.getDouble("rating");
             tripStop.yelp_id = json.getString("id");
-            tripStop.phone= json.getString("phone");
+            String phone = json.getString("phone");
+            tripStop.phone = (phone.isEmpty()) ? "N/A" : phone;
             try {
                 tripStop.price = json.getString("price");
             }catch (JSONException x){
