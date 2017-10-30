@@ -89,7 +89,7 @@ public class Util {
                     }
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                        Log.d("DBEUG", "failed with code " + statusCode);
                     }
                 });
     }
@@ -126,6 +126,17 @@ public class Util {
                 .snippet(snippet)
                 .icon(icon);
         Marker marker = map.addMarker(options);
+        return marker;
+    }
+
+    public static Marker addDefaultMarker(GoogleMap map, TripLocation loc) {
+        BitmapDescriptor defaultMarker =
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+        Marker marker = map.addMarker(new MarkerOptions()
+                .position(new LatLng(loc.lat, loc.lng))
+                .title(loc.loc_name)
+                .snippet(loc.address)
+                .icon(defaultMarker));
         return marker;
     }
 

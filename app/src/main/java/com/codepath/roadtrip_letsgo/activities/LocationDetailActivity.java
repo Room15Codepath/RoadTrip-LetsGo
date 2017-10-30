@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,8 +64,8 @@ public class LocationDetailActivity extends AppCompatActivity {
     Toolbar toolbarDetail;
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
-   // @BindView(R.id.btnStart)
-   // Button btnStart;
+    @BindView(R.id.btnRoute)
+    Button btnRoute;
 
     TripLocation origin;
     TripLocation dest;
