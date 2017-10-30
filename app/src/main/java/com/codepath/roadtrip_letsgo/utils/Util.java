@@ -211,6 +211,14 @@ public class Util {
         editor.apply();
     }
 
+    public static void deleteOrigin(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(ORIGIN_PARAM);
+        editor.commit();
+    }
+
+
     public static TripLocation getOrigin(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         if(prefs.contains(ORIGIN_PARAM)) {
@@ -231,6 +239,13 @@ public class Util {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(DESTINATION_PARAM, tripJSON);
         editor.apply();
+    }
+
+    public static void deleteDestination(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(DESTINATION_PARAM);
+        editor.commit();
     }
 
     public static TripLocation getDestination(Context context) {
