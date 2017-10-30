@@ -8,8 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.helper.GlideApp;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
+import com.codepath.roadtrip_letsgo.network.YelpClient;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
@@ -41,7 +43,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -50,6 +56,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cz.msebera.android.httpclient.Header;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
 
 public class PlaceDetailActivity extends AppCompatActivity {
     @BindView(R.id.tvName)
@@ -68,6 +79,20 @@ public class PlaceDetailActivity extends AppCompatActivity {
     RatingBar ratingBar;
     @BindView(R.id.tvCategories)
     TextView tvCategories;
+    @BindView(R.id.tvHours)
+    TextView tvHours;
+    @BindView(R.id.ivReviewer)
+    ImageView ivReviewer;
+    @BindView(R.id.tvReviewBody)
+    TextView tvReviewBody;
+    @BindView(R.id.tvReviewDate)
+    TextView tvReviewDate;
+    @BindView(R.id.rbReview)
+    RatingBar rbReview;
+    @BindView(R.id.rlReview)
+    RelativeLayout rlReview;
+    @BindView(R.id.tvReviewLabel)
+    TextView tvReviewLabel;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_layout)
@@ -88,6 +113,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     String shareText;
     Context mContext;
     SupportMapFragment mapFragment;
+    YelpClient yelpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,17 +121,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place_detail);
         ButterKnife.bind(this);
         mContext = getApplicationContext();
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
+        yelpClient = getYelpClient();
         origin = Util.getOrigin(mContext);
         dest = Util.getDestination(mContext);
-
         stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
         ratingBar.setRating((float)(stop.rating));
         tvPhone.setText(stop.phone);
@@ -115,6 +133,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
         tvCategories.setText(stop.getCategoriesStr());
+        setOpeningHours();
+        setUserReview();
         toolbarLayout.setTitle(stop.trip_location.loc_name);
         toolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent));
         toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
@@ -133,6 +153,76 @@ public class PlaceDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    public void setOpeningHours() {
+        yelpClient.getBusinessDetails(stop.getYelp_id(), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("yelp biz details", response.toString());
+                try {
+                    JSONArray hours = response.getJSONArray("hours");
+                    if (hours != null) {
+                        JSONArray openingHrs = hours.getJSONObject(0).getJSONArray("open");
+                        if (openingHrs != null) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i=0; i<openingHrs.length(); i++) {
+                                sb.append(Util.getOpeningHrsStr(openingHrs.getJSONObject(i)));
+                                sb.append("\n");
+                            }
+                            Log.d("tvhours", sb.toString());
+                            tvHours.setText(sb.toString());
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.d("yelp biz details", errorResponse.toString());
+            }
+        });
+    }
+
+
+    public void setUserReview() {
+        yelpClient.getBusinessReviews(stop.getYelp_id(), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("yelp biz reviews", response.toString());
+                try {
+                    JSONArray reviewList = response.getJSONArray("reviews");
+                    if (reviewList.length() > 0) {
+                        JSONObject firstReview = reviewList.getJSONObject(0);
+                        String imageUrl = firstReview.getJSONObject("user").getString("image_url");
+                        String body = firstReview.getString("text");
+                        String date = Util.getRelativeTimeAgo(firstReview.getString("time_created"));
+                        int rating = firstReview.getInt("rating");
+                        GlideApp.with(mContext).load(imageUrl)
+                                .apply(bitmapTransform(new RoundedCornersTransformation(25, 0,
+                                        RoundedCornersTransformation.CornerType.ALL)))
+                                .placeholder(ContextCompat.getDrawable(mContext, R.drawable.com_facebook_profile_picture_blank_square))
+                                .into(ivReviewer);
+                        tvReviewBody.setText(body);
+                        tvReviewDate.setText(date);
+                        rbReview.setRating(rating);
+                    } else {
+                        rlReview.setVisibility(View.GONE);
+                        tvReviewLabel.setVisibility(View.GONE);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.d("yelp biz details", errorResponse.toString());
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,8 +243,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
         }
-
-
     }
 
     private void loadMap(GoogleMap googleMap) {

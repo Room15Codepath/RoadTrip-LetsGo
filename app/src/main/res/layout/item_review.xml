@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/rlReview"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/ivReviewer"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="12dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+
+    <RatingBar
+        android:id="@+id/rbReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="2.0"
+        android:scaleY="0.4"
+        android:scaleX="0.4"
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="-110dp"
+        android:layout_marginBottom="-40dp"
+        android:isIndicator="true"
+        android:layout_alignTop="@+id/ivReviewer"
+        android:layout_toEndOf="@+id/ivReviewer" />
+
+    <TextView
+        android:id="@+id/tvReviewBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/rbReview"
+        android:layout_alignStart="@+id/rbReview"
+        android:text="text" />
+
+    <TextView
+        android:id="@+id/tvReviewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_alignTop="@+id/rbReview"
+        android:layout_marginEnd="20dp"
+        android:layout_alignParentEnd="true"
+        android:text="TextView" />
+
+
+</RelativeLayout>

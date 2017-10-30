@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -22,11 +23,18 @@ import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import java.io.ByteArrayInputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -69,6 +77,61 @@ public class Util {
 
     public static float convertKmToMiles(float km) {
         return new Float(0.621 * km * 0.001).floatValue();
+    }
+
+    public static String getOpeningHrsStr(JSONObject jsonObject) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(getReadableDay(jsonObject.getInt("day")));
+            sb.append(" ");
+            sb.append(getReadableHour(jsonObject.getString("start")));
+            sb.append(" - ");
+            sb.append(getReadableHour(jsonObject.getString("end")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    public static String getReadableDay(int day) {
+        switch(day) {
+            case 0: return "Mon ";
+            case 1: return "Tue ";
+            case 2: return "Wed ";
+            case 3: return "Thu ";
+            case 4: return "Fri ";
+            case 5: return "Sat ";
+            default: return "Sun ";
+        }
+    }
+
+    public static String getReadableHour(String hr) {
+        DateFormat f1 = new SimpleDateFormat("HHmm");
+        try {
+            Date d = f1.parse(hr);
+            DateFormat f2 = new SimpleDateFormat("hh:mm a");
+            return f2.format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return hr;
+        }
+    }
+
+    public static String getRelativeTimeAgo(String rawJsonDate) {
+        String yelpFormat = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat sf = new SimpleDateFormat(yelpFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return relativeDate;
     }
 
     public static void addRoute(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
