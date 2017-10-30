@@ -42,6 +42,7 @@ public class ListViewFragment extends Fragment { // need to add view holder
     LocationAdapter adapter;
     TripLocation origin;
     TripLocation dest;
+    int pos = -1;
 
     Unbinder unbinder;
 
@@ -58,6 +59,11 @@ RecyclerView rvLocations;
         origin = start;
         dest = end;
     }
+
+    public void setPosition(int position) {
+        pos = position;
+    }
+
     //
     public static ListViewFragment newInstance(int inp) {
         ListViewFragment fragment = new ListViewFragment();
@@ -104,6 +110,7 @@ RecyclerView rvLocations;
                     intent.putExtra("end", Parcels.wrap(dest));
 
                     intent.putExtra("location", Parcels.wrap(loc));
+                    intent.putExtra("position", pos);
                     //launch activity
                     startActivity(intent);
                 }

@@ -252,6 +252,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             TripLocation bt = new TripLocation();
             stops.add(bt);
             stops.add(list.get(i));
+            Log.d("DEBUG", "saved stop:" + list.get(i).loc_name);
         }
         TripLocation bt = new TripLocation();
         stops.add(bt);
@@ -586,7 +587,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     public void onAdapterCallback(int position) {
         TripLocation loc =  stops.get(position);
         stops.remove(position);
-        stops.remove(position);
+        stops.remove(position);  //delete empty row which marked as "add a stop"
         adapter.notifyDataSetChanged();
         Util.deleteStop(getApplicationContext(), loc);
         //update map

@@ -158,9 +158,11 @@ public class SearchActivity extends AppCompatActivity {
         fabMenu.setVisibility(View.GONE);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
+        pos = getIntent().getIntExtra("position",-1);  //get stop position in list
         stops = new ArrayList<>();
         mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
         lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
+        lvFragment.setPosition(pos);    //pass stop position to listview
         // parseIntent();
         getOriginAndDestination();
         setupTabs();
@@ -416,6 +418,7 @@ public class SearchActivity extends AppCompatActivity {
                     if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
                     TripStop loc = (TripStop) marker.getTag();
                     intent.putExtra("location", Parcels.wrap(loc));
+                    intent.putExtra("position", pos);
                     startActivity(intent);
 
                 }
