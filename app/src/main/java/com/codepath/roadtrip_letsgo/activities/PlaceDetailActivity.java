@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -84,6 +83,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     TripLocation origin;
     TripLocation dest;
     TripStop stop;
+    int position; //the location in stop list where we may add into.
     GoogleMap map;
     String shareText;
     Context mContext;
@@ -107,6 +107,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         dest = Util.getDestination(mContext);
 
         stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
+        position = getIntent().getIntExtra("position", -1);
         ratingBar.setRating((float)(stop.rating));
         tvPhone.setText(stop.phone);
         tvPrice.setText(stop.price);
@@ -246,10 +247,17 @@ public class PlaceDetailActivity extends AppCompatActivity {
         if (listFromShared.contains(stop.trip_location)) {
             listFromShared.set(listFromShared.indexOf(stop.trip_location), stop.trip_location);
         } else {
-            Util.saveStop(mContext, stop.trip_location);
+            if(position>-1) {
+                Util.saveStop(mContext, stop.trip_location, position);
+            }else {
+                Util.saveStop(mContext, stop.trip_location);
+            }
         }
-        Snackbar.make(fab, R.string.snackbar_add_stop, Snackbar.LENGTH_LONG)
-                .show();
+        //Snackbar.make(fab, R.string.snackbar_add_stop, Snackbar.LENGTH_LONG)
+        //        .show();
+        Intent i = new Intent(PlaceDetailActivity.this, HomeActivity.class);
+        i.putExtra("addstop", true);
+        startActivity(i);
 
     }
 }

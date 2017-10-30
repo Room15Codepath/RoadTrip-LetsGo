@@ -69,6 +69,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
+import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
 
 //import static com.codepath.roadtrip_letsgo.R.id.rvStops;
 
@@ -78,8 +79,8 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected FusedLocationProviderClient mFusedLocationProviderClient;
     Context mContext;
-    Place origin;
-    Place destination;
+    TripLocation origin;
+    TripLocation destination;
     PlaceAutocompleteFragment originFragment;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -119,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     public static final String PERMISSION = "PERMISSION";
     private ItemTouchHelper mItemTouchHelper;
    // StopsRecyclerAdapter adapter;
-   // ArrayList<TripLocation> listFromShared;
+    ArrayList<TripLocation> listFromShared;
     ArrayList<TripLocation> stops;
     TripRecyclerAdapter adapter;
 //    Fragment fmDestination;
@@ -135,11 +136,37 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
            setSupportActionBar(toolbar);
             setTitle("Road Trip");
         }
-        //listFromShared = getStops(getApplicationContext());
+
+        mGeoDataClient = Places.getGeoDataClient(this, null);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mContext = getApplicationContext();
+        parseIntent();
+
+        boolean isAddStop = getIntent().getBooleanExtra("addstop", false);
+        //
        // if (listFromShared != null) {
        //     Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
         //}
         stops = new ArrayList<>();
+        if(isAddStop){
+
+            listFromShared = getStops(getApplicationContext());
+            loadStops(listFromShared);
+            tvHint.setVisibility(View.GONE);
+            android.app.FragmentManager fm = getFragmentManager();
+            PlaceAutocompleteFragment fmDest = (PlaceAutocompleteFragment) fm.findFragmentById(R.id.destination_autocomplete_fragment);
+            PlaceAutocompleteFragment fmOrigin = (PlaceAutocompleteFragment) fm.findFragmentById(R.id.origin_autocomplete_fragment);
+            origin  = Util.getOrigin(getApplicationContext());
+            destination = Util.getDestination(getApplicationContext());
+            fmOrigin.setText(origin.loc_name);
+            fmDest.setText(destination.loc_name);
+
+        }else {
+            Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
+            setupViews();  //disable destination fragment.
+
+        }
         adapter = new TripRecyclerAdapter(getApplicationContext(), stops);
         //rvStops.setHasFixedSize(true);
         rvResults.setAdapter(adapter);
@@ -163,21 +190,20 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
 //        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
 //        mItemTouchHelper = new ItemTouchHelper(callback);
 //        mItemTouchHelper.attachToRecyclerView(rvStops);
-        mGeoDataClient = Places.getGeoDataClient(this, null);
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mContext = getApplicationContext();
         setupOriginListener();
         setupDestListener();
         //setupFindListener();
-        parseIntent();
         setupStartListener();
-        setupViews();
 
         View bottomSheet = findViewById( R.id.bottom_sheet );
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        if (isAddStop){
+            mBottomSheetBehavior.setPeekHeight(60);
+        }else
+        {
+            mBottomSheetBehavior.setPeekHeight(0);  // don't show top title
 
-        mBottomSheetBehavior.setPeekHeight(0);  // show top title
+        }
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -218,6 +244,20 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     public void enableDest(){
         tvHint.setVisibility(View.VISIBLE);
         llBottom.setVisibility(View.VISIBLE);
+    }
+
+    private void loadStops(List<TripLocation> list){
+        Log.d("DEBUG", "saved list size" + list.size());
+        //   ArrayList<Parcelable> pList= getIntent().getParcelableArrayListExtra("stops");
+        for( int i=0; i< list.size();i++) {
+            TripLocation bt = new TripLocation();
+            stops.add(bt);
+            stops.add(list.get(i));
+        }
+        TripLocation bt = new TripLocation();
+        stops.add(bt);
+//        adapter.notifyDataSetChanged();
+        Log.d("DEBUG", "after loading from pref:" + stops.size());
     }
 
 /*    @Override
@@ -304,8 +344,8 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             @Override
             public void onPlaceSelected(Place place) {
                 Log.i("place", "Place: " + place.getName());
-                origin = place;
-                Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
+                origin =  TripLocation.fromPlace(place);
+                Util.saveOrigin(mContext, origin);
                 //enable destination input
                 if (destination == null) {
                     enableDest();
@@ -403,9 +443,9 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                                         if (task.isSuccessful()) {
                                             PlaceBufferResponse retrievedPlaces = task.getResult();
                                             Place currentPlace = retrievedPlaces.get(0);
-                                            origin = currentPlace.freeze();
+                                            origin = TripLocation.fromPlace(currentPlace.freeze());
                                             originFragment.setText(address);
-                                            Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
+                                            Util.saveOrigin(mContext, origin);
                                             Log.i("currentplace", "Place found: " + currentPlace.getName());
                                             retrievedPlaces.release();
                                             //enable map if start/end are ready.
@@ -431,9 +471,9 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                destination = place;
+                destination =  TripLocation.fromPlace(place);
                 Log.i("place", "Place: " + place.getName());
-                Util.saveDestination(mContext, TripLocation.fromPlace(destination));
+                Util.saveDestination(mContext, destination);
 
                 tvHint.setVisibility(View.GONE);
                 btnStart.setEnabled(true);
@@ -473,7 +513,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 StringBuilder sb = new StringBuilder();
                 sb.append("https://www.google.com/maps/dir");
                 sb.append("/" + origin.getAddress());
-                ArrayList<TripLocation> trips = Util.getStops(mContext);
+                ArrayList<TripLocation> trips = getStops(mContext);
                 for (int i=0; i<trips.size(); i++) {
                     sb.append("/" + trips.get(i).getAddress());
                 }
@@ -498,12 +538,12 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
-            ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
+            ArrayList<TripLocation> list = getStops(getApplicationContext());
             if ( list != null && list.size()>0) {
-                TripLocation origin = list.get(0);
+                TripLocation orig = list.get(0);
                 TripLocation dest = list.get(list.size() - 1);
-                Util.addLocationMarkers(origin, dest, this, map);
-                Util.addRoute(origin, dest, this, map);
+                Util.addLocationMarkers(orig, dest, this, map);
+                Util.addRoute(orig, dest, this, map);
 
 /*            BitmapDescriptor defaultMarker =
                     BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
@@ -515,7 +555,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
 */
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 //   builder.include(marker.getPosition());
-                builder.include(new LatLng(origin.lat, origin.lng));
+                builder.include(new LatLng(orig.lat, orig.lng));
                 builder.include(new LatLng(dest.lat, dest.lng));
                 LatLngBounds bounds = builder.build();
 

@@ -216,11 +216,31 @@ public class Util {
         editor.apply();
     }
 
+    public static void saveStop(Context context, TripLocation stop, int position) {
+        ArrayList<TripLocation> trips = getStops(context);
+        trips.add(position,stop);
+        String stopJSON = new Gson().toJson(trips);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(STOP_LIST_PARAM, stopJSON);
+        editor.apply();
+    }
+
 
     public static void deleteStop(Context context, TripLocation stop) {
         Log.d ("DEBUG", "stop="+stop.getLoc_name());
         ArrayList<TripLocation> trips = getStops(context);
         trips.remove(stop);
+        String stopJSON = new Gson().toJson(trips);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(STOP_LIST_PARAM, stopJSON);
+        editor.apply();
+    }
+
+    public static void deleteStop(Context context, int position) {
+        ArrayList<TripLocation> trips = getStops(context);
+        trips.remove(position);
         String stopJSON = new Gson().toJson(trips);
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
