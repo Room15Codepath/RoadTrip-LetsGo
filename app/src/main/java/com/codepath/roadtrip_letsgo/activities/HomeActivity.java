@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
+import com.codepath.roadtrip_letsgo.adapters.MapInfoAdapter;
 import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
@@ -61,10 +62,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,6 +139,9 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 //    Fragment fmDestination;
 //    FragmentManager fm;
 
+    TripLocation originFromShared;
+    TripLocation destFromShared;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,6 +180,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
         }else {
             Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
+            Util.deleteOrigin(mContext);
+            Util.deleteDestination(mContext);
             setupViews();  //disable destination fragment.
 
         }
@@ -207,12 +219,12 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         setupStartListener();
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
+        /*mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 loadMap(googleMap);
             }
-        });
+        });*/
 
     }
 
@@ -317,11 +329,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 //enable destination input
                 if (destination == null) {
                     enableDest();
-                }
-
-                //enable map if start/end are ready.
-                if(origin !=null && destination !=null) {
-                    mBottomSheetBehavior.setPeekHeight(60);
                 }
             }
 
@@ -450,9 +457,15 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 stops.add(stop);
                 adapter.notifyDataSetChanged();
                 //enable map if start/end are ready.
-                if(origin !=null && destination !=null) {
+                /*if(origin !=null && destination !=null) {
+                    mapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
+                            loadMap(googleMap);
+                        }
+                    });
 
-                }
+                }*/
             }
 
             @Override
@@ -493,6 +506,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         });
     }
 
+
+
     private void loadMap(GoogleMap googleMap) {
         map = googleMap;
         if (map != null) {
@@ -501,27 +516,15 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
-            ArrayList<TripLocation> list = getStops(getApplicationContext());
-            if ( list != null && list.size()>0) {
-                TripLocation orig = list.get(0);
-                TripLocation dest = list.get(list.size() - 1);
-                Util.addLocationMarkers(orig, dest, this, map);
-                Util.addRoute(orig, dest, this, map);
-
-/*            BitmapDescriptor defaultMarker =
-                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
-            Marker marker = map.addMarker(new MarkerOptions()
-                    .position(new LatLng(stop.trip_location.lat, stop.trip_location.lng))
-                    .title(stop.trip_location.loc_name)
-                    .snippet(stop.trip_location.address)
-                    .icon(defaultMarker));
-*/
+            ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
+            if (list.isEmpty() && origin != null && destination != null) {
+                Util.addLocationMarkers(origin, destination, mContext, map);
+                Util.addRoute(origin, destination, mContext, map);
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 //   builder.include(marker.getPosition());
-                builder.include(new LatLng(orig.lat, orig.lng));
-                builder.include(new LatLng(dest.lat, dest.lng));
+                builder.include(new LatLng(origin.lat, origin.lng));
+                builder.include(new LatLng(destination.lat, destination.lng));
                 LatLngBounds bounds = builder.build();
-
                 int width = getResources().getDisplayMetrics().widthPixels;
                 int height = getResources().getDisplayMetrics().heightPixels;
                 int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
@@ -529,21 +532,59 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 // Zoom in the Google Map
                 map.animateCamera(cu);
             }
+
+
+            if ( list != null && list.size()>0) {
+                Log.d ("List", "list size="+list.size());
+                putMarkers(map, list);
+                drawRoute(map, list);
+            }
+
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void putMarkers(GoogleMap map, List<TripLocation> list){
+        Toast.makeText(this, "putMarkers", Toast.LENGTH_SHORT).show();
+        BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
+        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
+        for (int i = 0; i<=list.size()-1;i++) {
+            Log.d ("List", "list="+list.get(i).getLoc_name());
+            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+            Marker marker = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(list.get(i).lat, list.get(i).lng))
+                    .title(list.get(i).loc_name)
+                    .snippet(list.get(i).address)
+                    .icon(defaultMarker));
+            map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
+            marker.setTag(list.get(i));
+        }
 
     }
 
     public void drawRoute(GoogleMap map, List<TripLocation> list){
-            for( int i = 0; i<list.size()-1;i++) {
-                TripLocation start = list.get(i);
-                TripLocation next = list.get(i+1);
-                Util.addRoute(start, next, HomeActivity.this, map);
-            }
+        ArrayList<LatLng> directionPoint = new ArrayList<>();
+        directionPoint.add(new LatLng(origin.lat, origin.lng));
+        for (int i = 0; i <= list.size()-1; i++) {
+            directionPoint.add(new LatLng(list.get(i).lat, list.get(i).lng));
+        }
+        directionPoint.add(new LatLng(destination.lat, destination.lng));
+
+        PolylineOptions rectLine = new PolylineOptions().width(7).color(
+                ContextCompat.getColor(this, R.color.colorPrimary));
+        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+        for (int i = 0; i <= directionPoint.size()-1; i++) {
+            rectLine.add(directionPoint.get(i));
+            latLngBuilder.include(directionPoint.get(i));
+        }
+        map.addPolyline(rectLine);
+        int size = getResources().getDisplayMetrics().widthPixels;
+        LatLngBounds latLngBounds = latLngBuilder.build();
+        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
+        map.moveCamera(track);
     }
 
     // call back from recyclerView adapter for deleting stop.
@@ -554,6 +595,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         adapter.notifyDataSetChanged();
         Util.deleteStop(getApplicationContext(), loc);
         //update map
+        map.clear();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
