@@ -26,10 +26,17 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
     private final int STOP =0, BUTTON = 1;
 
     Context mContext;
+    private AdapterCallback mAdapterCallback;
 
     public TripRecyclerAdapter(Context context, List<TripLocation> items) {
         this.mContext = context;
         this.items = items;
+
+        try {
+            this.mAdapterCallback = ((AdapterCallback) context);
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement AdapterCallback.");
+        }
     }
 
     private Context getContext() {
@@ -80,6 +87,18 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
             case STOP:
                 ViewHolder1 vh1 = (ViewHolder1) holder;
                 configureViewHolder1(vh1, position);
+                vh1.tvRemove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        try {
+                            mAdapterCallback.onAdapterCallback(position);
+                        } catch (ClassCastException exception) {
+                            // do something
+                        }
+                    }
+                });
+
                 break;
             case BUTTON:
                 ViewHolder2 vh2 = (ViewHolder2) holder;
@@ -116,12 +135,6 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
             // as this ensures that the imageView field is populated.
             super(view);
             ButterKnife.bind(this, view);
-            tvRemove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d("DEBUG", "remove button clicked at " + getAdapterPosition());
-                }
-            });
         }
 
         public TextView getTvName() {
@@ -158,6 +171,10 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
         public void setTvAdd(TextView tvAdd) {
             this.tvAdd = tvAdd;
         }
+    }
+
+    public static interface AdapterCallback {
+        void onAdapterCallback(int position);
     }
 
 }

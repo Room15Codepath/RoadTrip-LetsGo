@@ -36,7 +36,6 @@ import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
-import com.codepath.roadtrip_letsgo.helper.OnStartDragListener;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.common.api.Status;
@@ -73,7 +72,7 @@ import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
 
 //import static com.codepath.roadtrip_letsgo.R.id.rvStops;
 
-public class HomeActivity extends AppCompatActivity implements OnStartDragListener {
+public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapter.AdapterCallback {
 
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
@@ -167,7 +166,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             setupViews();  //disable destination fragment.
 
         }
-        adapter = new TripRecyclerAdapter(getApplicationContext(), stops);
+        adapter = new TripRecyclerAdapter(HomeActivity.this, stops);
         //rvStops.setHasFixedSize(true);
         rvResults.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -525,10 +524,10 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         });
     }
 
-    @Override
-    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
-        mItemTouchHelper.startDrag(viewHolder);
-    }
+  //  @Override
+  //  public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+  //      mItemTouchHelper.startDrag(viewHolder);
+  //  }
 
     private void loadMap(GoogleMap googleMap) {
         map = googleMap;
@@ -583,4 +582,11 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
             }
     }
 
+    public void onAdapterCallback(int position) {
+        TripLocation loc =  stops.get(position);
+        stops.remove(position);
+        stops.remove(position);
+        adapter.notifyDataSetChanged();
+        Util.deleteStop(getApplicationContext(), loc);
+    }
 }
