@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/iv_stop_type"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
@@ -22,7 +22,7 @@
 
     <RelativeLayout
         android:id="@+id/stop_info"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/activity_vertical_margin_half"
@@ -34,8 +34,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="17sp"
+            tools:text="Name"
             android:singleLine="true"
+            android:layout_marginBottom="5dp"
             android:ellipsize="end"
             android:textColor="@color/colorPrimaryDark" />
 
@@ -44,30 +46,73 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:layout_toRightOf="@+id/tvName"
+            tools:text="mi"
+            android:layout_alignParentEnd="true"
             android:layout_marginLeft="10dp"
             android:layout_alignBaseline="@+id/tvName"
-            android:textStyle="italic"
-            android:textSize="14sp"/>
+            android:textSize="15sp"/>
+
+        <RatingBar
+            android:id="@+id/rbRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:rating="2.0"
+            android:scaleY="0.4"
+            android:scaleX="0.4"
+            android:transformPivotX="0dp"
+            android:transformPivotY="0dp"
+            android:layout_marginRight="-130dp"
+            android:layout_marginBottom="-40dp"
+            android:isIndicator="true"
+            android:layout_below="@id/tvName"
+            />
+
+        <TextView
+            android:id="@+id/tvReviewCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            tools:text="Reviews"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:layout_toRightOf="@+id/rbRating"
+            />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            tools:text="N/A"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:layout_alignParentEnd="true"
+            />
 
         <TextView
             android:id="@+id/tvAddress"
+            tools:text="address"
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:layout_gravity="left"
-            android:layout_below="@+id/tvName"
-            android:textStyle="italic"
-            android:textSize="16sp" />
+            android:layout_below="@+id/rbRating"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
     </RelativeLayout>
 
-    <ImageButton
-        android:id="@+id/ibAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/stop_info"
-        android:layout_marginTop="5dp"
-        android:layout_weight="0.2"
-        android:background="@android:color/transparent"
-        android:tint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_add_location" />
+    <!--<ImageButton-->
+        <!--android:id="@+id/ibAdd"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toRightOf="@+id/stop_info"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:layout_weight="0.2"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--android:tint="@color/colorAccent"-->
+        <!--app:srcCompat="@drawable/ic_add_location" />-->
 </RelativeLayout>

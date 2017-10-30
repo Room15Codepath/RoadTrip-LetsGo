@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -215,13 +214,16 @@ public class PlaceDetailActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    rlReview.setVisibility(View.GONE);
+                    tvReviewLabel.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
                 Log.d("yelp biz details", errorResponse.toString());
+                rlReview.setVisibility(View.GONE);
+                tvReviewLabel.setVisibility(View.GONE);
             }
         });
     }

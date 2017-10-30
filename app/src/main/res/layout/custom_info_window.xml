@@ -1,7 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
     android:background="#FFFFFF"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="10dp"
     android:orientation="vertical" >
 
@@ -10,20 +11,76 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
+        android:text="Name"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:singleLine="true"
         android:ellipsize="end"
         android:maxLines="1" />
 
+    <!--<TextView-->
+        <!--android:id="@+id/tvMiles"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="right"-->
+        <!--android:text="mi"-->
+        <!--android:layout_toRightOf="@+id/tv_info_window_title"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:layout_alignBaseline="@+id/tv_info_window_title"-->
+        <!--android:textSize="15sp"/>-->
+
+    <RatingBar
+        android:id="@+id/rbRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="2.0"
+        android:scaleY="0.4"
+        android:scaleX="0.4"
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp"
+        android:layout_marginRight="-130dp"
+        android:layout_marginBottom="-40dp"
+        android:isIndicator="true"
+        android:layout_below="@id/tv_info_window_title"
+        />
+
     <TextView
-        android:id="@+id/tv_info_window_description"
+        android:id="@+id/tvReviewCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Reviews"
+        android:textSize="15sp"
+        android:textColor="@android:color/black"
+        android:layout_toRightOf="@+id/rbRating"
+        />
+
+    <TextView
+        android:id="@+id/tvAddress"
+        tools:text="address"
+        android:layout_marginTop="5dp"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="left"
         android:singleLine="true"
         android:ellipsize="end"
-        android:textColor="@color/colorPrimaryDark"
-        android:maxLines="1"
-        android:text="Hours" />
+        android:layout_below="@+id/rbRating"
+        android:textColor="@android:color/black"
+        android:textSize="15sp" />
 
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="N/A"
+        android:textSize="15sp"
+        android:textColor="@android:color/black"
+        android:layout_toRightOf="@id/tv_info_window_title"
+        />
+
+
+</RelativeLayout>
