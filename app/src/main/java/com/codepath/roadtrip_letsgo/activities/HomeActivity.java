@@ -1,5 +1,7 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,8 +9,10 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
@@ -21,10 +25,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -200,36 +206,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         //setupFindListener();
         setupStartListener();
 
-        View bottomSheet = findViewById( R.id.bottom_sheet );
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        if (isAddStop){
-            mBottomSheetBehavior.setPeekHeight(60);
-        }else
-        {
-            mBottomSheetBehavior.setPeekHeight(0);  // don't show top title
-
-        }
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // React to state change
-                Log.d("DEBUG", "state change: " + newState);
-                TextView tvTitle = bottomSheet.findViewById(R.id.bsTitle);
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    tvTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward, 0, 0, 0);
-                }
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    tvTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward, 0, 0, 0);
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                // React to dragging events
-                Log.d("DEBUG", "slide : " + slideOffset);
-            }
-        });
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -266,24 +242,10 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         Log.d("DEBUG", "after loading from pref:" + stops.size());
     }
 
-/*    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("home", "onStart()");
-   //     listFromShared = getStops(getApplicationContext());
-   //     Log.d("home", "listFromShared="+listFromShared.toString());
-   //     adapter.customNotifyDataSetChanged(listFromShared);
-
-    }
-*/
     public void parseIntent() {
         Bundle bundle = getIntent().getExtras();
         userId = bundle.getString(USER);
         permission = bundle.getBoolean(PERMISSION);
-        //  rating = bundle.getFloat("rating");
-        //  range = bundle.getFloat("range");
-
-        //Log.d("DEBUG:", "bundle="+mode+rating+range);
     }
 
     @Override
@@ -489,7 +451,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 adapter.notifyDataSetChanged();
                 //enable map if start/end are ready.
                 if(origin !=null && destination !=null) {
-                    mBottomSheetBehavior.setPeekHeight(60);
+
                 }
             }
 
@@ -530,11 +492,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             }
         });
     }
-
-  //  @Override
-  //  public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
-  //      mItemTouchHelper.startDrag(viewHolder);
-  //  }
 
     private void loadMap(GoogleMap googleMap) {
         map = googleMap;
@@ -597,5 +554,37 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         adapter.notifyDataSetChanged();
         Util.deleteStop(getApplicationContext(), loc);
         //update map
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void onShowMap(MenuItem item) {
+        final View mapContainer = findViewById(R.id.map_container);
+
+        Display mdisp = getWindowManager().getDefaultDisplay();
+        int maxX= mdisp.getWidth();
+        float radius = Math.max(mapContainer.getWidth(), mapContainer.getHeight()) * 2.0f;
+
+        if (mapContainer.getVisibility() == View.INVISIBLE) {
+            mapContainer.setVisibility(View.VISIBLE);
+            ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(3000).start();
+            if(origin !=null && destination !=null) {
+                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        loadMap(googleMap);
+                    }
+                });
+            }
+        } else {
+            Animator reveal = ViewAnimationUtils.createCircularReveal(
+                    mapContainer, maxX, 0, radius, 0).setDuration(3000);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mapContainer.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
+        }
     }
 }
