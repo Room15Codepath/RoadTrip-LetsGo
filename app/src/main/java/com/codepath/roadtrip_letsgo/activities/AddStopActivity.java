@@ -121,7 +121,7 @@ public class AddStopActivity extends AppCompatActivity {
     }
     public void parseIntent() {
         TripLocation stop = Parcels.unwrap(getIntent().getParcelableExtra("stop"));
-        Log.d("DEBUG", "new stop:" + stop.loc_name);
+//        Log.d("DEBUG", "new stop:" + stop.loc_name);
  //       dest = Parcels.unwrap(getIntent().getParcelableExtra("destination"));
         int pos = getIntent().getIntExtra("position", -1);
         if(pos>=0){

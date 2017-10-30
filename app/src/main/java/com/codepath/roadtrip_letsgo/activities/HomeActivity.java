@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,15 +26,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.adapters.StopsRecyclerAdapter;
+import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
+import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
+import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
 import com.codepath.roadtrip_letsgo.helper.OnStartDragListener;
-import com.codepath.roadtrip_letsgo.helper.SimpleItemTouchHelperCallback;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.common.api.Status;
@@ -67,7 +69,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
-import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
+
+//import static com.codepath.roadtrip_letsgo.R.id.rvStops;
 
 public class HomeActivity extends AppCompatActivity implements OnStartDragListener {
 
@@ -78,10 +81,10 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     Place origin;
     Place destination;
     PlaceAutocompleteFragment originFragment;
-    @BindView(R.id.toolbar_home)
-    Toolbar toolbarHome;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.app_bar_layout)
-    AppBarLayout appBarLayout;
+   AppBarLayout appBarLayout;
 //    @BindView(R.id.container_home)
 //    FrameLayout containerFragments;
     @BindView(R.id.search_container)
@@ -89,13 +92,20 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     @BindView(R.id.btnStart)
     Button btnStart;
 
-  //  @BindView(R.id.tvFrom)
+    @BindView(R.id.labelDestination)
+    TextView lDestination;
+
+    @BindView(R.id.tvHint)
+    TextView tvHint;
+
+    @BindView(R.id.llBottom)
+    LinearLayout llBottom;
   //  PlacesAutocompleteTextView tvFrom;
     //@BindView(R.id.tvTo)
    // PlacesAutocompleteTextView tvTo;
 
-    @BindView(R.id.rvStops)
-    RecyclerView rvStops;
+    @BindView(R.id.rvResults)
+    RecyclerView rvResults; //rvStops;
 
     private BottomSheetBehavior mBottomSheetBehavior;
     SupportMapFragment mapFragment;
@@ -108,8 +118,12 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     public static final String USER = "USER";
     public static final String PERMISSION = "PERMISSION";
     private ItemTouchHelper mItemTouchHelper;
-    StopsRecyclerAdapter adapter;
-    ArrayList<TripLocation> listFromShared;
+   // StopsRecyclerAdapter adapter;
+   // ArrayList<TripLocation> listFromShared;
+    ArrayList<TripLocation> stops;
+    TripRecyclerAdapter adapter;
+//    Fragment fmDestination;
+//    FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,24 +131,38 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         Log.d("home", "onCreate()");
-        if (toolbarHome != null) {
-            setSupportActionBar(toolbarHome);
+        if (toolbar != null) {
+           setSupportActionBar(toolbar);
             setTitle("Road Trip");
         }
-        listFromShared = getStops(getApplicationContext());
-        if (listFromShared != null) {
-            Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
-        }
-
-        adapter = new StopsRecyclerAdapter(getApplicationContext(), this);
-        rvStops.setHasFixedSize(true);
-        rvStops.setAdapter(adapter);
+        //listFromShared = getStops(getApplicationContext());
+       // if (listFromShared != null) {
+       //     Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
+        //}
+        stops = new ArrayList<>();
+        adapter = new TripRecyclerAdapter(getApplicationContext(), stops);
+        //rvStops.setHasFixedSize(true);
+        rvResults.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvStops.setLayoutManager(linearLayoutManager);
+        rvResults.setLayoutManager(linearLayoutManager);
+        ItemClickSupport.addTo(rvResults).setOnItemClickListener(
+                (recyclerView, position, v) -> {
+                    //create intent
+                    if(position%2 ==0) {
+                        Intent i = new Intent(getApplicationContext(), SearchActivity.class);
+                     //   i.putExtra("origin", Parcels.wrap(origin));
+                   //     i.putExtra("destination", Parcels.wrap(destination));
+                   //     i.putExtra("stopType", stopType);
+                        i.putExtra("position", position/2);
+                        //launch activity
+                        startActivity(i);
+                    }
+                }
+        );
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(rvStops);
+//        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+//        mItemTouchHelper = new ItemTouchHelper(callback);
+//        mItemTouchHelper.attachToRecyclerView(rvStops);
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -144,10 +172,12 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         //setupFindListener();
         parseIntent();
         setupStartListener();
+        setupViews();
+
         View bottomSheet = findViewById( R.id.bottom_sheet );
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-        mBottomSheetBehavior.setPeekHeight(60);  // show top title
+        mBottomSheetBehavior.setPeekHeight(0);  // show top title
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -179,17 +209,27 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
+    public void setupViews(){
+        tvHint.setVisibility(View.INVISIBLE);
+        llBottom.setVisibility(View.INVISIBLE);
+        btnStart.setEnabled(false);
+    }
 
-    @Override
+    public void enableDest(){
+        tvHint.setVisibility(View.VISIBLE);
+        llBottom.setVisibility(View.VISIBLE);
+    }
+
+/*    @Override
     protected void onStart() {
         super.onStart();
         Log.d("home", "onStart()");
-        listFromShared = getStops(getApplicationContext());
-        Log.d("home", "listFromShared="+listFromShared.toString());
-        adapter.customNotifyDataSetChanged(listFromShared);
+   //     listFromShared = getStops(getApplicationContext());
+   //     Log.d("home", "listFromShared="+listFromShared.toString());
+   //     adapter.customNotifyDataSetChanged(listFromShared);
 
     }
-
+*/
     public void parseIntent() {
         Bundle bundle = getIntent().getExtras();
         userId = bundle.getString(USER);
@@ -211,8 +251,19 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+
+            TravelModeFragment travelModeFragment;
+            FragmentManager fm = getSupportFragmentManager();
+            travelModeFragment = TravelModeFragment.newInstance();
+            travelModeFragment.show(fm, "fragment_travelmode");
+        }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private void setupOriginListener() {
         originFragment = (PlaceAutocompleteFragment)
@@ -255,6 +306,15 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 Log.i("place", "Place: " + place.getName());
                 origin = place;
                 Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
+                //enable destination input
+                if (destination == null) {
+                    enableDest();
+                }
+
+                //enable map if start/end are ready.
+                if(origin !=null && destination !=null) {
+                    mBottomSheetBehavior.setPeekHeight(60);
+                }
             }
 
             @Override
@@ -269,6 +329,7 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                         originFragment.setText("");
                         view.setVisibility(View.GONE);
                         Util.saveOrigin(mContext, null);
+                        //disable map
                     }
                 });
     }
@@ -347,6 +408,8 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                                             Util.saveOrigin(mContext, TripLocation.fromPlace(origin));
                                             Log.i("currentplace", "Place found: " + currentPlace.getName());
                                             retrievedPlaces.release();
+                                            //enable map if start/end are ready.
+
                                         } else {
                                             Log.e("currentplace", "Place not found.");
                                         }
@@ -371,6 +434,17 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                 destination = place;
                 Log.i("place", "Place: " + place.getName());
                 Util.saveDestination(mContext, TripLocation.fromPlace(destination));
+
+                tvHint.setVisibility(View.GONE);
+                btnStart.setEnabled(true);
+                //add empty stop into list to indicate stops are enabled
+                TripLocation stop = new TripLocation();
+                stops.add(stop);
+                adapter.notifyDataSetChanged();
+                //enable map if start/end are ready.
+                if(origin !=null && destination !=null) {
+                    mBottomSheetBehavior.setPeekHeight(60);
+                }
             }
 
             @Override
@@ -386,27 +460,10 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
                         destFragment.setText("");
                         view.setVisibility(View.GONE);
                         Util.saveDestination(mContext, null);
+                        // disable map
                     }
                 });
     }
-
-    /*private void setupFindListener() {
-        btnFind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(origin ==null || destination == null) return;
-                ArrayList<TripLocation> list = new ArrayList<>();
-                list.add(TripLocation.fromPlace(origin));
-                list.add(TripLocation.fromPlace(destination));
-                Util.saveStops(getApplicationContext(),list);
-                Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-//                i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-//                i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
-                //i.putExtra("stopType", sStopType.getSelectedItem().toString());
-                startActivity(i);
-            }
-        });
-    }*/
 
     private void setupStartListener() {
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -431,23 +488,6 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
-    }
-
-    public void onAddStop(MenuItem item) {
-        if (origin == null || destination == null) {
-            Snackbar.make(toolbarHome, R.string.snackbar_home, Snackbar.LENGTH_LONG)
-                    .show();
-            return;
-        }
-        ArrayList<TripLocation> list = new ArrayList<>();
-        list.add(TripLocation.fromPlace(origin));
-        list.add(TripLocation.fromPlace(destination));
-        //Util.saveStops(getApplicationContext(),list);
-        Intent i = new Intent(HomeActivity.this, SearchActivity.class);
-        //i.putExtra("origin", Parcels.wrap(TripLocation.fromPlace(origin)));
-        //i.putExtra("destination", Parcels.wrap(TripLocation.fromPlace(destination)));
-        //i.putExtra("stopType", sStopType.getSelectedItem().toString());
-        startActivity(i);
     }
 
     private void loadMap(GoogleMap googleMap) {
@@ -491,9 +531,16 @@ public class HomeActivity extends AppCompatActivity implements OnStartDragListen
         }
     }
 
+    public void putMarkers(GoogleMap map, List<TripLocation> list){
+
+    }
+
     public void drawRoute(GoogleMap map, List<TripLocation> list){
-
-
+            for( int i = 0; i<list.size()-1;i++) {
+                TripLocation start = list.get(i);
+                TripLocation next = list.get(i+1);
+                Util.addRoute(start, next, HomeActivity.this, map);
+            }
     }
 
 }

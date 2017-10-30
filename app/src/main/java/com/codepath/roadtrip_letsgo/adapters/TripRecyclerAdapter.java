@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -42,7 +43,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        if(position%2 ==0)
+        if(position%2 ==1)
         {
             return STOP;
         } else {
@@ -108,12 +109,19 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
     public static class ViewHolder1 extends RecyclerView.ViewHolder {
         @BindView(R.id.tvName) public TextView tvName;
         @BindView(R.id.tvAddr) public TextView tvAddr;
+        @BindView(R.id.btnRemove) public ImageButton tvRemove;
 
         public ViewHolder1(View view) {
             // Very important to call the parent constructor
             // as this ensures that the imageView field is populated.
             super(view);
             ButterKnife.bind(this, view);
+            tvRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("DEBUG", "remove button clicked at " + getAdapterPosition());
+                }
+            });
         }
 
         public TextView getTvName() {
