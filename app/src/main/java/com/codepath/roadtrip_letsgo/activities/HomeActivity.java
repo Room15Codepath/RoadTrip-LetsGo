@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -168,6 +169,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         }
         adapter = new TripRecyclerAdapter(HomeActivity.this, stops);
         //rvStops.setHasFixedSize(true);
+
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(rvResults.getContext(), DividerItemDecoration.VERTICAL);
+        rvResults.addItemDecoration(itemDecoration);
+
         rvResults.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvResults.setLayoutManager(linearLayoutManager);

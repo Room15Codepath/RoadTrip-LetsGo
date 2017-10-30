@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -128,7 +127,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
     public static class ViewHolder1 extends RecyclerView.ViewHolder {
         @BindView(R.id.tvName) public TextView tvName;
         @BindView(R.id.tvAddr) public TextView tvAddr;
-        @BindView(R.id.btnRemove) public ImageButton tvRemove;
+        @BindView(R.id.tvRemove) public TextView tvRemove;
 
         public ViewHolder1(View view) {
             // Very important to call the parent constructor
