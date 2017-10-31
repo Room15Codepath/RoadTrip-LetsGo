@@ -142,7 +142,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     TripRecyclerAdapter adapter;
 //    Fragment fmDestination;
 //    FragmentManager fm;
-
+    MenuItem mapMenu;
     TripLocation originFromShared;
     TripLocation destFromShared;
 
@@ -223,12 +223,12 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         setupStartListener();
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        /*mapFragment.getMapAsync(new OnMapReadyCallback() {
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 loadMap(googleMap);
             }
-        });*/
+        });
 
     }
 
@@ -269,6 +269,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         // Inflate the options menu from XML
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
+        mapMenu = menu.findItem(R.id.action_show_map);
+        mapMenu.setEnabled(false);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -454,13 +456,16 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
                 tvHint.setVisibility(View.GONE);
                 btnStart.setEnabled(true);
+                mapMenu.setEnabled(true);
                 //add empty stop into list to indicate stops are enabled
                 if(stops.size()==0) {
                     TripLocation stop = new TripLocation();
                     stops.add(stop);
                     adapter.notifyDataSetChanged();
                 }
+
                 //enable map if start/end are ready.
+                loadMap(map);
                 /*if(origin !=null && destination !=null) {
                     mapFragment.getMapAsync(new OnMapReadyCallback() {
                         @Override
@@ -516,7 +521,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         map = googleMap;
         if (map != null) {
             // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
@@ -647,18 +652,20 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
         if (mapContainer.getVisibility() == View.INVISIBLE) {
             mapContainer.setVisibility(View.VISIBLE);
-            ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(3000).start();
-            if(origin !=null && destination !=null) {
+            ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(1000).start();
+            //loadMap(map);
+
+            /*if(origin !=null && destination !=null) {
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
                         loadMap(googleMap);
                     }
                 });
-            }
+            }*/
         } else {
             Animator reveal = ViewAnimationUtils.createCircularReveal(
-                    mapContainer, maxX, 0, radius, 0).setDuration(3000);
+                    mapContainer, maxX, 0, radius, 0).setDuration(1000);
             reveal.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -667,6 +674,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             });
             reveal.start();
         }
+        btnStart.bringToFront();
     }
 
     @Override
