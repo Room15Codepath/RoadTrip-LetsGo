@@ -86,6 +86,7 @@ import cz.msebera.android.httpclient.Header;
 
 import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
 import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
+import static com.codepath.roadtrip_letsgo.utils.Util.getTravelMode;
 
 //import static com.codepath.roadtrip_letsgo.R.id.rvStops;
 
@@ -169,10 +170,10 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         mContext = getApplicationContext();
         parseIntent();
 
-        boolean isAddStop = getIntent().getBooleanExtra("addstop", false);
+        //boolean isAddStop = getIntent().getBooleanExtra("addstop", false);
 
         stops = new ArrayList<>();
-        if(isAddStop){
+    /*    if(isAddStop){
 
             listFromShared = getStops(getApplicationContext());
             loadStops(listFromShared);
@@ -185,13 +186,13 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             fmOrigin.setText(origin.loc_name);
             fmDest.setText(destination.loc_name);
 
-        }else {
+        }else {*/
             Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
             Util.deleteOrigin(mContext);
             Util.deleteDestination(mContext);
             setupViews();  //disable destination fragment.
 
-        }
+        //}
         adapter = new TripRecyclerAdapter(HomeActivity.this, stops);
         //rvStops.setHasFixedSize(true);
 //
@@ -504,15 +505,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
                 //enable map if start/end are ready.
                 updateMap(map);
-                /*if(origin !=null && destination !=null) {
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            loadMap(googleMap);
-                        }
-                    });
 
-                }*/
             }
 
             @Override
@@ -649,7 +642,9 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     }
     private void addMultipleRoute(LatLng point1, LatLng point2) {
         final GMapV2Direction md = new GMapV2Direction();
-        md.getDocument(point1, point2, GMapV2Direction.MODE_DRIVING,
+        String mode = getTravelMode(mContext);
+        Log.d("DEBUG", "in mode: " + mode);
+        md.getDocument(point1, point2, mode,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
