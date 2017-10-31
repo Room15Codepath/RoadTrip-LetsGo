@@ -32,7 +32,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -294,7 +293,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         originFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.origin_autocomplete_fragment);
         originFragment.setHint("Enter Origin");
-        ((EditText)originFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14.0f);
 
         if (ContextCompat.checkSelfPermission(HomeActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -446,7 +444,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         PlaceAutocompleteFragment destFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.destination_autocomplete_fragment);
         destFragment.setHint("Enter Destination");
-       ((EditText)destFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14.0f);
         destFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
