@@ -40,25 +40,26 @@
             android:layout_height="wrap_content"
             tools:showIn="@layout/activity_home">
 
-            <TextView
-                android:id="@+id/labelStart"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginLeft="2sp"
-                android:layout_marginTop="2sp"
-                android:gravity="end"
-                android:textSize="20sp"
-                android:text="From" />
 
-            <fragment
+                <TextView
+                    android:id="@+id/labelStart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textSize="15sp"
+                    android:text="From" />
+
+                <fragment
                     android:id="@+id/origin_autocomplete_fragment"
                     android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                     android:layout_width="match_parent"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_toEndOf="@id/labelStart"
+                    android:layout_below="@id/labelStart"
                     android:textSize="20sp"
-                    android:layout_height="30dp" />
+                    android:layout_height="40dp" />
+
 
             <!--android.support.v7.widget.RecyclerView
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -69,7 +70,7 @@
                 /-->
             <RelativeLayout
                 android:id="@+id/rlMiddle"
-                android:layout_below="@id/labelStart"
+                android:layout_below="@+id/origin_autocomplete_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -77,8 +78,12 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:text="Where are you going?"
-                    android:textSize="20sp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="23sp"
                     android:id="@+id/tvHint"/>
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvResults"
                     android:layout_width="match_parent"
@@ -90,25 +95,23 @@
             <LinearLayout
                 android:id="@+id/llBottom"
                 android:layout_below="@id/rlMiddle"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/labelDestination"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:gravity="end"
-                    android:textSize="20sp"
-                    android:layout_marginTop="2sp"
-                    android:layout_marginLeft="2sp"
-                    android:layout_weight="9"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textSize="15sp"
                     android:text="To"
                     />
                 <fragment
                     android:id="@+id/destination_autocomplete_fragment"
                     android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
@@ -121,18 +124,32 @@
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:layout_alignParentBottom="true">
 
         <Button
             android:id="@+id/btnStart"
             style="@style/Widget.AppCompat.Button.Colored"
+            android:stateListAnimator="@null"
             android:layout_width="match_parent"
+            android:layout_alignParentEnd="true"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:padding="20dp"
+            android:layout_margin="5dp"
             android:text="Start Trip"
-            android:textSize="16sp" />
+            android:textSize="17sp" />
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView"-->
+            <!--android:layout_width="35dp"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:tint="@color/colorAccent"-->
+            <!--app:srcCompat="@drawable/ic_map" />-->
 
     </RelativeLayout>
     <FrameLayout
