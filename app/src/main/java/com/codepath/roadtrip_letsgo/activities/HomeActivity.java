@@ -39,7 +39,6 @@ import android.widget.Toast;
 
 import com.codepath.roadtrip_letsgo.Manifest;
 import com.codepath.roadtrip_letsgo.R;
-import com.codepath.roadtrip_letsgo.adapters.MapInfoAdapter;
 import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
@@ -566,8 +565,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             map.getUiSettings().setZoomControlsEnabled(true);
             ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
             if (list.isEmpty() && origin != null && destination != null) {
-                Util.addLocationMarkers(origin, destination, mContext, map);
-                Util.addRoute(origin, destination, mContext, map);
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 //   builder.include(marker.getPosition());
                 builder.include(new LatLng(origin.lat, origin.lng));
@@ -579,6 +576,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
                 // Zoom in the Google Map
                 map.moveCamera(cu);
+                Util.addRoute(origin, destination, mContext, map);
+                Util.addLocationMarkers(origin, destination, mContext, map);
             }
 
 
@@ -608,8 +607,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                     .title(list.get(i).loc_name)
                     .snippet(list.get(i).address)
                     .icon(defaultMarker));
-            map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
-            marker.setTag(list.get(i));
+         //   map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
+        //    marker.setTag(list.get(i));
         }
 
     }
@@ -644,7 +643,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         adapter.notifyDataSetChanged();
         Util.deleteStop(getApplicationContext(), loc);
         //update map
-//        map.clear();
+        map.clear();
+        updateMap(map);
 
     }
     private void addMultipleRoute(LatLng point1, LatLng point2) {
@@ -693,14 +693,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(1000).start();
             mapMenu.setIcon(getResources().getDrawable(R.drawable.ic_list));
 
-            /*if(origin !=null && destination !=null) {
-                mapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        loadMap(googleMap);
-                    }
-                });
-            }*/
         } else {
             Animator reveal = ViewAnimationUtils.createCircularReveal(
                     mapContainer, maxX, 0, radius, 0).setDuration(1000);
@@ -727,9 +719,31 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             adapter.notifyDataSetChanged();
 
             Log.d("DEBUG", "stop added.");
+            //update map
+            map.clear();
+            updateMap(map);
+
         }else {
             Log.d("DEBUG", "no stop.");
         }
         super.onNewIntent(intent);
+    }
+
+    public void updateMap( GoogleMap map){
+       // Util.addRoute(origin, destination, mContext, map);
+        map.clear();
+        Util.addLocationMarkers(origin, destination, mContext, map);
+
+        ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
+
+        if ( !list.isEmpty() && origin != null && destination != null) {
+            putMarkers(map, list);
+            list.add(0,origin);
+            list.add(destination);
+            Log.d ("List", "list size="+list.size());
+            //map.clear();
+            drawRoute(map, list);
+        }
+
     }
 }
