@@ -534,7 +534,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
                 // Zoom in the Google Map
-                map.animateCamera(cu);
+                map.moveCamera(cu);
             }
 
 
