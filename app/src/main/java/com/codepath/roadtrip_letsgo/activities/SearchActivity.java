@@ -28,8 +28,8 @@ import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.MapInfoAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SmartFragmentStatePagerAdapter;
+import com.codepath.roadtrip_letsgo.fragments.FilterFragment;
 import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
-import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.models.InfoWindow;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
@@ -330,10 +330,10 @@ public class SearchActivity extends AppCompatActivity {
         btnFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TravelModeFragment travelModeFragment;
+                FilterFragment filterFragment;
                 FragmentManager fm = getSupportFragmentManager();
-                travelModeFragment = TravelModeFragment.newInstance();
-                travelModeFragment.show(fm, "fragment_travelmode");
+                filterFragment = FilterFragment.newInstance();
+                filterFragment.show(fm, "fragment_travelmode");
             }
         });
     }
@@ -583,10 +583,10 @@ public class SearchActivity extends AppCompatActivity {
 */
         if (id == R.id.action_settings) {
 
-            TravelModeFragment travelModeFragment;
+            FilterFragment filterFragment;
             FragmentManager fm = getSupportFragmentManager();
-            travelModeFragment = TravelModeFragment.newInstance();
-            travelModeFragment.show(fm, "fragment_travelmode");
+            filterFragment = FilterFragment.newInstance();
+            filterFragment.show(fm, "fragment_travelmode");
         }
 
         return super.onOptionsItemSelected(item);

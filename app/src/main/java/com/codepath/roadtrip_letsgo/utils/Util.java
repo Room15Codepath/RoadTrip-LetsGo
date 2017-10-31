@@ -51,6 +51,7 @@ public class Util {
     public static final String ORIGIN_PARAM = "origin";
     public static final String DESTINATION_PARAM = "destination";
     public static final String STOP_LIST_PARAM = "stopList";
+    public static final String TRAVEL_MODE_PARAM = "mode";
 
     public static Document byteToDocument(byte[] documentoXml) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -333,5 +334,29 @@ public class Util {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(STOP_LIST_PARAM, JSONList);
         editor.apply();
+    }
+
+    public static void saveTravelMode(Context context, String mode) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(TRAVEL_MODE_PARAM, mode);
+        editor.apply();
+    }
+
+    public static String getTravelMode(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        if(prefs.contains(TRAVEL_MODE_PARAM)) {
+            String mode = prefs.getString(TRAVEL_MODE_PARAM, "");
+            return mode;
+        }else{
+            return null;
+        }
+    }
+
+    public static void deleteTravelMode(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(TRAVEL_MODE_PARAM);
+        editor.commit();
     }
 }
