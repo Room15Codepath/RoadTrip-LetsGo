@@ -1,48 +1,34 @@
 package com.codepath.roadtrip_letsgo.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
+import com.codepath.roadtrip_letsgo.activities.HomeActivity;
+import com.codepath.roadtrip_letsgo.utils.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static android.content.SharedPreferences.Editor;
 
-/**
- * Created by luba on 10/18/17.
- */
-
-public class TravelModeFragment  extends DialogFragment {
+public class TravelModeFragment extends DialogFragment {
 
     private static final String TAG_LOG = TravelModeFragment.class.getCanonicalName();
-    private static final int MODAL_WIDTH = 1000;
-    private static final int MODAL_HEIGHT = 1300;
-
-    public static String mode = "driving";
+    public static String mode;
 
     public enum TravelMode {
         MODE_DRIVING,
         MODE_BICYCLING,
         MODE_WALKING
     }
-
 
 
     @BindView(R.id.btnCar)
@@ -54,26 +40,7 @@ public class TravelModeFragment  extends DialogFragment {
     @BindView(R.id.btnWalk)
     ImageView btnWalk;
 
-    @BindView(R.id.ratingSeekBar)
-    SeekBar rating;
-
-    @BindView(R.id.rangeSeekBar)
-    SeekBar range;
-
-    @BindView(R.id.labelMiles)
-    TextView miles;
-
-    @BindView(R.id.labelStars)
-    TextView stars;
-
-    @BindView(R.id.btnSave)
-    Button btnSave;
-    @BindView(R.id.btnCancel)
-    Button btnCancel;
-
     private Unbinder unbinder;
-
-
 
     public TravelModeFragment() {
         // Required empty public constructor
@@ -81,12 +48,11 @@ public class TravelModeFragment  extends DialogFragment {
 
     public static TravelModeFragment newInstance() {
         TravelModeFragment fragment = new TravelModeFragment();
-
         return fragment;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -94,98 +60,58 @@ public class TravelModeFragment  extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         getDialog().setCanceledOnTouchOutside(true);
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_travel_mode, container, false);
+
         unbinder = ButterKnife.bind(this, view);
-        initializeDefaultValues();
         btnCar.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_car));
         btnBike.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bike));
         btnWalk.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk));
+        initializeDefaultMode();
 
-        rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                String starsText = String.format("%.1f stars", rating.getProgress()/2.0);
-                stars.setText(starsText);
-
-            }
-        });
-
-        range.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                String milesText = String.format("%.1f miles", range.getProgress()/10.0);
-                miles.setText(milesText);
-            }
-        });
 
         btnCar.setOnClickListener(v -> {
             setTravelMode (TravelMode.MODE_DRIVING);
             mode = "driving";
+            Util.saveTravelMode(getActivity().getApplicationContext(), mode);
+            ((HomeActivity) getActivity()).setIconForTravelMode(true,false,false);
+            dismiss();
         });
 
         btnBike.setOnClickListener(v -> {
             setTravelMode (TravelMode.MODE_BICYCLING);
             mode = "bicycling";
+            Util.saveTravelMode(getActivity().getApplicationContext(), mode);
+            ((HomeActivity) getActivity()).setIconForTravelMode(false,true,false);
+            dismiss();
         });
 
         btnWalk.setOnClickListener(v -> {
             setTravelMode (TravelMode.MODE_WALKING);
             mode="walking";
-
-        });
-
-        btnSave.setOnClickListener(v -> {
-            Log.d (TAG_LOG, "mode="+mode);
-            float starsValue = (float) (rating.getProgress()/2.0);
-            Log.d (TAG_LOG, "starsValue="+starsValue);
-            float rangeValue = (float) (range.getProgress()/10.0);
-            Log.d (TAG_LOG, "rangeValue="+rangeValue);
-            SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
-            Editor editor = settings.edit();
-            editor.putString("mode",mode);
-            editor.putFloat("rating",starsValue);
-            editor.putFloat("range",rangeValue);
-            editor.commit();
+            Util.saveTravelMode(getActivity().getApplicationContext(), mode);
+            ((HomeActivity) getActivity()).setIconForTravelMode(false,false,true);
             dismiss();
+
         });
 
-        btnCancel.setOnClickListener(v -> dismiss());
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
+    private void initializeDefaultMode() {
+        //SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
+        String travelMode = Util.getTravelMode(getActivity().getApplicationContext());
+        Log.d ("home fragment", "default mode="+travelMode);
+            if (travelMode.equals("driving")) {
+                setTravelMode(TravelMode.MODE_DRIVING);
+            } else if (travelMode.equals("bicycling")) {
+                setTravelMode(TravelMode.MODE_BICYCLING);
+            } else if (travelMode.equals("walking")){setTravelMode(TravelMode.MODE_WALKING);}
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Window window = getDialog().getWindow();
-        window.setLayout(MODAL_WIDTH, MODAL_HEIGHT);
-        window.setGravity(Gravity.CENTER);
+        if (travelMode.isEmpty()){
+            setTravelMode(TravelMode.MODE_DRIVING);
+        }
+
     }
 
     private void setTravelMode (TravelMode type) {
@@ -193,6 +119,7 @@ public class TravelModeFragment  extends DialogFragment {
         DrawableCompat.setTint(btnBike.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         DrawableCompat.setTint(btnWalk.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         if (type == TravelMode.MODE_DRIVING) {
+            Log.d ("home fragment", "setTravelMode="+type);
             DrawableCompat.setTint(btnCar.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
         else if (type == TravelMode.MODE_BICYCLING) {
@@ -203,21 +130,13 @@ public class TravelModeFragment  extends DialogFragment {
         }
     }
 
-    private void initializeDefaultValues() {
-
+    /*private void  saveModeToShared() {
+        Log.d (TAG_LOG, "mode="+mode);
         SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
-        float rangeValue = settings.getFloat("range", 20)*10;
-        float ratingValue = settings.getFloat("rating", 2)*2;
-        setTravelMode (TravelMode.MODE_DRIVING);
-        range.setProgress((int)rangeValue);
-        range.setMax(60);
-        String milesText = String.format("%.1f miles", range.getProgress()/10.0);
-        miles.setText(milesText);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("mode", mode);
+        editor.commit();
+        dismiss();
+    }*/
 
-        rating.setProgress((int)ratingValue);
-        rating.setMax(10);
-        String starsText = String.format("%.1f stars", rating.getProgress()/2.0);
-        stars.setText(starsText);
-
-    }
 }

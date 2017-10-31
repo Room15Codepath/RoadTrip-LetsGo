@@ -12,11 +12,27 @@
         android:title="Show Map"/>
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_car"
         android:orderInCategory="200"
-        android:icon="@drawable/ic_settings"
+        android:icon="@drawable/ic_directions_car"
         android:visible="true"
         app:showAsAction="always"
-        android:title="Settings"/>
+        android:title="Car"/>
+
+    <item
+        android:id="@+id/action_bike"
+        android:orderInCategory="300"
+        android:icon="@drawable/ic_directions_bike"
+        android:visible="false"
+        app:showAsAction="always"
+        android:title="Bike"/>
+
+    <item
+        android:id="@+id/action_walk"
+        android:orderInCategory="400"
+        android:icon="@drawable/ic_directions_walk"
+        android:visible="false"
+        app:showAsAction="always"
+        android:title="Walk"/>
 
 </menu>

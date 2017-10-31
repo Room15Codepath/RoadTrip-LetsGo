@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.roadtrip_letsgo.R;
@@ -86,7 +87,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
             case STOP:
                 ViewHolder1 vh1 = (ViewHolder1) holder;
                 configureViewHolder1(vh1, position);
-                vh1.tvRemove.setOnClickListener(new View.OnClickListener() {
+                vh1.ivRemove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
@@ -127,7 +128,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
     public static class ViewHolder1 extends RecyclerView.ViewHolder {
         @BindView(R.id.tvName) public TextView tvName;
         @BindView(R.id.tvAddr) public TextView tvAddr;
-        @BindView(R.id.tvRemove) public TextView tvRemove;
+        @BindView(R.id.ivRemove) public ImageView ivRemove;
 
         public ViewHolder1(View view) {
             // Very important to call the parent constructor
