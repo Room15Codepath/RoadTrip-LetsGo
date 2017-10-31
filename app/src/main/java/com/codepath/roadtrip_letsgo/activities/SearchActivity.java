@@ -410,7 +410,7 @@ public class SearchActivity extends AppCompatActivity {
             int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-            map.animateCamera(cu);
+            map.moveCamera(cu);
 
             map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override

@@ -281,7 +281,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
          //   map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(stop.trip_location.lat, stop.trip_location.lng)));
 
             // Zoom in the Google Map
-            map.animateCamera(cu);
+            map.moveCamera(cu);
 
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
