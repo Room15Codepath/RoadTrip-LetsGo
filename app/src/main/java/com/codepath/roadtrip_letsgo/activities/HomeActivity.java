@@ -273,7 +273,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
         mapMenu = menu.findItem(R.id.action_show_map);
-        mapMenu.setEnabled(false);
+        mapMenu.setVisible(false);
 
         car = menu.findItem(R.id.action_car);
         DrawableCompat.setTint(car.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
@@ -494,7 +494,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
                 tvHint.setVisibility(View.GONE);
                 btnStart.setEnabled(true);
-                mapMenu.setEnabled(true);
+                mapMenu.setVisible(true);
                 //add empty stop into list to indicate stops are enabled
                 if(stops.size()==0) {
                     TripLocation stop = new TripLocation();
