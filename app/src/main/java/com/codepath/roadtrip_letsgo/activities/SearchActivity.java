@@ -80,6 +80,7 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
+import static com.codepath.roadtrip_letsgo.utils.Util.getTravelMode;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 @RuntimePermissions
@@ -432,9 +433,10 @@ public class SearchActivity extends AppCompatActivity {
 
     private void addRoute(TripLocation origin, TripLocation dest) {
         final GMapV2Direction md = new GMapV2Direction();
+        String mode = getTravelMode(mContext);
         LatLng pnt1 = new LatLng(origin.lat, origin.lng);
         LatLng pnt2 = new LatLng(dest.lat, dest.lng);
-        md.getDocument( pnt1, pnt2, GMapV2Direction.MODE_DRIVING,
+        md.getDocument( pnt1, pnt2, mode,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

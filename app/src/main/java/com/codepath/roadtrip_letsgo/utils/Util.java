@@ -137,9 +137,10 @@ public class Util {
 
     public static void addRoute(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
         final GMapV2Direction md = new GMapV2Direction();
+        String mode = getTravelMode(context.getApplicationContext());
         LatLng pnt1 = new LatLng(origin.lat, origin.lng);
         LatLng pnt2 = new LatLng(dest.lat, dest.lng);
-        md.getDocument(pnt1, pnt2, GMapV2Direction.MODE_DRIVING,
+        md.getDocument(pnt1, pnt2, mode,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
