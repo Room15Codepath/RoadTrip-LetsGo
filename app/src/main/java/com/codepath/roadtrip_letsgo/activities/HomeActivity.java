@@ -600,7 +600,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         adapter.notifyDataSetChanged();
         Util.deleteStop(getApplicationContext(), loc);
         //update map
-        map.clear();
+//        map.clear();
 
     }
     private void addMultipleRoute(LatLng point1, LatLng point2) {
