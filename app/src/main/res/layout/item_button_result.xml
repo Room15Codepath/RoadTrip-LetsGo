@@ -7,9 +7,10 @@
     <TextView
         android:id="@+id/tvAdd"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:drawableStart="@drawable/ic_add_circle_outline"
         android:gravity="center"
         android:textSize="17dp"
+        android:layout_marginStart="3dp"
         android:text="Add a stop" />
 </LinearLayout>

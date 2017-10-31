@@ -455,9 +455,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 tvHint.setVisibility(View.GONE);
                 btnStart.setEnabled(true);
                 //add empty stop into list to indicate stops are enabled
-                TripLocation stop = new TripLocation();
-                stops.add(stop);
-                adapter.notifyDataSetChanged();
+                if(stops.size()==0) {
+                    TripLocation stop = new TripLocation();
+                    stops.add(stop);
+                    adapter.notifyDataSetChanged();
+                }
                 //enable map if start/end are ready.
                 /*if(origin !=null && destination !=null) {
                     mapFragment.getMapAsync(new OnMapReadyCallback() {
