@@ -60,7 +60,7 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <ImageButton
+    <!--ImageButton
         android:id="@+id/ibAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,5 +69,5 @@
         android:layout_weight="0.2"
         android:background="@android:color/transparent"
         android:tint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_add_location" />
+        app:srcCompat="@drawable/ic_add_location" /-->
 </RelativeLayout>

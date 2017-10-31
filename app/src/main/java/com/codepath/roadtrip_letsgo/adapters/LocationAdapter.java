@@ -1,13 +1,11 @@
 package com.codepath.roadtrip_letsgo.adapters;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +15,6 @@ import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.utils.Util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,7 +22,6 @@ import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by yingbwan on 10/14/2017.
@@ -91,14 +87,14 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         @BindView(R.id.iv_stop_type)
         ImageView ivStopType;
 
-        @BindView(R.id.ibAdd)
-        ImageButton ibAdd;
+        //@BindView(R.id.ibAdd)
+        //ImageButton ibAdd;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            ibAdd.setOnClickListener(new View.OnClickListener() {
+/*            ibAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition(); // gets item position
@@ -115,6 +111,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
                                 .show();
                 }}
             });
+            */
         }
     }
 
