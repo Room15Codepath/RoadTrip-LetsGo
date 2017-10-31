@@ -133,8 +133,8 @@
             android:id="@+id/btnStart"
             style="@style/Widget.AppCompat.Button.Colored"
             android:stateListAnimator="@null"
-            android:layout_width="match_parent"
-            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
@@ -158,7 +158,7 @@
         android:id="@+id/map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="invisible">
         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"

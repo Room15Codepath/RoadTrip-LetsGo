@@ -118,6 +118,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     @BindView(R.id.llBottom)
     LinearLayout llBottom;
+
+    @BindView(R.id.map_container)
+    View mapContainer;
+    @BindView(R.id.footer)
+    View footer;
   //  PlacesAutocompleteTextView tvFrom;
     //@BindView(R.id.tvTo)
    // PlacesAutocompleteTextView tvTo;
@@ -678,13 +683,12 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void onShowMap(MenuItem item) {
-        final View mapContainer = findViewById(R.id.map_container);
-
+        //final View mapContainer = findViewById(R.id.map_container);
         Display mdisp = getWindowManager().getDefaultDisplay();
         int maxX= mdisp.getWidth();
         float radius = Math.max(mapContainer.getWidth(), mapContainer.getHeight()) * 2.0f;
 
-        if (mapContainer.getVisibility() == View.INVISIBLE) {
+        if (mapContainer.getVisibility() == View.INVISIBLE || mapContainer.getVisibility() == View.GONE) {
             mapContainer.setVisibility(View.VISIBLE);
             ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(1000).start();
             //loadMap(map);
@@ -708,7 +712,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             });
             reveal.start();
         }
-        btnStart.bringToFront();
+        footer.bringToFront();
     }
 
     @Override
