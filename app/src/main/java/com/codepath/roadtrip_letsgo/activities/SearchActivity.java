@@ -30,6 +30,7 @@ import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.ListViewFragment;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
+import com.codepath.roadtrip_letsgo.models.InfoWindow;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
 import com.codepath.roadtrip_letsgo.models.TripStop;
 import com.codepath.roadtrip_letsgo.network.GMapV2Direction;
@@ -58,6 +59,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
 import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -494,12 +496,13 @@ public class SearchActivity extends AppCompatActivity {
                     for (int i=0; i<response.getJSONArray("businesses").length(); i++) {
                         TripStop tripStop = TripStop.fromJSON(
                                 response.getJSONArray("businesses").getJSONObject(i), StopType.CAFE);
+                        InfoWindow iw = InfoWindow.fromTripStop(tripStop);
+                        String iwJSON = new Gson().toJson(iw);
                         BitmapDescriptor defaultMarker =
                                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
                         Marker marker = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(tripStop.trip_location.lat, tripStop.trip_location.lng))
-                                .title(tripStop.trip_location.loc_name)
-                                .snippet(tripStop.trip_location.address)
+                                .title(iwJSON)
                                 .icon(defaultMarker));
                         map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
                         marker.setTag(tripStop);

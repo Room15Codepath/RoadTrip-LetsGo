@@ -32,7 +32,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,6 +44,7 @@ import com.codepath.roadtrip_letsgo.adapters.TripRecyclerAdapter;
 import com.codepath.roadtrip_letsgo.fragments.TravelModeFragment;
 import com.codepath.roadtrip_letsgo.helper.ItemClickSupport;
 import com.codepath.roadtrip_letsgo.models.TripLocation;
+import com.codepath.roadtrip_letsgo.network.GMapV2Direction;
 import com.codepath.roadtrip_letsgo.utils.Util;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -72,6 +72,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.ui.IconGenerator;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,6 +83,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cz.msebera.android.httpclient.Header;
 
 import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
 import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
@@ -289,7 +293,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         originFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.origin_autocomplete_fragment);
         originFragment.setHint("Enter Origin");
-        ((EditText)originFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14.0f);
 
         if (ContextCompat.checkSelfPermission(HomeActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -441,7 +444,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         PlaceAutocompleteFragment destFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.destination_autocomplete_fragment);
         destFragment.setHint("Enter Destination");
-       ((EditText)destFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14.0f);
         destFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -534,8 +536,9 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             }
 
 
-            if ( list != null && list.size()>0) {
+            if ( !list.isEmpty() && origin != null && destination != null) {
                 Log.d ("List", "list size="+list.size());
+                map.clear();
                 putMarkers(map, list);
                 drawRoute(map, list);
             }
@@ -572,15 +575,15 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             directionPoint.add(new LatLng(list.get(i).lat, list.get(i).lng));
         }
         directionPoint.add(new LatLng(destination.lat, destination.lng));
-
-        PolylineOptions rectLine = new PolylineOptions().width(7).color(
-                ContextCompat.getColor(this, R.color.colorPrimary));
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
-        for (int i = 0; i <= directionPoint.size()-1; i++) {
-            rectLine.add(directionPoint.get(i));
-            latLngBuilder.include(directionPoint.get(i));
+
+        for (int j=0; j<=directionPoint.size()-2; j++) {
+            latLngBuilder.include(directionPoint.get(j));
+            addMultipleRoute(new LatLng(directionPoint.get(j).latitude, directionPoint.get(j).longitude),
+                    new LatLng(directionPoint.get(j+1).latitude, directionPoint.get(j+1).longitude));
+
         }
-        map.addPolyline(rectLine);
+
         int size = getResources().getDisplayMetrics().widthPixels;
         LatLngBounds latLngBounds = latLngBuilder.build();
         CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
@@ -598,6 +601,39 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         map.clear();
 
     }
+    private void addMultipleRoute(LatLng point1, LatLng point2) {
+        final GMapV2Direction md = new GMapV2Direction();
+        md.getDocument(point1, point2, GMapV2Direction.MODE_DRIVING,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            Log.d("DEBUG:", "draw route for origin/dest");
+                            Document doc = Util.byteToDocument(responseBody);
+                            ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                            drawPolyline(directionPoint);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                    }
+                });
+    }
+
+    private void drawPolyline(ArrayList<LatLng> directionPoint) {
+        PolylineOptions rectLine = new PolylineOptions().width(7).color(
+                ContextCompat.getColor(this, R.color.colorPrimary));
+
+        for (int i = 0; i < directionPoint.size(); i++) {
+            rectLine.add(directionPoint.get(i));
+        }
+        map.addPolyline(rectLine);
+    }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void onShowMap(MenuItem item) {
