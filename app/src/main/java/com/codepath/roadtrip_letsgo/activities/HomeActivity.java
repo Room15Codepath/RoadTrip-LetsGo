@@ -503,7 +503,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 }
 
                 //enable map if start/end are ready.
-                loadMap(map);
+                updateMap(map);
                 /*if(origin !=null && destination !=null) {
                     mapFragment.getMapAsync(new OnMapReadyCallback() {
                         @Override
@@ -594,7 +594,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     }
 
     public void putMarkers(GoogleMap map, List<TripLocation> list){
-        Toast.makeText(this, "putMarkers", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "putMarkers", Toast.LENGTH_SHORT).show();
         BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
         Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
         BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
@@ -732,11 +732,13 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     public void updateMap( GoogleMap map){
        // Util.addRoute(origin, destination, mContext, map);
         map.clear();
-        Util.addLocationMarkers(origin, destination, mContext, map);
+      //  Util.addLocationMarkers(origin, destination, mContext, map);
 
         ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
-
-        if ( !list.isEmpty() && origin != null && destination != null) {
+        if(list ==null) {
+            list = new ArrayList<>();
+        }
+        if ( origin != null && destination != null) {
             putMarkers(map, list);
             list.add(0,origin);
             list.add(destination);
