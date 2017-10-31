@@ -271,7 +271,6 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         mapMenu = menu.findItem(R.id.action_show_map);
         mapMenu.setEnabled(false);
 
-        return super.onCreateOptionsMenu(menu);
         car = menu.findItem(R.id.action_car);
         DrawableCompat.setTint(car.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
         bike = menu.findItem(R.id.action_bike);
