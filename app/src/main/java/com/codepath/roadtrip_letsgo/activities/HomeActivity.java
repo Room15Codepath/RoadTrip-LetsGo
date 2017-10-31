@@ -18,6 +18,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -144,6 +145,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     TripLocation originFromShared;
     TripLocation destFromShared;
+    private MenuItem car, bike, walk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +156,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         if (toolbar != null) {
            setSupportActionBar(toolbar);
             setTitle("Road Trip");
+
         }
 
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -163,10 +166,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         parseIntent();
 
         boolean isAddStop = getIntent().getBooleanExtra("addstop", false);
-        //
-       // if (listFromShared != null) {
-       //     Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
-        //}
+
         stops = new ArrayList<>();
         if(isAddStop){
 
@@ -268,25 +268,59 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         // Inflate the options menu from XML
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
-
-        return super.onCreateOptionsMenu(menu);
+        car = menu.findItem(R.id.action_car);
+        DrawableCompat.setTint(car.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
+        bike = menu.findItem(R.id.action_bike);
+        DrawableCompat.setTint(bike.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
+        walk = menu.findItem(R.id.action_walk);
+        DrawableCompat.setTint(walk.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
+        Util.saveTravelMode(mContext, "driving");
+        return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-
-            TravelModeFragment travelModeFragment;
-            FragmentManager fm = getSupportFragmentManager();
-            travelModeFragment = TravelModeFragment.newInstance();
-            travelModeFragment.show(fm, "fragment_travelmode");
+        String travelMode = Util.getTravelMode(mContext);
+        Log.d ("home", "travelMode="+travelMode);
+        TravelModeFragment travelModeFragment;
+        FragmentManager fm = getSupportFragmentManager();
+        int i = item.getItemId();
+        if (travelMode.equals("driving")) {
+            i = R.id.action_car;
+        } else if (travelMode.equals("bicycling")) {
+            i = R.id.action_bike;
+        } else if (travelMode.equals("walking")) {
+            i = R.id.action_walk;
         }
-        return super.onOptionsItemSelected(item);
+
+        switch (item.getItemId()) {
+            case R.id.action_car:
+                Log.d ("home", "action_car=");
+                travelModeFragment = TravelModeFragment.newInstance();
+                travelModeFragment.show(fm, "fragment_travelmode");
+                return true;
+            case R.id.action_bike:
+                Log.d ("home", "action_bike=");
+                travelModeFragment = TravelModeFragment.newInstance();
+                travelModeFragment.show(fm, "fragment_travelmode");
+                return true;
+            case R.id.action_walk:
+                Log.d ("home", "action_walk=");
+                travelModeFragment = TravelModeFragment.newInstance();
+                travelModeFragment.show(fm, "fragment_travelmode");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
+    public void setIconForTravelMode(boolean carv, boolean bikev, boolean walkv){
+        car.setVisible(carv);
+        bike.setVisible(bikev);
+        walk.setVisible(walkv);
 
+    }
 
     private void setupOriginListener() {
         originFragment = (PlaceAutocompleteFragment)
@@ -557,7 +591,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
         for (int i = 0; i<=list.size()-1;i++) {
             Log.d ("List", "list="+list.get(i).getLoc_name());
-            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(list.get(i).lat, list.get(i).lng))
                     .title(list.get(i).loc_name)
