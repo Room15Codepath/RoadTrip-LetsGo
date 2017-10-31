@@ -691,7 +691,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         if (mapContainer.getVisibility() == View.INVISIBLE || mapContainer.getVisibility() == View.GONE) {
             mapContainer.setVisibility(View.VISIBLE);
             ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(1000).start();
-            //loadMap(map);
+            mapMenu.setIcon(getResources().getDrawable(R.drawable.ic_list));
 
             /*if(origin !=null && destination !=null) {
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -711,6 +711,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 }
             });
             reveal.start();
+            mapMenu.setIcon(getResources().getDrawable(R.drawable.ic_map));
         }
         footer.bringToFront();
     }
