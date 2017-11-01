@@ -60,6 +60,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
+import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -538,16 +539,16 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void addLocationMarkers(TripLocation origin, TripLocation dest) {
+//
+//        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
+//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
+//        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_flag), "");
+//        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, destIcon);
 
-        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
-        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
-        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_flag), "");
-        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, destIcon);
-
-//        BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
-//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
-//        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-//        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
+        BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
+        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
     }
 
 

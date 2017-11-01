@@ -591,10 +591,14 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     public void putMarkers(GoogleMap map, List<TripLocation> list){
         //IconGenerator icnGenerator = new IconGenerator(this);
-        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
-        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
-        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_flag), "");
-        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, destIcon);
+//        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
+//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
+//        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_flag), "");
+//        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, destIcon);
+        BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
+        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
         for (int i = 0; i<=list.size()-1;i++) {
             Log.d ("List", "list="+list.get(i).getLoc_name());
             //BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
