@@ -124,6 +124,18 @@
             app:fab_icon="@drawable/ic_place_black_24dp"
             app:fabSize="normal"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabRatingSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:fab_colorNormal="@color/background"
+            app:fab_colorPressed="@color/background"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            app:fab_icon="@drawable/ic_star"
+            app:fabSize="normal"/>
+
 
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>

@@ -146,6 +146,9 @@ public class SearchActivity extends AppCompatActivity {
     @BindView(R.id.fabDistSort)
     com.getbase.floatingactionbutton.FloatingActionButton fabDistSort;
 
+    @BindView(R.id.fabRatingSort)
+    com.getbase.floatingactionbutton.FloatingActionButton fabRatingSort;
+
     @BindView(R.id.multiple_sort)
     com.getbase.floatingactionbutton.FloatingActionsMenu fabMenu;
 
@@ -295,6 +298,16 @@ public class SearchActivity extends AppCompatActivity {
                         return Float.compare(o1Distance, o2Distance);
                     }
                 });
+                lvFragment.cleanList();
+                lvFragment.addItems(stops);
+
+            }
+        });
+
+        fabRatingSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(stops, TripStop.COMPARE_BY_RATING);
                 lvFragment.cleanList();
                 lvFragment.addItems(stops);
 

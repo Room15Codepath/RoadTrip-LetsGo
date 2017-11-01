@@ -21,6 +21,8 @@ public class TripStop {
     public String yelp_id;
     public StopType stop_type;
     public String image_url;
+
+
     public double rating;
     public boolean is_closed;
     public double distance_away;
@@ -90,6 +92,11 @@ public class TripStop {
         return str.toString();
     }
 
+
+    public double getRating() {
+        return rating;
+    }
+
     public double getDistance_away() {
         return distance_away;
     }
@@ -110,6 +117,13 @@ public class TripStop {
         @Override
         public int compare(TripStop lhs, TripStop rhs) {
             return Double.compare(lhs.getDistance_away(), rhs.getDistance_away());
+        }
+    };
+
+    public static final Comparator<TripStop> COMPARE_BY_RATING = new Comparator<TripStop>() {
+        @Override
+        public int compare(TripStop lhs, TripStop rhs) {
+            return Double.compare(rhs.getRating(), lhs.getRating());
         }
     };
 

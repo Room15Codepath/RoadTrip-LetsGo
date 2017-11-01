@@ -135,7 +135,7 @@ public class ListViewFragment extends Fragment { // need to add view holder
     }
 
     public void addItems(List<TripStop> bList){
-        locations.clear();
+        //locations.clear();
         animationView.setVisibility(View.VISIBLE);
         animationView.addColorFilterToLayer("Pin 1", new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP));
         animationView.addColorFilterToLayer("C3", new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP));
