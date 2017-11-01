@@ -464,6 +464,10 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                                             origin = TripLocation.fromPlace(currentPlace.freeze());
                                             originFragment.setText(address);
                                             Util.saveOrigin(mContext, origin);
+                                            //enable destination input
+                                            if (destination == null) {
+                                                enableDest();
+                                            }
                                             Log.i("currentplace", "Place found: " + currentPlace.getName());
                                             retrievedPlaces.release();
                                             //enable map if start/end are ready.
