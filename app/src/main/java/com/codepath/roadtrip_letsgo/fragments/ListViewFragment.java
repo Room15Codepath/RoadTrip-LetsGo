@@ -3,6 +3,8 @@ package com.codepath.roadtrip_letsgo.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.activities.PlaceDetailActivity;
 import com.codepath.roadtrip_letsgo.adapters.LocationAdapter;
@@ -46,8 +49,9 @@ public class ListViewFragment extends Fragment { // need to add view holder
 
     Unbinder unbinder;
 
-//@BindView(R.id.rvLocations)
-RecyclerView rvLocations;
+     //@BindView(R.id.rvLocations)
+     RecyclerView rvLocations;
+     public LottieAnimationView animationView;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -90,16 +94,21 @@ RecyclerView rvLocations;
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
        // unbinder = ButterKnife.bind(getContext(), view);
         rvLocations = (RecyclerView) view.findViewById(R.id.rvLocations);
+        animationView = (LottieAnimationView) view.findViewById(R.id.animation_view);
         locations = new ArrayList<>();
         adapter = new LocationAdapter(locations);
         rvLocations.setAdapter(adapter);
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvLocations.setLayoutManager(linearLayoutManager);
+        animationView.addColorFilterToLayer("Pin 1", new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP));
+        animationView.addColorFilterToLayer("C3", new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP));
 
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(rvLocations.getContext(), DividerItemDecoration.VERTICAL);
         rvLocations.addItemDecoration(itemDecoration);
+
+
+        //animationView.setImageDrawable(this.itemView.getResources().getDrawable(R.drawable.ic_add_location));
 
         ItemClickSupport.addTo(rvLocations).setOnItemClickListener(
                 (recyclerView, position, vw) -> {
@@ -127,8 +136,23 @@ RecyclerView rvLocations;
 
     public void addItems(List<TripStop> bList){
         locations.clear();
-        locations.addAll(bList);
-        adapter.notifyItemInserted(locations.size() - 1);
+        animationView.setVisibility(View.VISIBLE);
+        animationView.addColorFilterToLayer("Pin 1", new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP));
+        animationView.addColorFilterToLayer("C3", new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP));
+        animationView.playAnimation();
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        Log.i("tag", "This'll run 1500 milliseconds later");
+                        locations.addAll(bList);
+                        adapter.notifyItemInserted(locations.size() - 1);
+                        animationView.cancelAnimation();
+                        animationView.setVisibility(View.GONE);
+                    }
+                },
+                1500);
+
         Log.d("DEBUG", "after insertion, total:" + locations.size() );
     }
 
