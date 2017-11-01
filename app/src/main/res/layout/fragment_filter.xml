@@ -4,10 +4,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
-    android:paddingBottom="30dp"
-    android:paddingTop="30dp">
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="20dp"
+    android:paddingTop="20dp">
 
     <!--<TextView
         android:id="@+id/labelMinimumRating"
@@ -43,13 +43,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16dp"
-        android:text="Search Range"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="@string/distance_away_from_route"/>
 
     <SeekBar
         android:id="@+id/rangeSeekBar"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/labelSearchRange"
         android:layout_width="fill_parent"
+        android:layout_alignParentRight="true"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -71,6 +74,7 @@
         android:layout_height="wrap_content"
         android:text="Save"
         android:gravity="right"
+        android:layout_alignBaseline="@+id/btnCancel"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
         android:textColor="@color/colorAccent"
         android:layout_below="@+id/labelMiles"
