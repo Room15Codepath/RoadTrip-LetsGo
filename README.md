@@ -15,7 +15,8 @@ The choices will be presented on the map as well as listed with highlight inform
 
 GIF created with Vokoscreen
 <br><br>
-
+## Sprint GIF:
+[Link to GIF Walkthrough](https://imgur.com/ebQ9Mnw.gif)
 ## User Stories:
 
 ### Onboarding
