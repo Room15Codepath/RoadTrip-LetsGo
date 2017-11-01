@@ -259,7 +259,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
             map.getUiSettings().setZoomControlsEnabled(true);
             Util.addLocationMarkers(origin, dest, this, map);
             BitmapDescriptor defaultMarker =
-                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(stop.trip_location.lat, stop.trip_location.lng))
                     .title(stop.trip_location.loc_name)
