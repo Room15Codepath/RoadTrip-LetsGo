@@ -39,7 +39,7 @@
                 android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/colorPrimary"
-                android:textSize="25sp" />
+                android:textSize="24sp" />
 
             <RatingBar
                 android:id="@+id/ratingBar"
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 tools:text="Reviews"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:layout_marginBottom="5dp"
                 android:textColor="@android:color/black"
                 android:layout_toRightOf="@id/ratingBar"
@@ -78,7 +78,7 @@
                     android:paddingLeft="10dp"
                     android:layout_alignBottom="@+id/tvReviewCount"
                     android:layout_alignParentRight="true"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_weight="1"
                     />
@@ -89,7 +89,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="10dp"
                     android:textColor="@android:color/black"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:layout_marginRight="2sp"
                     android:text="distance"
                     android:layout_alignBaseline="@+id/tvName"
@@ -104,7 +104,7 @@
                 android:paddingLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textColor="@android:color/black"
                 />
 
@@ -120,40 +120,43 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/divider1"
             android:paddingLeft="20dp"
-            android:textSize="19sp"
             android:textColor="@color/colorPrimary"
             android:id="@+id/tvPhoneLabel"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:textStyle="bold"
-            android:text="Phone"/>
+            android:drawableStart="@drawable/ic_contact_phone"
+            />
 
         <TextView
             android:id="@+id/tvPhone"
             android:paddingLeft="20dp"
             android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:autoLink="phone"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:linksClickable="true"
             android:textColor="@android:color/black"
+            android:layout_below="@id/divider1"
             tools:text="phone"
-            android:layout_below="@+id/tvPhoneLabel"
-            android:layout_alignParentStart="true" />
+            android:layout_toEndOf="@+id/tvPhoneLabel"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvPhone"
+            android:layout_below="@id/tvPhoneLabel"
             android:paddingLeft="20dp"
-            android:textSize="19sp"
+            android:textSize="16sp"
             android:textColor="@color/colorPrimary"
             android:id="@+id/tvHoursLabel"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:textStyle="bold"
+            android:drawableEnd="@drawable/ic_access_time"
             android:text="Opening Hours"/>
 
         <TextView
@@ -164,7 +167,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:textColor="@android:color/black"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:text="N/A \n" />
 
         <TextView
@@ -172,7 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvHours"
             android:paddingLeft="20dp"
-            android:textSize="19sp"
+            android:textSize="16sp"
             android:textColor="@color/colorPrimary"
             android:id="@+id/tvLocationLabel"
             android:layout_marginBottom="10dp"
@@ -181,7 +184,7 @@
 
         <TextView
             android:id="@+id/tvAddress"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:layout_width="wrap_content"
@@ -201,7 +204,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:layout_marginBottom="20dp"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:onClick="onDirection"
             android:text="Get Directions"
             android:textColor="@color/colorAccent"/>
@@ -225,7 +228,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/map"
             android:paddingLeft="20dp"
-            android:textSize="19sp"
+            android:textSize="16sp"
             android:textColor="@color/colorPrimary"
             android:id="@+id/tvReviewLabel"
             android:layout_marginTop="30dp"
@@ -245,10 +248,6 @@
             <!--android:id="@+id/divider2"-->
             <!--android:layout_below="@id/map"-->
             <!--android:layout_margin="10dp"/>-->
-
-
-
-
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
