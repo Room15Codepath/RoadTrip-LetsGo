@@ -171,10 +171,15 @@ public class Util {
     }
 
     public static void addLocationMarkers(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
-        BitmapDescriptor icon_origin = Util.createBubble(context, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = addMarker(map, new LatLng(origin.lat,origin.lng), origin.loc_name, origin.address, icon_origin);
-        BitmapDescriptor icon_dest = Util.createBubble(context, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
+        BitmapDescriptor originIcon = Util.createNewBubble(context, 0, R.style.iconGenText, context.getResources().getDrawable(R.drawable.ic_home), "");
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
+        BitmapDescriptor destIcon = Util.createNewBubble(context, 0, R.style.iconGenText, context.getResources().getDrawable(R.drawable.ic_flag), "");
+        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, destIcon);
+
+   //     BitmapDescriptor icon_origin = Util.createBubble(context, IconGenerator.STYLE_WHITE, "origin");
+     //   Marker marker_origin = addMarker(map, new LatLng(origin.lat,origin.lng), origin.loc_name, origin.address, icon_origin);
+     //   BitmapDescriptor icon_dest = Util.createBubble(context, IconGenerator.STYLE_WHITE, "destination");
+     //   Marker marker_dest = addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
     }
 
     public static BitmapDescriptor createBubble(Context context, int style, String title) {
