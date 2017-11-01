@@ -133,7 +133,7 @@
             android:id="@+id/btnStart"
             style="@style/Widget.AppCompat.Button.Colored"
             android:stateListAnimator="@null"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

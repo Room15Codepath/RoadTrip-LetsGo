@@ -598,7 +598,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         for (int i = 0; i<=list.size()-1;i++) {
             Log.d ("List", "list="+list.get(i).getLoc_name());
             //BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-            BitmapDescriptor stopMarker = Util.createNewBubble(this, IconGenerator.STYLE_GREEN, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_pin_map), String.valueOf(i+1));
+            BitmapDescriptor stopMarker = Util.createNewBubble(this, IconGenerator.STYLE_GREEN, R.style.iconGenText,
+                    getResources().getDrawable(R.drawable.ic_pin_map), " " + String.valueOf(i+1) + ' ');
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(list.get(i).lat, list.get(i).lng))
                     .title(list.get(i).loc_name)

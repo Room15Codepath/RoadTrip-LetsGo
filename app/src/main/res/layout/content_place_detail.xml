@@ -156,7 +156,8 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:textStyle="bold"
-            android:drawableEnd="@drawable/ic_access_time"
+            android:drawableStart="@drawable/ic_access_time"
+            android:drawablePadding="10dp"
             android:text="Opening Hours"/>
 
         <TextView
@@ -178,7 +179,8 @@
             android:textSize="16sp"
             android:textColor="@color/colorPrimary"
             android:id="@+id/tvLocationLabel"
-            android:drawableEnd="@drawable/ic_home"
+            android:drawableStart="@drawable/ic_place"
+            android:drawablePadding="10dp"
             android:layout_marginBottom="10dp"
             android:textStyle="bold"
             android:text="Location"/>
