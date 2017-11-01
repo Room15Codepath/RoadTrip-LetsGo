@@ -33,13 +33,21 @@ public class MapInfoAdapter  implements GoogleMap.InfoWindowAdapter {
         TextView price = (TextView) v.findViewById(R.id.tvPrice);
         RatingBar rating = (RatingBar) v.findViewById(R.id.rbRating);
         TextView reviewCount = (TextView) v.findViewById(R.id.tvReviewCount);
-        InfoWindow iw = new Gson().fromJson(marker.getTitle(), new TypeToken<InfoWindow>() {
-        }.getType());
-        title.setText(iw.name);
-        address.setText(iw.address);
-        price.setText(iw.price);
-        rating.setRating((int) iw.rating);
-        reviewCount.setText(iw.reviewCount + " Reviews");
+        try {
+            InfoWindow iw = new Gson().fromJson(marker.getTitle(), new TypeToken<InfoWindow>() {
+            }.getType());
+            title.setText(iw.name);
+            address.setText(iw.address);
+            price.setText(iw.price);
+            rating.setRating((int) iw.rating);
+            reviewCount.setText(iw.reviewCount + " Reviews");
+        } catch (com.google.gson.JsonSyntaxException e) {
+            title.setText(marker.getTitle());
+            address.setText(marker.getSnippet());
+            price.setVisibility(View.GONE);
+            rating.setVisibility(View.GONE);
+            reviewCount.setVisibility(View.GONE);
+        }
 
         // Populate fields
 //        TextView title = (TextView) v.findViewById(R.id.tv_info_window_title);
