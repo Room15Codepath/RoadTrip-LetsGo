@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -29,12 +27,12 @@ import static android.content.SharedPreferences.Editor;
 public class FilterFragment extends DialogFragment {
 
     private static final String TAG_LOG = FilterFragment.class.getCanonicalName();
-    private static final int MODAL_WIDTH = 1200;
-    private static final int MODAL_HEIGHT = 1500;
+    //private static final int MODAL_WIDTH = 1200;
+    //private static final int MODAL_HEIGHT = 1500;
 
 
-    @BindView(R.id.ratingSeekBar)
-    SeekBar rating;
+    //@BindView(R.id.ratingSeekBar)
+    //SeekBar rating;
 
     @BindView(R.id.rangeSeekBar)
     SeekBar range;
@@ -42,8 +40,8 @@ public class FilterFragment extends DialogFragment {
     @BindView(R.id.labelMiles)
     TextView miles;
 
-    @BindView(R.id.labelStars)
-    TextView stars;
+    //@BindView(R.id.labelStars)
+    //TextView stars;
 
     @BindView(R.id.btnSave)
     Button btnSave;
@@ -76,7 +74,7 @@ public class FilterFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
         unbinder = ButterKnife.bind(this, view);
         initializeDefaultValues();
-        rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        /*rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -94,7 +92,7 @@ public class FilterFragment extends DialogFragment {
                 stars.setText(starsText);
 
             }
-        });
+        });*/
 
         range.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -116,13 +114,13 @@ public class FilterFragment extends DialogFragment {
         });
 
         btnSave.setOnClickListener(v -> {
-            float starsValue = (float) (rating.getProgress()/2.0);
-            Log.d (TAG_LOG, "starsValue="+starsValue);
+            //float starsValue = (float) (rating.getProgress()/2.0);
+            //Log.d (TAG_LOG, "starsValue="+starsValue);
             float rangeValue = (float) (range.getProgress()/10.0);
             Log.d (TAG_LOG, "rangeValue="+rangeValue);
             SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
             Editor editor = settings.edit();
-            editor.putFloat("rating",starsValue);
+            //editor.putFloat("rating",starsValue);
             editor.putFloat("range",rangeValue);
             editor.commit();
             dismiss();
@@ -140,9 +138,9 @@ public class FilterFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Window window = getDialog().getWindow();
-        window.setLayout(MODAL_WIDTH, MODAL_HEIGHT);
-        window.setGravity(Gravity.CENTER);
+        //Window window = getDialog().getWindow();
+        //window.setLayout(MODAL_WIDTH, MODAL_HEIGHT);
+        //window.setGravity(Gravity.CENTER);
     }
 
 
@@ -157,10 +155,10 @@ public class FilterFragment extends DialogFragment {
         String milesText = String.format("%.1f miles", range.getProgress()/10.0);
         miles.setText(milesText);
 
-        rating.setProgress((int)ratingValue);
+        /*rating.setProgress((int)ratingValue);
         rating.setMax(10);
         String starsText = String.format("%.1f stars", rating.getProgress()/2.0);
-        stars.setText(starsText);
+        stars.setText(starsText);*/
 
     }
 }
