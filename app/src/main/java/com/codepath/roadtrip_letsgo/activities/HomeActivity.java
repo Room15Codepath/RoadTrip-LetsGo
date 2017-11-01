@@ -62,7 +62,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -577,7 +576,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 // Zoom in the Google Map
                 map.moveCamera(cu);
                 Util.addRoute(origin, destination, mContext, map);
-                Util.addLocationMarkers(origin, destination, mContext, map);
+                //Util.addLocationMarkers(origin, destination, mContext, map);
+                BitmapDescriptor originIcon = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
+                Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
+                BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
+                Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
             }
 
 
@@ -594,21 +597,20 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     }
 
     public void putMarkers(GoogleMap map, List<TripLocation> list){
-      //  Toast.makeText(this, "putMarkers", Toast.LENGTH_SHORT).show();
-        BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
-        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
+        IconGenerator icnGenerator = new IconGenerator(this);
+        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_pin_map), String.valueOf(1));
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
+        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_pin_map), String.valueOf(list.size()+2));
+        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, destIcon);
         for (int i = 0; i<=list.size()-1;i++) {
             Log.d ("List", "list="+list.get(i).getLoc_name());
-            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+            //BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+            BitmapDescriptor stopMarker = Util.createNewBubble(this, icnGenerator.STYLE_GREEN, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_pin_map), String.valueOf(i+2));
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(list.get(i).lat, list.get(i).lng))
                     .title(list.get(i).loc_name)
                     .snippet(list.get(i).address)
-                    .icon(defaultMarker));
-         //   map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
-        //    marker.setTag(list.get(i));
+                    .icon(stopMarker));
         }
 
     }

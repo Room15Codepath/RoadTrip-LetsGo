@@ -3,6 +3,7 @@ package com.codepath.roadtrip_letsgo.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -178,6 +179,16 @@ public class Util {
     public static BitmapDescriptor createBubble(Context context, int style, String title) {
         IconGenerator iconGenerator = new IconGenerator(context);
         iconGenerator.setStyle(style);
+        Bitmap bitmap = iconGenerator.makeIcon(title);
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+        return bitmapDescriptor;
+    }
+
+    public static BitmapDescriptor createNewBubble(Context context, int style, int text_style, Drawable background, String title) {
+        IconGenerator iconGenerator = new IconGenerator(context);
+        iconGenerator.setStyle(style);
+        iconGenerator.setBackground(background);
+        iconGenerator.setTextAppearance(text_style);
         Bitmap bitmap = iconGenerator.makeIcon(title);
         BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
         return bitmapDescriptor;
