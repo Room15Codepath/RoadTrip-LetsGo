@@ -81,6 +81,16 @@ public class Util {
         return new Float(0.621 * km * 0.001).floatValue();
     }
 
+    public static String getEncodedTravelMode(String travelMode) {
+        if (travelMode == "bicycling") {
+            return "/data=!4m2!4m1!3e1";
+        } else if (travelMode == "walking") {
+            return "/data=!4m2!4m1!3e2";
+        } else {
+            return "/data=!4m2!4m1!3e0";
+        }
+    }
+
     public static String getOpeningHrsStr(JSONObject jsonObject) {
         StringBuilder sb = new StringBuilder();
         try {

@@ -542,6 +542,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                     sb.append("/" + trips.get(i).getAddress());
                 }
                 sb.append("/" + destination.getAddress());
+                String travelMode = Util.getTravelMode(mContext);
+                sb.append(Util.getEncodedTravelMode(travelMode));
                 Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
                 i.setPackage("com.google.android.apps.maps");
                 startActivity(i);
