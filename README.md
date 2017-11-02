@@ -13,14 +13,14 @@ The choices will be presented on the map as well as listed with highlight inform
 
 <img src='https://i.imgur.com/gWQ9y26.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with Vokoscreen
+Recorded by Mobizen
 <br><br>
-## Sprint GIF:
-[Link to GIF Walkthrough](https://imgur.com/ebQ9Mnw.gif)
+## Sprint video:
+[Link to video](https://youtu.be/Ec8_x_E92qg)
 ## User Stories:
 
 ### Onboarding
-* [x ] User can login with email (facebook)
+* [x] User can login with email (facebook)
 * [ ] User can view an onboarding guide (instructions to start using app)
 
 ### Setting Trip Filters
