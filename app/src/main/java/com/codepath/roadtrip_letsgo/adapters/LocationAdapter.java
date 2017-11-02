@@ -102,30 +102,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         @BindView(R.id.tvPrice)
         TextView tvPrice;
 
-//        @BindView(R.id.ibAdd)
-//        ImageButton ibAdd;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
-//            ibAdd.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    int position = getAdapterPosition(); // gets item position
-//                    if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
-//                        TripStop tripStop = mLocations.get(position);
-//                        ArrayList<TripLocation> listFromShared = Util.getStops(getApplicationContext());
-//
-//                        if (listFromShared.contains(tripStop.getTrip_location())) {
-//                            listFromShared.set(listFromShared.indexOf(tripStop.getTrip_location()), tripStop.getTrip_location());
-//                        } else {
-//                            Util.saveStop(context, tripStop.getTrip_location());
-//                        }
-//                        Snackbar.make(itemView, R.string.snackbar_add_stop, Snackbar.LENGTH_LONG)
-//                                .show();
-//                }}
-//            });
         }
     }
 

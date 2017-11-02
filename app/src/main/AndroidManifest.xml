@@ -80,10 +80,6 @@
             android:name=".activities.HomeActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activities.AddStopActivity" />
-        <activity
-            android:name=".activities.LocationDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activities.PlaceDetailActivity"
             android:label="@string/title_activity_place_detail"

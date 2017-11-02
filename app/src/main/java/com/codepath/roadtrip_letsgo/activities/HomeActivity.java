@@ -101,8 +101,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.app_bar_layout)
-   AppBarLayout appBarLayout;
-//    @BindView(R.id.container_home)
+    AppBarLayout appBarLayout;
+    //    @BindView(R.id.container_home)
 //    FrameLayout containerFragments;
     @BindView(R.id.search_container)
     RelativeLayout searchContainer;
@@ -122,9 +122,9 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     View mapContainer;
     @BindView(R.id.footer)
     View footer;
-  //  PlacesAutocompleteTextView tvFrom;
+    //  PlacesAutocompleteTextView tvFrom;
     //@BindView(R.id.tvTo)
-   // PlacesAutocompleteTextView tvTo;
+    // PlacesAutocompleteTextView tvTo;
 
     @BindView(R.id.rvResults)
     RecyclerView rvResults; //rvStops;
@@ -132,20 +132,18 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     private BottomSheetBehavior mBottomSheetBehavior;
     SupportMapFragment mapFragment;
     GoogleMap map;
-    //String mode;
-    //Float rating, range;
+
     String userId;
     boolean permission;
 
     public static final String USER = "USER";
     public static final String PERMISSION = "PERMISSION";
     private ItemTouchHelper mItemTouchHelper;
-   // StopsRecyclerAdapter adapter;
+
     ArrayList<TripLocation> listFromShared;
     ArrayList<TripLocation> stops;
     TripRecyclerAdapter adapter;
-//    Fragment fmDestination;
-//    FragmentManager fm;
+
     MenuItem mapMenu;
     TripLocation originFromShared;
     TripLocation destFromShared;
@@ -158,7 +156,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         ButterKnife.bind(this);
         Log.d("home", "onCreate()");
         if (toolbar != null) {
-           setSupportActionBar(toolbar);
+            setSupportActionBar(toolbar);
             setTitle("Road Trip");
 
         }
@@ -169,35 +167,14 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         mContext = getApplicationContext();
         parseIntent();
 
-        //boolean isAddStop = getIntent().getBooleanExtra("addstop", false);
-
         stops = new ArrayList<>();
-    /*    if(isAddStop){
 
-            listFromShared = getStops(getApplicationContext());
-            loadStops(listFromShared);
-            tvHint.setVisibility(View.GONE);
-            android.app.FragmentManager fm = getFragmentManager();
-            PlaceAutocompleteFragment fmDest = (PlaceAutocompleteFragment) fm.findFragmentById(R.id.destination_autocomplete_fragment);
-            PlaceAutocompleteFragment fmOrigin = (PlaceAutocompleteFragment) fm.findFragmentById(R.id.origin_autocomplete_fragment);
-            origin  = Util.getOrigin(getApplicationContext());
-            destination = Util.getDestination(getApplicationContext());
-            fmOrigin.setText(origin.loc_name);
-            fmDest.setText(destination.loc_name);
+        Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
+        Util.deleteOrigin(mContext);
+        Util.deleteDestination(mContext);
+        setupViews();  //disable destination fragment.
 
-        }else {*/
-            Util.deleteStops(getApplicationContext(), getStops(getApplicationContext()));
-            Util.deleteOrigin(mContext);
-            Util.deleteDestination(mContext);
-            setupViews();  //disable destination fragment.
-
-        //}
         adapter = new TripRecyclerAdapter(HomeActivity.this, stops);
-        //rvStops.setHasFixedSize(true);
-//
-//        RecyclerView.ItemDecoration itemDecoration = new
-//                DividerItemDecoration(rvResults.getContext(), DividerItemDecoration.VERTICAL);
-//        rvResults.addItemDecoration(itemDecoration);
 
         rvResults.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -205,21 +182,15 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         ItemClickSupport.addTo(rvResults).setOnItemClickListener(
                 (recyclerView, position, v) -> {
                     //create intent
-                    if(position%2 ==0) {
+                    if (position % 2 == 0) {
                         Intent i = new Intent(getApplicationContext(), SearchActivity.class);
-                     //   i.putExtra("origin", Parcels.wrap(origin));
-                   //     i.putExtra("destination", Parcels.wrap(destination));
-                   //     i.putExtra("stopType", stopType);
-                        i.putExtra("position", position/2);
+                        i.putExtra("position", position / 2);
                         //launch activity
                         startActivity(i);
                     }
                 }
         );
 
-//        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-//        mItemTouchHelper = new ItemTouchHelper(callback);
-//        mItemTouchHelper.attachToRecyclerView(rvStops);
         setupOriginListener();
         setupDestListener();
         //setupFindListener();
@@ -235,21 +206,21 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     }
 
-    public void setupViews(){
+    public void setupViews() {
         tvHint.setVisibility(View.INVISIBLE);
         llBottom.setVisibility(View.INVISIBLE);
         btnStart.setEnabled(false);
     }
 
-    public void enableDest(){
+    public void enableDest() {
         tvHint.setVisibility(View.VISIBLE);
         llBottom.setVisibility(View.VISIBLE);
     }
 
-    private void loadStops(List<TripLocation> list){
+    private void loadStops(List<TripLocation> list) {
         Log.d("DEBUG", "saved list size" + list.size());
         //   ArrayList<Parcelable> pList= getIntent().getParcelableArrayListExtra("stops");
-        for( int i=0; i< list.size();i++) {
+        for (int i = 0; i < list.size(); i++) {
             TripLocation bt = new TripLocation();
             stops.add(bt);
             stops.add(list.get(i));
@@ -287,9 +258,9 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         String travelMode = Util.getTravelMode(mContext);
-        Log.d ("home", "travelMode="+travelMode);
+        Log.d("home", "travelMode=" + travelMode);
         TravelModeFragment travelModeFragment;
         FragmentManager fm = getSupportFragmentManager();
         int i = item.getItemId();
@@ -303,17 +274,17 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
         switch (item.getItemId()) {
             case R.id.action_car:
-                Log.d ("home", "action_car=");
+                Log.d("home", "action_car=");
                 travelModeFragment = TravelModeFragment.newInstance();
                 travelModeFragment.show(fm, "fragment_travelmode");
                 return true;
             case R.id.action_bike:
-                Log.d ("home", "action_bike=");
+                Log.d("home", "action_bike=");
                 travelModeFragment = TravelModeFragment.newInstance();
                 travelModeFragment.show(fm, "fragment_travelmode");
                 return true;
             case R.id.action_walk:
-                Log.d ("home", "action_walk=");
+                Log.d("home", "action_walk=");
                 travelModeFragment = TravelModeFragment.newInstance();
                 travelModeFragment.show(fm, "fragment_travelmode");
                 return true;
@@ -322,7 +293,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         }
     }
 
-    public void setIconForTravelMode(boolean carv, boolean bikev, boolean walkv){
+    public void setIconForTravelMode(boolean carv, boolean bikev, boolean walkv) {
         car.setVisible(carv);
         bike.setVisible(bikev);
         walk.setVisible(walkv);
@@ -367,7 +338,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             @Override
             public void onPlaceSelected(Place place) {
                 Log.i("place", "Place: " + place.getName());
-                origin =  TripLocation.fromPlace(place);
+                origin = TripLocation.fromPlace(place);
                 Util.saveOrigin(mContext, origin);
                 //enable destination input
                 if (destination == null) {
@@ -484,7 +455,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 });
     }
 
-   private void setupDestListener() {
+    private void setupDestListener() {
         PlaceAutocompleteFragment destFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.destination_autocomplete_fragment);
         destFragment.setHint("Enter Destination");
@@ -492,7 +463,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                destination =  TripLocation.fromPlace(place);
+                destination = TripLocation.fromPlace(place);
                 Log.i("place", "Place: " + place.getName());
                 Util.saveDestination(mContext, destination);
 
@@ -500,7 +471,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 btnStart.setEnabled(true);
                 mapMenu.setVisible(true);
                 //add empty stop into list to indicate stops are enabled
-                if(stops.size()==0) {
+                if (stops.size() == 0) {
                     TripLocation stop = new TripLocation();
                     stops.add(stop);
                     adapter.notifyDataSetChanged();
@@ -533,12 +504,12 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(origin ==null || destination == null) return;
+                if (origin == null || destination == null) return;
                 StringBuilder sb = new StringBuilder();
                 sb.append("https://www.google.com/maps/dir");
                 sb.append("/" + origin.getAddress());
                 ArrayList<TripLocation> trips = getStops(mContext);
-                for (int i=0; i<trips.size(); i++) {
+                for (int i = 0; i < trips.size(); i++) {
                     sb.append("/" + trips.get(i).getAddress());
                 }
                 sb.append("/" + destination.getAddress());
@@ -552,12 +523,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     }
 
 
-
     private void loadMap(GoogleMap googleMap) {
         map = googleMap;
         if (map != null) {
             // Map is ready
-         //   Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            //   Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
@@ -579,12 +549,12 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 BitmapDescriptor originIcon = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
                 Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
                 BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-                Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
+                Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat, destination.lng), destination.loc_name, destination.address, icon_dest);
             }
 
 
-            if ( !list.isEmpty() && origin != null && destination != null) {
-                Log.d ("List", "list size="+list.size());
+            if (!list.isEmpty() && origin != null && destination != null) {
+                Log.d("List", "list size=" + list.size());
                 map.clear();
                 putMarkers(map, list);
                 drawRoute(map, list);
@@ -595,7 +565,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         }
     }
 
-    public void putMarkers(GoogleMap map, List<TripLocation> list){
+    public void putMarkers(GoogleMap map, List<TripLocation> list) {
         //IconGenerator icnGenerator = new IconGenerator(this);
 //        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
 //        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
@@ -604,12 +574,12 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
         Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
         BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, icon_dest);
-        for (int i = 0; i<=list.size()-1;i++) {
-            Log.d ("List", "list="+list.get(i).getLoc_name());
+        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat, destination.lng), destination.loc_name, destination.address, icon_dest);
+        for (int i = 0; i <= list.size() - 1; i++) {
+            Log.d("List", "list=" + list.get(i).getLoc_name());
             //BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
             BitmapDescriptor stopMarker = Util.createNewBubble(this, IconGenerator.STYLE_GREEN, R.style.iconGenText,
-                    getResources().getDrawable(R.drawable.ic_pin_map), " " + String.valueOf(i+1) + ' ');
+                    getResources().getDrawable(R.drawable.ic_pin_map), " " + String.valueOf(i + 1) + ' ');
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(list.get(i).lat, list.get(i).lng))
                     .title(list.get(i).loc_name)
@@ -619,19 +589,19 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     }
 
-    public void drawRoute(GoogleMap map, List<TripLocation> list){
+    public void drawRoute(GoogleMap map, List<TripLocation> list) {
         ArrayList<LatLng> directionPoint = new ArrayList<>();
         directionPoint.add(new LatLng(origin.lat, origin.lng));
-        for (int i = 0; i <= list.size()-1; i++) {
+        for (int i = 0; i <= list.size() - 1; i++) {
             directionPoint.add(new LatLng(list.get(i).lat, list.get(i).lng));
         }
         directionPoint.add(new LatLng(destination.lat, destination.lng));
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
 
-        for (int j=0; j<=directionPoint.size()-2; j++) {
+        for (int j = 0; j <= directionPoint.size() - 2; j++) {
             latLngBuilder.include(directionPoint.get(j));
             addMultipleRoute(new LatLng(directionPoint.get(j).latitude, directionPoint.get(j).longitude),
-                    new LatLng(directionPoint.get(j+1).latitude, directionPoint.get(j+1).longitude));
+                    new LatLng(directionPoint.get(j + 1).latitude, directionPoint.get(j + 1).longitude));
 
         }
 
@@ -643,7 +613,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     // call back from recyclerView adapter for deleting stop.
     public void onAdapterCallback(int position) {
-        TripLocation loc =  stops.get(position);
+        TripLocation loc = stops.get(position);
         stops.remove(position);
         stops.remove(position);  //delete empty row which marked as "add a stop"
         adapter.notifyDataSetChanged();
@@ -653,6 +623,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         updateMap(map);
 
     }
+
     private void addMultipleRoute(LatLng point1, LatLng point2) {
         final GMapV2Direction md = new GMapV2Direction();
         String mode = getTravelMode(mContext);
@@ -670,6 +641,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                             e.printStackTrace();
                         }
                     }
+
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
@@ -688,12 +660,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void onShowMap(MenuItem item) {
         //final View mapContainer = findViewById(R.id.map_container);
         Display mdisp = getWindowManager().getDefaultDisplay();
-        int maxX= mdisp.getWidth();
+        int maxX = mdisp.getWidth();
         float radius = Math.max(mapContainer.getWidth(), mapContainer.getHeight()) * 2.0f;
 
         if (mapContainer.getVisibility() == View.INVISIBLE || mapContainer.getVisibility() == View.GONE) {
@@ -731,26 +702,26 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             map.clear();
             updateMap(map);
 
-        }else {
+        } else {
             Log.d("DEBUG", "no stop.");
         }
         super.onNewIntent(intent);
     }
 
-    public void updateMap( GoogleMap map){
-       // Util.addRoute(origin, destination, mContext, map);
+    public void updateMap(GoogleMap map) {
+        // Util.addRoute(origin, destination, mContext, map);
         map.clear();
-      //  Util.addLocationMarkers(origin, destination, mContext, map);
+        //  Util.addLocationMarkers(origin, destination, mContext, map);
 
         ArrayList<TripLocation> list = Util.getStops(getApplicationContext());
-        if(list ==null) {
+        if (list == null) {
             list = new ArrayList<>();
         }
-        if ( origin != null && destination != null) {
+        if (origin != null && destination != null) {
             putMarkers(map, list);
-            list.add(0,origin);
+            list.add(0, origin);
             list.add(destination);
-            Log.d ("List", "list size="+list.size());
+            Log.d("List", "list size=" + list.size());
             //map.clear();
             drawRoute(map, list);
         }

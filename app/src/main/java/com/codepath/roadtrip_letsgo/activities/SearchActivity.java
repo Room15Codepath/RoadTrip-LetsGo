@@ -380,13 +380,8 @@ public class SearchActivity extends AppCompatActivity {
 
         //mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
         //lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
-    //    if(lvFragment !=null) {
             lvFragment.addTrip(origin, dest);
 
-            /*if (stops.size() > 0) {
-                lvFragment.addItems(stops);
-            }*/
-      //  }
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -569,20 +564,6 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
-        //MenuItem searchItem = menu.findItem(R.id.action_search);
-        /*final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchView.clearFocus();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });*/
 
         return super.onCreateOptionsMenu(menu);
 
@@ -595,13 +576,6 @@ public class SearchActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-/*        if (id == R.id.action_add) {
-            Intent i = new Intent(this, AddStopActivity.class);
-            i.putExtra("start", Parcels.wrap(origin));
-            i.putExtra("end", Parcels.wrap(dest));
-            startActivityForResult(i, REQUEST_CODE_ADD);
-        }
-*/
         if (id == R.id.action_settings) {
 
             FilterFragment filterFragment;
