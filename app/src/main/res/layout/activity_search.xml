@@ -94,7 +94,6 @@
         android:layout_height="wrap_content"
         app:fab_addButtonColorNormal="@color/colorPrimary"
         app:fab_addButtonColorPressed="@color/colorPrimary"
-        app:fab_icon="@drawable/ic_sort"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
