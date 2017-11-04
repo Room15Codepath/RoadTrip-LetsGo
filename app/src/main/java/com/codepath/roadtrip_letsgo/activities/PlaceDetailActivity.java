@@ -1,7 +1,9 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -34,7 +36,6 @@ import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -57,9 +58,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
-
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
-import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
 
 public class PlaceDetailActivity extends AppCompatActivity {
     @BindView(R.id.tvName)
@@ -126,29 +124,27 @@ public class PlaceDetailActivity extends AppCompatActivity {
         dest = Util.getDestination(mContext);
         stop = Parcels.unwrap(getIntent().getParcelableExtra("location"));
         position = getIntent().getIntExtra("position", -1);
-        ratingBar.setRating((float)(stop.rating));
+        ratingBar.setRating((float) (stop.rating));
         tvPhone.setText(stop.phone);
         tvPrice.setText(stop.price);
-        float distance = Util.getDistance(origin.lat, origin.lng, stop.trip_location.lat, stop.trip_location.lng);
-        tvDistance.setText(String.format("%.1f", distance * 0.0006213719) +" mi");
+        float distance = Util.getDistance(origin.lat, origin.lng, stop.trip_location.lat,
+                stop.trip_location.lng);
+        tvDistance.setText(String.format("%.1f", distance * 0.0006213719) + " mi");
         tvReviewCount.setText(stop.review_count + " Reviews");
         tvName.setText(stop.trip_location.loc_name);
         tvCategories.setText(stop.getCategoriesStr());
         setOpeningHours();
         setUserReview();
         toolbarLayout.setTitle(stop.trip_location.loc_name);
-        toolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent));
-        toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+        toolbarLayout.setExpandedTitleColor(
+                ContextCompat.getColor(getApplicationContext(), android.R.color.transparent));
+        toolbarLayout.setCollapsedTitleTextColor(
+                ContextCompat.getColor(getApplicationContext(), android.R.color.white));
         GlideApp.with(this).load(stop.image_url).fitCenter().into(header);
         tvAddress.setText(stop.trip_location.address);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                loadMap(googleMap);
-            }
-        });
+        mapFragment.getMapAsync(googleMap -> loadMap(googleMap));
 
         Log.d("DEBUG", "input location:" + stop.trip_location.loc_name);
         setSupportActionBar(toolbar);
@@ -165,7 +161,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                         JSONArray openingHrs = hours.getJSONObject(0).getJSONArray("open");
                         if (openingHrs != null) {
                             StringBuilder sb = new StringBuilder();
-                            for (int i=0; i<openingHrs.length(); i++) {
+                            for (int i = 0; i < openingHrs.length(); i++) {
                                 sb.append(Util.getOpeningHrsStr(openingHrs.getJSONObject(i)));
                                 sb.append("\n");
                             }
@@ -179,7 +175,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 Log.d("yelp biz details", errorResponse.toString());
             }
@@ -198,12 +195,14 @@ public class PlaceDetailActivity extends AppCompatActivity {
                         JSONObject firstReview = reviewList.getJSONObject(0);
                         String imageUrl = firstReview.getJSONObject("user").getString("image_url");
                         String body = firstReview.getString("text");
-                        String date = Util.getRelativeTimeAgo(firstReview.getString("time_created"));
+                        String date = Util.getRelativeTimeAgo(
+                                firstReview.getString("time_created"));
                         int rating = firstReview.getInt("rating");
                         GlideApp.with(mContext).load(imageUrl)
                                 .apply(bitmapTransform(new RoundedCornersTransformation(25, 0,
                                         RoundedCornersTransformation.CornerType.ALL)))
-                                .placeholder(ContextCompat.getDrawable(mContext, R.drawable.com_facebook_profile_picture_blank_square))
+                                .placeholder(ContextCompat.getDrawable(mContext,
+                                        R.drawable.com_facebook_profile_picture_blank_square))
                                 .into(ivReviewer);
                         tvReviewBody.setText(body);
                         tvReviewDate.setText(date);
@@ -220,7 +219,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONObject errorResponse) {
                 Log.d("yelp biz details", errorResponse.toString());
                 rlReview.setVisibility(View.GONE);
                 tvReviewLabel.setVisibility(View.GONE);
@@ -239,7 +239,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
     public void onDirection(View view) {
 
-        String gmmIntentUri = String.format("google.navigation:q=%s,+%s", stop.trip_location.loc_name, stop.trip_location.address);
+        String gmmIntentUri = String.format("google.navigation:q=%s,+%s",
+                stop.trip_location.loc_name, stop.trip_location.address);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(gmmIntentUri));
         // Make the Intent explicit by setting the Google Maps package
         mapIntent.setPackage("com.google.android.apps.maps");
@@ -273,12 +274,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
             builder.include(new LatLng(dest.lat, dest.lng));
             LatLngBounds bounds = builder.build();
 
-           int width = getResources().getDisplayMetrics().widthPixels;
+            int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
             int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-           // CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-         //   map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(stop.trip_location.lat, stop.trip_location.lng)));
+            // CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+            //   map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(stop.trip_location.lat,
+            // stop.trip_location.lng)));
 
             // Zoom in the Google Map
             map.moveCamera(cu);
@@ -292,11 +294,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareText = String.format("%s\n%s\n%s\nShared by Roadtrip LetsGo app", stop.trip_location.loc_name, stop.trip_location.address, stop.phone);
+        shareText = String.format("%s\n%s\n%s\nShared by Roadtrip LetsGo app",
+                stop.trip_location.loc_name, stop.trip_location.address, stop.phone);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
 
-        final List<ResolveInfo> activities = getPackageManager().queryIntentActivities (shareIntent, 0);
+        final List<ResolveInfo> activities = getPackageManager().queryIntentActivities(shareIntent,
+                0);
 
         List<String> appNames = new ArrayList<String>();
         for (ResolveInfo info : activities) {
@@ -305,17 +309,16 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Share using...");
-        builder.setItems(appNames.toArray(new CharSequence[appNames.size()]), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                ResolveInfo info = activities.get(item);
-                if (info.activityInfo.packageName.equals("com.facebook.katana")) {
-                    setupFacebookShareIntent();
-                }
-                // start the selected activity
-                shareIntent.setPackage(info.activityInfo.packageName);
-                startActivity(shareIntent);
-            }
-        });
+        builder.setItems(appNames.toArray(new CharSequence[appNames.size()]),
+                (dialog, item1) -> {
+                    ResolveInfo info = activities.get(item1);
+                    if (info.activityInfo.packageName.equals("com.facebook.katana")) {
+                        setupFacebookShareIntent();
+                    }
+                    // start the selected activity
+                    shareIntent.setPackage(info.activityInfo.packageName);
+                    startActivity(shareIntent);
+                });
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -338,9 +341,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
         if (listFromShared.contains(stop.trip_location)) {
             listFromShared.set(listFromShared.indexOf(stop.trip_location), stop.trip_location);
         } else {
-            if(position>-1) {
+            if (position > -1) {
                 Util.saveStop(mContext, stop.trip_location, position);
-            }else {
+            } else {
                 Util.saveStop(mContext, stop.trip_location);
             }
         }

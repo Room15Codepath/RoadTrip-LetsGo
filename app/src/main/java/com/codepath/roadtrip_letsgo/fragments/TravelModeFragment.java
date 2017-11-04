@@ -58,7 +58,7 @@ public class TravelModeFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         getDialog().setCanceledOnTouchOutside(true);
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_travel_mode, container, false);
@@ -71,26 +71,26 @@ public class TravelModeFragment extends DialogFragment {
 
 
         btnCar.setOnClickListener(v -> {
-            setTravelMode (TravelMode.MODE_DRIVING);
+            setTravelMode(TravelMode.MODE_DRIVING);
             mode = "driving";
             Util.saveTravelMode(getActivity().getApplicationContext(), mode);
-            ((HomeActivity) getActivity()).setIconForTravelMode(true,false,false);
+            ((HomeActivity) getActivity()).setIconForTravelMode(true, false, false);
             dismiss();
         });
 
         btnBike.setOnClickListener(v -> {
-            setTravelMode (TravelMode.MODE_BICYCLING);
+            setTravelMode(TravelMode.MODE_BICYCLING);
             mode = "bicycling";
             Util.saveTravelMode(getActivity().getApplicationContext(), mode);
-            ((HomeActivity) getActivity()).setIconForTravelMode(false,true,false);
+            ((HomeActivity) getActivity()).setIconForTravelMode(false, true, false);
             dismiss();
         });
 
         btnWalk.setOnClickListener(v -> {
-            setTravelMode (TravelMode.MODE_WALKING);
-            mode="walking";
+            setTravelMode(TravelMode.MODE_WALKING);
+            mode = "walking";
             Util.saveTravelMode(getActivity().getApplicationContext(), mode);
-            ((HomeActivity) getActivity()).setIconForTravelMode(false,false,true);
+            ((HomeActivity) getActivity()).setIconForTravelMode(false, false, true);
             dismiss();
 
         });
@@ -99,40 +99,48 @@ public class TravelModeFragment extends DialogFragment {
     }
 
     private void initializeDefaultMode() {
-        //SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
+        //SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences
+        // ("settings", 0);
         String travelMode = Util.getTravelMode(getActivity().getApplicationContext());
-        Log.d ("home fragment", "default mode="+travelMode);
-            if (travelMode.equals("driving")) {
-                setTravelMode(TravelMode.MODE_DRIVING);
-            } else if (travelMode.equals("bicycling")) {
-                setTravelMode(TravelMode.MODE_BICYCLING);
-            } else if (travelMode.equals("walking")){setTravelMode(TravelMode.MODE_WALKING);}
+        Log.d("home fragment", "default mode=" + travelMode);
+        if (travelMode.equals("driving")) {
+            setTravelMode(TravelMode.MODE_DRIVING);
+        } else if (travelMode.equals("bicycling")) {
+            setTravelMode(TravelMode.MODE_BICYCLING);
+        } else if (travelMode.equals("walking")) {
+            setTravelMode(TravelMode.MODE_WALKING);
+        }
 
-        if (travelMode.isEmpty()){
+        if (travelMode.isEmpty()) {
             setTravelMode(TravelMode.MODE_DRIVING);
         }
 
     }
 
-    private void setTravelMode (TravelMode type) {
-        DrawableCompat.setTint(btnCar.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
-        DrawableCompat.setTint(btnBike.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
-        DrawableCompat.setTint(btnWalk.getDrawable(), ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+    private void setTravelMode(TravelMode type) {
+        DrawableCompat.setTint(btnCar.getDrawable(),
+                ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+        DrawableCompat.setTint(btnBike.getDrawable(),
+                ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+        DrawableCompat.setTint(btnWalk.getDrawable(),
+                ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         if (type == TravelMode.MODE_DRIVING) {
-            Log.d ("home fragment", "setTravelMode="+type);
-            DrawableCompat.setTint(btnCar.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
-        }
-        else if (type == TravelMode.MODE_BICYCLING) {
-            DrawableCompat.setTint(btnBike.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
-        }
-        else {
-            DrawableCompat.setTint(btnWalk.getDrawable(), ContextCompat.getColor(getContext(), R.color.colorAccent));
+            Log.d("home fragment", "setTravelMode=" + type);
+            DrawableCompat.setTint(btnCar.getDrawable(),
+                    ContextCompat.getColor(getContext(), R.color.colorAccent));
+        } else if (type == TravelMode.MODE_BICYCLING) {
+            DrawableCompat.setTint(btnBike.getDrawable(),
+                    ContextCompat.getColor(getContext(), R.color.colorAccent));
+        } else {
+            DrawableCompat.setTint(btnWalk.getDrawable(),
+                    ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
     }
 
     /*private void  saveModeToShared() {
         Log.d (TAG_LOG, "mode="+mode);
-        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
+        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences
+        ("settings", 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("mode", mode);
         editor.commit();

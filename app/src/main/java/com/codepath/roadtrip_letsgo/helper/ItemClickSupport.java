@@ -27,7 +27,8 @@ public class ItemClickSupport {
         public boolean onLongClick(View v) {
             if (mOnItemLongClickListener != null) {
                 RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(v);
-                return mOnItemLongClickListener.onItemLongClicked(mRecyclerView, holder.getAdapterPosition(), v);
+                return mOnItemLongClickListener.onItemLongClicked(mRecyclerView,
+                        holder.getAdapterPosition(), v);
             }
             return false;
         }

@@ -32,7 +32,8 @@ public class TripStop {
     public String price;
     public ArrayList<String> categories;
 
-    public TripStop() {}
+    public TripStop() {
+    }
 
     public static TripStop fromJSON(JSONObject json, StopType stopType) {
         TripStop tripStop = new TripStop();
@@ -48,12 +49,12 @@ public class TripStop {
             tripStop.phone = (phone.isEmpty()) ? "N/A" : phone;
             try {
                 tripStop.price = json.getString("price");
-            }catch (JSONException x){
+            } catch (JSONException x) {
                 tripStop.price = "N/A";
             }
             tripStop.categories = new ArrayList<String>();
             JSONArray categoryList = json.getJSONArray("categories");
-            for (int i=0; i<categoryList.length(); i++) {
+            for (int i = 0; i < categoryList.length(); i++) {
                 tripStop.categories.add(categoryList.getJSONObject(i).getString("title"));
             }
             tripStop.review_count = json.getInt("review_count");
@@ -61,7 +62,7 @@ public class TripStop {
             tripLocation.loc_name = json.getString("name");
             tripLocation.address = getAddressStr(
                     json.getJSONObject("location").getJSONArray("display_address"));
-            tripLocation.lat  = json.getJSONObject("coordinates").getDouble("latitude");
+            tripLocation.lat = json.getJSONObject("coordinates").getDouble("latitude");
             tripLocation.lng = json.getJSONObject("coordinates").getDouble("longitude");
             tripStop.trip_location = tripLocation;
         } catch (Exception e) {
@@ -73,7 +74,7 @@ public class TripStop {
     private static String getAddressStr(JSONArray address) {
         StringBuilder str = new StringBuilder();
         try {
-            for (int i=0; i<address.length(); i++) {
+            for (int i = 0; i < address.length(); i++) {
                 str.append(address.getString(i));
                 str.append(" ");
             }
@@ -85,9 +86,9 @@ public class TripStop {
 
     public String getCategoriesStr() {
         StringBuilder str = new StringBuilder();
-        for (int i=0; i<categories.size(); i++) {
+        for (int i = 0; i < categories.size(); i++) {
             str.append(categories.get(i));
-            str.append((i == categories.size()-1) ? " " : ", ");
+            str.append((i == categories.size() - 1) ? " " : ", ");
         }
         return str.toString();
     }

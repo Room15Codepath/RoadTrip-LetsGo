@@ -47,8 +47,10 @@ public class YelpClient {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONObject errorResponse) {
                 Log.d("yelp token", errorResponse.toString());
             }
         });
@@ -59,7 +61,7 @@ public class YelpClient {
         mContext = context;
         CLIENT_ID = mContext.getString(R.string.yelp_client_id);
         SECRET_KEY = mContext.getString(R.string.yelp_secret_key);
-        if(instance == null) {
+        if (instance == null) {
             instance = new YelpClient();
         }
         return instance;

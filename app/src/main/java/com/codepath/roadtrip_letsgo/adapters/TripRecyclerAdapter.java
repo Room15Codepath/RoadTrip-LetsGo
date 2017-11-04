@@ -21,9 +21,9 @@ import butterknife.ButterKnife;
  * Created by yingbwan on 10/22/2017.
  */
 
-public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class TripRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TripLocation> items;
-    private final int STOP =0, BUTTON = 1;
+    private final int STOP = 0, BUTTON = 1;
 
     Context mContext;
     private AdapterCallback mAdapterCallback;
@@ -50,8 +50,7 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        if(position%2 ==1)
-        {
+        if (position % 2 == 1) {
             return STOP;
         } else {
             return BUTTON;
@@ -108,7 +107,8 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
                 break;
         }
     }
-    public void configureViewHolder1(ViewHolder1 holder, int position){
+
+    public void configureViewHolder1(ViewHolder1 holder, int position) {
         TripLocation stop = items.get(position);
 
         // set items
@@ -119,16 +119,19 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
 
     }
 
-    public void configureViewHolder2(ViewHolder2 holder, int position){
+    public void configureViewHolder2(ViewHolder2 holder, int position) {
         //Doc article = items.get(position);
         Log.d("STOP", "button line: " + position);
         // set items
     }
 
     public static class ViewHolder1 extends RecyclerView.ViewHolder {
-        @BindView(R.id.tvName) public TextView tvName;
-        @BindView(R.id.tvAddr) public TextView tvAddr;
-        @BindView(R.id.ivRemove) public ImageView ivRemove;
+        @BindView(R.id.tvName)
+        public TextView tvName;
+        @BindView(R.id.tvAddr)
+        public TextView tvAddr;
+        @BindView(R.id.ivRemove)
+        public ImageView ivRemove;
 
         public ViewHolder1(View view) {
             // Very important to call the parent constructor
@@ -155,7 +158,8 @@ public class TripRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public static class ViewHolder2 extends RecyclerView.ViewHolder {
-        @BindView(R.id.tvAdd) public TextView tvAdd;
+        @BindView(R.id.tvAdd)
+        public TextView tvAdd;
 
         public ViewHolder2(View view) {
             // Very important to call the parent constructor

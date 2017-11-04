@@ -16,7 +16,7 @@ import com.google.gson.reflect.TypeToken;
  * Created by tessavoon on 10/28/17.
  */
 
-public class MapInfoAdapter  implements GoogleMap.InfoWindowAdapter {
+public class MapInfoAdapter implements GoogleMap.InfoWindowAdapter {
     LayoutInflater mInflater;
 
     public MapInfoAdapter(LayoutInflater i) {

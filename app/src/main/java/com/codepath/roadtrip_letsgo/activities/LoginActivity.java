@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseUser user;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate()");
@@ -59,8 +58,11 @@ public class LoginActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
 
         if (user != null) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Have both permissions", Toast.LENGTH_LONG).show();
                 gotoHomeActivity(user.getUid(), hasPermissions());
             } else {
@@ -73,13 +75,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "checkLocationPermission");
-                if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(LoginActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(LoginActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
                     // our app has permissions.
                     gotoHomeActivity(null, hasPermissions());
 
-                }
-                else {
+                } else {
                     //our app doesn't have permissions, So i m requesting permissions.
                     requestLocationPermission();
                 }
@@ -88,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        initializeFacebookLogin ();
+        initializeFacebookLogin();
 
     }
 
@@ -108,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void initializeFacebookLogin () {
+    private void initializeFacebookLogin() {
         //FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton btnFacebookLogin = findViewById(R.id.btn_facevook_login);
@@ -148,8 +153,12 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             user = mAuth.getCurrentUser();
-                            if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                                    && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            if (ContextCompat.checkSelfPermission(LoginActivity.this,
+                                    Manifest.permission.ACCESS_FINE_LOCATION)
+                                    == PackageManager.PERMISSION_GRANTED
+                                    && ContextCompat.checkSelfPermission(LoginActivity.this,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                                    == PackageManager.PERMISSION_GRANTED) {
                                 gotoHomeActivity(user.getUid(), hasPermissions());
                             } else {
                                 requestLocationPermission();
@@ -177,7 +186,8 @@ public class LoginActivity extends AppCompatActivity {
     private boolean hasPermissions() {
         int res = 0;
         //string array of permissions,
-        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
 
         for (String perms : permissions) {
             res = checkCallingOrSelfPermission(perms);
@@ -190,10 +200,15 @@ public class LoginActivity extends AppCompatActivity {
 
     public boolean requestLocationPermission() {
         Log.d(TAG, "checkLocationPermission");
-        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(LoginActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(LoginActivity.this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            ActivityCompat.requestPermissions(LoginActivity.this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
+            String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION};
+            ActivityCompat.requestPermissions(LoginActivity.this, permissions,
+                    MY_PERMISSIONS_REQUEST_LOCATION);
             return false;
         } else {
             return true;
@@ -201,18 +216,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[],
+            int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
                     // permission was granted
-                    if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(LoginActivity.this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(LoginActivity.this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "onRequestPermissionsResult");
                         user = mAuth.getCurrentUser();
-                        if (user!=null) {
+                        if (user != null) {
                             gotoHomeActivity(user.getUid(), hasPermissions());
                         } else {
                             gotoHomeActivity(null, hasPermissions());

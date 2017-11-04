@@ -1,6 +1,7 @@
 package com.codepath.roadtrip_letsgo.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -103,8 +104,8 @@ public class SearchActivity extends AppCompatActivity {
     private final int REQUEST_CODE_SET = 20;  //for settings
     TripLocation origin;
     TripLocation dest;
-    String stopType=null;
-    int pos =-1;
+    String stopType = null;
+    int pos = -1;
 
     private SmartFragmentStatePagerAdapter adapterViewPager;
 //    @BindView(R.id.toolbar)
@@ -164,10 +165,12 @@ public class SearchActivity extends AppCompatActivity {
         fabMenu.setVisibility(View.GONE);
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
-        pos = getIntent().getIntExtra("position",-1);  //get stop position in list
+        pos = getIntent().getIntExtra("position", -1);  //get stop position in list
         stops = new ArrayList<>();
-        mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
-        lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
+        mapFragment = (SupportMapFragment) getCurrentPagerFragment(
+                0);//adapterViewPager.getRegisteredFragment(0);
+        lvFragment = (ListViewFragment) getCurrentPagerFragment(
+                1);//adapterViewPager.getRegisteredFragment(1);
         lvFragment.setPosition(pos);    //pass stop position to listview
         // parseIntent();
         getOriginAndDestination();
@@ -196,7 +199,8 @@ public class SearchActivity extends AppCompatActivity {
         });
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onPageScrolled(int position, float positionOffset,
+                    int positionOffsetPixels) {
 
             }
 
@@ -211,107 +215,83 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        btnCoffeCup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnCoffeCup.setOnClickListener(v -> {
 
-                Log.d("search activity", "cofee cup");
-                searchStops.setQuery("cafe", false);
-                stopType = "" + searchStops.getQuery();
-                Log.d("STRING", stopType);
-                cleanTabs();
-                onComplete();
+            Log.d("search activity", "cofee cup");
+            searchStops.setQuery("cafe", false);
+            stopType = "" + searchStops.getQuery();
+            Log.d("STRING", stopType);
+            cleanTabs();
+            onComplete();
 
-            }
         });
 
-        btnGasStation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("search activity", "cofee cup");
-                searchStops.setQuery("gas station", true);
-                stopType = "" + searchStops.getQuery();
-                Log.d("STRING", stopType);
-                cleanTabs();
-                onComplete();
+        btnGasStation.setOnClickListener(v -> {
+            Log.d("search activity", "cofee cup");
+            searchStops.setQuery("gas station", true);
+            stopType = "" + searchStops.getQuery();
+            Log.d("STRING", stopType);
+            cleanTabs();
+            onComplete();
 
 
-            }
         });
-        btnShoppingCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchStops.setQuery("mall", true);
-                stopType = "" + searchStops.getQuery();
-                Log.d("STRING", stopType);
-                cleanTabs();
-                onComplete();
+        btnShoppingCart.setOnClickListener(v -> {
+            searchStops.setQuery("mall", true);
+            stopType = "" + searchStops.getQuery();
+            Log.d("STRING", stopType);
+            cleanTabs();
+            onComplete();
 
-            }
         });
 
-        btnRastaurant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchStops.setQuery("restaurant", true);
-                stopType = "" + searchStops.getQuery();
-                Log.d("STRING", stopType);
-                cleanTabs();
-                onComplete();
+        btnRastaurant.setOnClickListener(v -> {
+            searchStops.setQuery("restaurant", true);
+            stopType = "" + searchStops.getQuery();
+            Log.d("STRING", stopType);
+            cleanTabs();
+            onComplete();
 
-            }
         });
 
-        btnAtm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchStops.setQuery("atm", true);
-                stopType = "" + searchStops.getQuery();
-                Log.d("STRING", stopType);
-                cleanTabs();
-                onComplete();
+        btnAtm.setOnClickListener(v -> {
+            searchStops.setQuery("atm", true);
+            stopType = "" + searchStops.getQuery();
+            Log.d("STRING", stopType);
+            cleanTabs();
+            onComplete();
 
-            }
         });
 
-        fabSort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Collections.sort(stops, new Comparator<TripStop>() {
-                    public int compare(TripStop o1, TripStop o2) {
-                        return o1.getTripLocation_Name().compareTo(o2.getTripLocation_Name());
-                    }
-                });
-                lvFragment.cleanList();
-                lvFragment.addItems(stops);
+        fabSort.setOnClickListener(v -> {
+            Collections.sort(stops, new Comparator<TripStop>() {
+                public int compare(TripStop o1, TripStop o2) {
+                    return o1.getTripLocation_Name().compareTo(o2.getTripLocation_Name());
+                }
+            });
+            lvFragment.cleanList();
+            lvFragment.addItems(stops);
 
-            }
         });
 
-        fabDistSort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Collections.sort(stops, new Comparator<TripStop>() {
-                    public int compare(TripStop o1, TripStop o2) {
-                        float o1Distance = getDistanceFromOrigin(o1.getTrip_location());
-                        float o2Distance = getDistanceFromOrigin(o2.getTrip_location());
-                        return Float.compare(o1Distance, o2Distance);
-                    }
-                });
-                lvFragment.cleanList();
-                lvFragment.addItems(stops);
+        fabDistSort.setOnClickListener(v -> {
+            Collections.sort(stops, new Comparator<TripStop>() {
+                public int compare(TripStop o1, TripStop o2) {
+                    float o1Distance = getDistanceFromOrigin(o1.getTrip_location());
+                    float o2Distance = getDistanceFromOrigin(o2.getTrip_location());
+                    return Float.compare(o1Distance, o2Distance);
+                }
+            });
+            lvFragment.cleanList();
+            lvFragment.addItems(stops);
 
-            }
         });
 
-        fabRatingSort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Collections.sort(stops, TripStop.COMPARE_BY_RATING);
-                lvFragment.cleanList();
-                lvFragment.addItems(stops);
+        fabRatingSort.setOnClickListener(v -> {
+            Collections.sort(stops, TripStop.COMPARE_BY_RATING);
+            lvFragment.cleanList();
+            lvFragment.addItems(stops);
 
-            }
         });
 
 
@@ -319,12 +299,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void setupTabs() {
         if (mapFragment != null) {
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap map) {
-                    loadMap(map);
-                }
-            });
+            mapFragment.getMapAsync(map -> loadMap(map));
         } else {
             Log.d("DEBUG", "map fragment is null");
         }
@@ -332,8 +307,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-    public void cleanTabs(){
-        if (lvFragment!=null && map != null) {
+    public void cleanTabs() {
+        if (lvFragment != null && map != null) {
             lvFragment.cleanList();
             map.clear();
         }
@@ -341,14 +316,11 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setFilterListener() {
-        btnFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FilterFragment filterFragment;
-                FragmentManager fm = getSupportFragmentManager();
-                filterFragment = FilterFragment.newInstance();
-                filterFragment.show(fm, "fragment_travelmode");
-            }
+        btnFilter.setOnClickListener(v -> {
+            FilterFragment filterFragment;
+            FragmentManager fm = getSupportFragmentManager();
+            filterFragment = FilterFragment.newInstance();
+            filterFragment.show(fm, "fragment_travelmode");
         });
     }
 
@@ -376,19 +348,19 @@ public class SearchActivity extends AppCompatActivity {
         return (Fragment) a.instantiateItem(viewPager, position);
 
     }
+
     public void onComplete() {
 
-        //mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager.getRegisteredFragment(0);
-        //lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager.getRegisteredFragment(1);
-            lvFragment.addTrip(origin, dest);
+        //mapFragment = (SupportMapFragment) getCurrentPagerFragment(0);//adapterViewPager
+        // .getRegisteredFragment(0);
+        //lvFragment = (ListViewFragment) getCurrentPagerFragment(1);//adapterViewPager
+        // .getRegisteredFragment(1);
+        lvFragment.addTrip(origin, dest);
 
         if (mapFragment != null) {
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap map) {
-                    loadMap(map);
-                    // map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
-                }
+            mapFragment.getMapAsync(map -> {
+                loadMap(map);
+                // map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
             });
         } else {
             Log.d("DEBUG", "map fragment is null");
@@ -406,9 +378,10 @@ public class SearchActivity extends AppCompatActivity {
             addRoute(origin, dest);
             //getBusinesses();
             // Zoom in the Google Map
-           // LatLng definedLoc = new LatLng(origin.lat,origin.lng);
+            // LatLng definedLoc = new LatLng(origin.lat,origin.lng);
 
-        //    CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc).zoom(13.0F).build();
+            //    CameraPosition cameraPosition = new CameraPosition.Builder().target(definedLoc)
+            // .zoom(13.0F).build();
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             builder.include(new LatLng(origin.lat, origin.lng));
             builder.include(new LatLng(dest.lat, dest.lng));
@@ -421,21 +394,23 @@ public class SearchActivity extends AppCompatActivity {
 
             map.moveCamera(cu);
 
-            map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                @Override
-                public void onInfoWindowClick(Marker marker) {
-                    Log.d("DEBUG:", "info window clicked");
-                    Intent intent = new Intent(SearchActivity.this, PlaceDetailActivity.class);
-                    if(marker.getTitle().equals("origin") || marker.getTitle().equals("destination")) return;
-                    TripStop loc = (TripStop) marker.getTag();
-                    intent.putExtra("location", Parcels.wrap(loc));
-                    intent.putExtra("position", pos);
-                    startActivity(intent);
-
+            map.setOnInfoWindowClickListener(marker -> {
+                Log.d("DEBUG:", "info window clicked");
+                Intent intent = new Intent(SearchActivity.this, PlaceDetailActivity.class);
+                if (marker.getTitle().equals("origin") || marker.getTitle().equals(
+                        "destination")) {
+                    return;
                 }
+                TripStop loc = (TripStop) marker.getTag();
+                intent.putExtra("location", Parcels.wrap(loc));
+                intent.putExtra("position", pos);
+                startActivity(intent);
+
             });
         } else {
-           Log.d("DEBUG", "map is null");// Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG",
+                    "map is null");// Toast.makeText(this, "Error - Map was null!!", Toast
+            // .LENGTH_SHORT).show();
         }
     }
 
@@ -444,7 +419,7 @@ public class SearchActivity extends AppCompatActivity {
         String mode = getTravelMode(mContext);
         LatLng pnt1 = new LatLng(origin.lat, origin.lng);
         LatLng pnt2 = new LatLng(dest.lat, dest.lng);
-        md.getDocument( pnt1, pnt2, mode,
+        md.getDocument(pnt1, pnt2, mode,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -454,14 +429,16 @@ public class SearchActivity extends AppCompatActivity {
                             ArrayList<LatLng> directionPoint = md.getDirection(doc);
                             drawPolyline(directionPoint);
                             if (stopType != null) {
-                                 getBusinesses(directionPoint);
+                                getBusinesses(directionPoint);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
+
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                            Throwable error) {
 
                     }
                 });
@@ -480,38 +457,41 @@ public class SearchActivity extends AppCompatActivity {
     private void getBusinesses(ArrayList<LatLng> directionPoint) {
         SharedPreferences settings = getSharedPreferences("settings", 0);
         Log.d("radius fl", String.valueOf(settings.getFloat("range", 1.0f)));
-        float radius = settings.getFloat("range",1.0f) * 1609;
-        Log.d("DEBUG:", "Radius:" +radius);
+        float radius = settings.getFloat("range", 1.0f) * 1609;
+        Log.d("DEBUG:", "Radius:" + radius);
         if (directionPoint.size() <= 20) {
             getYelpBusinessesFromPoint(new LatLng(origin.lat, origin.lng), radius);
         }
-        for (int i=0; i<directionPoint.size(); i+=20) {
+        for (int i = 0; i < directionPoint.size(); i += 20) {
             getYelpBusinessesFromPoint(directionPoint.get(i), radius);
         }
     }
 
     private void getYelpBusinessesFromPoint(LatLng point, float radius) {
-        Log.d("search activity", "stopType"+stopType);
+        Log.d("search activity", "stopType" + stopType);
         RequestParams params = new RequestParams();
         params.put("term", stopType);
         params.put("latitude", String.valueOf(point.latitude));
         params.put("longitude", String.valueOf(point.longitude));
-        params.put("radius",String.valueOf(Math.round(radius)));
+        params.put("radius", String.valueOf(Math.round(radius)));
         stops = new ArrayList<>();
         yelpClient.getBusinesses(params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     Log.d("yelpbusinesses", response.toString());
-                    for (int i=0; i<response.getJSONArray("businesses").length(); i++) {
+                    for (int i = 0; i < response.getJSONArray("businesses").length(); i++) {
                         TripStop tripStop = TripStop.fromJSON(
-                                response.getJSONArray("businesses").getJSONObject(i), StopType.CAFE);
+                                response.getJSONArray("businesses").getJSONObject(i),
+                                StopType.CAFE);
                         InfoWindow iw = InfoWindow.fromTripStop(tripStop);
                         String iwJSON = new Gson().toJson(iw);
                         BitmapDescriptor defaultMarker =
-                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+                                BitmapDescriptorFactory.defaultMarker(
+                                        BitmapDescriptorFactory.HUE_ORANGE);
                         Marker marker = map.addMarker(new MarkerOptions()
-                                .position(new LatLng(tripStop.trip_location.lat, tripStop.trip_location.lng))
+                                .position(new LatLng(tripStop.trip_location.lat,
+                                        tripStop.trip_location.lng))
                                 .title(iwJSON)
                                 .icon(defaultMarker));
                         map.setInfoWindowAdapter(new MapInfoAdapter(getLayoutInflater()));
@@ -527,7 +507,7 @@ public class SearchActivity extends AppCompatActivity {
                         }
                     }
                     Log.d("stop", stops.toString());
-                    Log.d("response length", ""+response.getJSONArray("businesses").length());
+                    Log.d("response length", "" + response.getJSONArray("businesses").length());
 
                     Collections.sort(stops, TripStop.COMPARE_BY_DISTANCE);
 
@@ -540,7 +520,8 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONObject errorResponse) {
 
             }
         });
@@ -548,15 +529,22 @@ public class SearchActivity extends AppCompatActivity {
 
     private void addLocationMarkers(TripLocation origin, TripLocation dest) {
 //
-//        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
-//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
-//        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_flag), "");
-//        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, destIcon);
+//        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText,
+// getResources().getDrawable(R.drawable.ic_home), "");
+//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin
+// .loc_name, origin.address, originIcon);
+//        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText,
+// getResources().getDrawable(R.drawable.ic_flag), "");
+//        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name,
+// dest.address, destIcon);
 
         BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
-        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng),
+                origin.loc_name, origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE,
+                "destination");
+        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat, dest.lng), dest.loc_name,
+                dest.address, icon_dest);
     }
 
 
@@ -588,12 +576,11 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(POSITION, tabLayout.getSelectedTabPosition());
-        outState.putParcelable(KEY_LOCATION,mCurrentLocation);
+        outState.putParcelable(KEY_LOCATION, mCurrentLocation);
     }
 
     @Override
@@ -604,13 +591,16 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("DEBUG:", "permission granted.");
-        SearchActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        SearchActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode,
+                grantResults);
     }
 
-    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION})
     void getMyLocation() {
         //noinspection MissingPermission
         map.setMyLocationEnabled(true);
@@ -618,24 +608,20 @@ public class SearchActivity extends AppCompatActivity {
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
         //noinspection MissingPermission
         locationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            onLocationChanged(location);
-                        }
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        onLocationChanged(location);
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                    e.printStackTrace();
                 });
     }
 
-    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    @SuppressLint("MissingPermission")
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION})
     protected void startLocationUpdates() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -649,7 +635,8 @@ public class SearchActivity extends AppCompatActivity {
         SettingsClient settingsClient = LocationServices.getSettingsClient(this);
         settingsClient.checkLocationSettings(locationSettingsRequest);
         //noinspection MissingPermission
-        getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, new LocationCallback() {
+        getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest,
+                new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         onLocationChanged(locationResult.getLastLocation());
@@ -664,10 +651,10 @@ public class SearchActivity extends AppCompatActivity {
             return;
         }
         mCurrentLocation = location;
-    //    String msg = "Updated Location: " +
-     //           Double.toString(location.getLatitude()) + "," +
-     //           Double.toString(location.getLongitude());
-      //  Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        //    String msg = "Updated Location: " +
+        //           Double.toString(location.getLatitude()) + "," +
+        //           Double.toString(location.getLongitude());
+        //  Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 /*    @Override
@@ -678,7 +665,8 @@ public class SearchActivity extends AppCompatActivity {
 
         if (mCurrentLocation != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-            LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation
+            .getLongitude());
  //           CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
 //            map.animateCamera(cameraUpdate);
         } else {

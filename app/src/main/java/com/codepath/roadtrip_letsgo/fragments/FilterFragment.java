@@ -51,7 +51,6 @@ public class FilterFragment extends DialogFragment {
     private Unbinder unbinder;
 
 
-
     public FilterFragment() {
         // Required empty public constructor
     }
@@ -69,7 +68,7 @@ public class FilterFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         getDialog().setCanceledOnTouchOutside(true);
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
         unbinder = ButterKnife.bind(this, view);
@@ -108,7 +107,7 @@ public class FilterFragment extends DialogFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                String milesText = String.format("%.1f miles", range.getProgress()/10.0);
+                String milesText = String.format("%.1f miles", range.getProgress() / 10.0);
                 miles.setText(milesText);
             }
         });
@@ -116,12 +115,13 @@ public class FilterFragment extends DialogFragment {
         btnSave.setOnClickListener(v -> {
             //float starsValue = (float) (rating.getProgress()/2.0);
             //Log.d (TAG_LOG, "starsValue="+starsValue);
-            float rangeValue = (float) (range.getProgress()/10.0);
-            Log.d (TAG_LOG, "rangeValue="+rangeValue);
-            SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
+            float rangeValue = (float) (range.getProgress() / 10.0);
+            Log.d(TAG_LOG, "rangeValue=" + rangeValue);
+            SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences(
+                    "settings", 0);
             Editor editor = settings.edit();
             //editor.putFloat("rating",starsValue);
-            editor.putFloat("range",rangeValue);
+            editor.putFloat("range", rangeValue);
             editor.commit();
             dismiss();
         });
@@ -144,15 +144,15 @@ public class FilterFragment extends DialogFragment {
     }
 
 
-
     private void initializeDefaultValues() {
 
-        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("settings", 0);
-        float rangeValue = settings.getFloat("range", 20)*10;
-        float ratingValue = settings.getFloat("rating", 2)*2;
-        range.setProgress((int)rangeValue);
+        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences(
+                "settings", 0);
+        float rangeValue = settings.getFloat("range", 20) * 10;
+        float ratingValue = settings.getFloat("rating", 2) * 2;
+        range.setProgress((int) rangeValue);
         range.setMax(60);
-        String milesText = String.format("%.1f miles", range.getProgress()/10.0);
+        String milesText = String.format("%.1f miles", range.getProgress() / 10.0);
         miles.setText(milesText);
 
         /*rating.setProgress((int)ratingValue);

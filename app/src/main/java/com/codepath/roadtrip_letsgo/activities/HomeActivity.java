@@ -1,5 +1,9 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
+import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
+import static com.codepath.roadtrip_letsgo.utils.Util.getTravelMode;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
@@ -11,7 +15,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
@@ -59,7 +62,6 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
@@ -67,7 +69,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -82,10 +83,6 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
-
-import static com.codepath.roadtrip_letsgo.activities.LoginActivity.MY_PERMISSIONS_REQUEST_LOCATION;
-import static com.codepath.roadtrip_letsgo.utils.Util.getStops;
-import static com.codepath.roadtrip_letsgo.utils.Util.getTravelMode;
 
 //import static com.codepath.roadtrip_letsgo.R.id.rvStops;
 
@@ -197,12 +194,7 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         setupStartListener();
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                loadMap(googleMap);
-            }
-        });
+        mapFragment.getMapAsync(googleMap -> loadMap(googleMap));
 
     }
 
@@ -247,11 +239,14 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         mapMenu.setVisible(false);
 
         car = menu.findItem(R.id.action_car);
-        DrawableCompat.setTint(car.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
+        DrawableCompat.setTint(car.getIcon(),
+                ContextCompat.getColor(mContext, android.R.color.white));
         bike = menu.findItem(R.id.action_bike);
-        DrawableCompat.setTint(bike.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
+        DrawableCompat.setTint(bike.getIcon(),
+                ContextCompat.getColor(mContext, android.R.color.white));
         walk = menu.findItem(R.id.action_walk);
-        DrawableCompat.setTint(walk.getIcon(), ContextCompat.getColor(mContext, android.R.color.white));
+        DrawableCompat.setTint(walk.getIcon(),
+                ContextCompat.getColor(mContext, android.R.color.white));
         Util.saveTravelMode(mContext, "driving");
         return true;
     }
@@ -322,14 +317,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             }
         } else {
             Task locationResult = mFusedLocationProviderClient.getLastLocation();
-            locationResult.addOnCompleteListener(this, new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        setCurrentLocationAddress(task);
-                    } else {
-                        Log.d("gps", "location not returned");
-                    }
+            locationResult.addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    setCurrentLocationAddress(task);
+                } else {
+                    Log.d("gps", "location not returned");
                 }
             });
         }
@@ -352,20 +344,17 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             }
         });
         originFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        originFragment.setText("");
-                        view.setVisibility(View.GONE);
-                        Util.saveOrigin(mContext, null);
-                        //disable map
-                    }
+                .setOnClickListener(view -> {
+                    originFragment.setText("");
+                    view.setVisibility(View.GONE);
+                    Util.saveOrigin(mContext, null);
+                    //disable map
                 });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
@@ -387,31 +376,29 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
     }
 
     private void setCurrentLocationAddress(Task locationResult) {
-        locationResult.addOnCompleteListener(this, new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-                if (task.isSuccessful()) {
-                    Location mLastKnownLocation = (Location) task.getResult();
-                    if (mLastKnownLocation != null) {
+        locationResult.addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                Location mLastKnownLocation = (Location) task.getResult();
+                if (mLastKnownLocation != null) {
 
-                        LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
-                                mLastKnownLocation.getLongitude());
-                        Geocoder geocoder;
-                        List<Address> addresses;
-                        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                        try {
-                            addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
-                                    mLastKnownLocation.getLongitude(), 1);
-                            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                            String address = addresses.get(0).getAddressLine(0);
-                            LatLngBounds mBounds = new LatLngBounds(latlng, latlng);
-                            setPlaceFromGivenAddress(address, mBounds);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Log.d("get last known location", "failed");
+                    LatLng latlng = new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude());
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                    try {
+                        addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude(), 1);
+                        // Here 1 represent max location result to returned, by documents it
+                        // recommended 1 to 5
+                        String address = addresses.get(0).getAddressLine(0);
+                        LatLngBounds mBounds = new LatLngBounds(latlng, latlng);
+                        setPlaceFromGivenAddress(address, mBounds);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                } else {
+                    Log.d("get last known location", "failed");
                 }
             }
         });
@@ -419,38 +406,36 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     private void setPlaceFromGivenAddress(String address, LatLngBounds mBounds) {
         mGeoDataClient.getAutocompletePredictions(address, mBounds, null).addOnCompleteListener(
-                new OnCompleteListener<AutocompletePredictionBufferResponse>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AutocompletePredictionBufferResponse> task) {
-                        if (task.isSuccessful()) {
-                            AutocompletePredictionBufferResponse predictedPlaces = task.getResult();
-                            if (predictedPlaces.getCount() > 0) {
-                                String currentPlaceId = predictedPlaces.get(0).getPlaceId();
-                                mGeoDataClient.getPlaceById(currentPlaceId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
-                                        if (task.isSuccessful()) {
-                                            PlaceBufferResponse retrievedPlaces = task.getResult();
+                task -> {
+                    if (task.isSuccessful()) {
+                        AutocompletePredictionBufferResponse predictedPlaces = task.getResult();
+                        if (predictedPlaces.getCount() > 0) {
+                            String currentPlaceId = predictedPlaces.get(0).getPlaceId();
+                            mGeoDataClient.getPlaceById(currentPlaceId).addOnCompleteListener(
+                                    task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            PlaceBufferResponse retrievedPlaces =
+                                                    task1.getResult();
                                             Place currentPlace = retrievedPlaces.get(0);
-                                            origin = TripLocation.fromPlace(currentPlace.freeze());
+                                            origin = TripLocation.fromPlace(
+                                                    currentPlace.freeze());
                                             originFragment.setText(address);
                                             Util.saveOrigin(mContext, origin);
                                             //enable destination input
                                             if (destination == null) {
                                                 enableDest();
                                             }
-                                            Log.i("currentplace", "Place found: " + currentPlace.getName());
+                                            Log.i("currentplace", "Place found: "
+                                                    + currentPlace.getName());
                                             retrievedPlaces.release();
                                             //enable map if start/end are ready.
 
                                         } else {
                                             Log.e("currentplace", "Place not found.");
                                         }
-                                    }
-                                });
-                            }
-                            predictedPlaces.release();
+                                    });
                         }
+                        predictedPlaces.release();
                     }
                 });
     }
@@ -489,36 +474,30 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
             }
         });
         destFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        destFragment.setText("");
-                        view.setVisibility(View.GONE);
-                        Util.saveDestination(mContext, null);
-                        // disable map
-                    }
+                .setOnClickListener(view -> {
+                    destFragment.setText("");
+                    view.setVisibility(View.GONE);
+                    Util.saveDestination(mContext, null);
+                    // disable map
                 });
     }
 
     private void setupStartListener() {
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (origin == null || destination == null) return;
-                StringBuilder sb = new StringBuilder();
-                sb.append("https://www.google.com/maps/dir");
-                sb.append("/" + origin.getAddress());
-                ArrayList<TripLocation> trips = getStops(mContext);
-                for (int i = 0; i < trips.size(); i++) {
-                    sb.append("/" + trips.get(i).getAddress());
-                }
-                sb.append("/" + destination.getAddress());
-                String travelMode = Util.getTravelMode(mContext);
-                sb.append(Util.getEncodedTravelMode(travelMode));
-                Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(sb.toString()));
-                i.setPackage("com.google.android.apps.maps");
-                startActivity(i);
+        btnStart.setOnClickListener(v -> {
+            if (origin == null || destination == null) return;
+            StringBuilder sb = new StringBuilder();
+            sb.append("https://www.google.com/maps/dir");
+            sb.append("/" + origin.getAddress());
+            ArrayList<TripLocation> trips = getStops(mContext);
+            for (int i = 0; i < trips.size(); i++) {
+                sb.append("/" + trips.get(i).getAddress());
             }
+            sb.append("/" + destination.getAddress());
+            String travelMode = Util.getTravelMode(mContext);
+            sb.append(Util.getEncodedTravelMode(travelMode));
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(sb.toString()));
+            i.setPackage("com.google.android.apps.maps");
+            startActivity(i);
         });
     }
 
@@ -527,7 +506,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         map = googleMap;
         if (map != null) {
             // Map is ready
-            //   Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            //   Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT)
+            // .show();
             //      ResultsActivityPermissionsDispatcher.getMyLocationWithCheck(this);
             //     ResultsActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
             map.getUiSettings().setZoomControlsEnabled(true);
@@ -541,15 +521,21 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                 int width = getResources().getDisplayMetrics().widthPixels;
                 int height = getResources().getDisplayMetrics().heightPixels;
                 int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height,
+                        padding);
                 // Zoom in the Google Map
                 map.moveCamera(cu);
                 Util.addRoute(origin, destination, mContext, map);
                 //Util.addLocationMarkers(origin, destination, mContext, map);
-                BitmapDescriptor originIcon = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
-                Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
-                BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-                Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat, destination.lng), destination.loc_name, destination.address, icon_dest);
+                BitmapDescriptor originIcon = Util.createBubble(this, IconGenerator.STYLE_WHITE,
+                        "origin");
+                Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng),
+                        origin.loc_name, origin.address, originIcon);
+                BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE,
+                        "destination");
+                Marker marker_dest = Util.addMarker(map,
+                        new LatLng(destination.lat, destination.lng), destination.loc_name,
+                        destination.address, icon_dest);
             }
 
 
@@ -567,19 +553,29 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
     public void putMarkers(GoogleMap map, List<TripLocation> list) {
         //IconGenerator icnGenerator = new IconGenerator(this);
-//        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_home), "");
-//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
-//        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText, getResources().getDrawable(R.drawable.ic_flag), "");
-//        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng), destination.loc_name, destination.address, destIcon);
+//        BitmapDescriptor originIcon = Util.createNewBubble(this, 0, R.style.iconGenText,
+// getResources().getDrawable(R.drawable.ic_home), "");
+//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin
+// .loc_name, origin.address, originIcon);
+//        BitmapDescriptor destIcon = Util.createNewBubble(this, 0, R.style.iconGenText,
+// getResources().getDrawable(R.drawable.ic_flag), "");
+//        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat,destination.lng),
+// destination.loc_name, destination.address, destIcon);
         BitmapDescriptor icon_origin = Util.createBubble(this, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, icon_origin);
-        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat, destination.lng), destination.loc_name, destination.address, icon_dest);
+        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng),
+                origin.loc_name, origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(this, IconGenerator.STYLE_WHITE,
+                "destination");
+        Marker marker_dest = Util.addMarker(map, new LatLng(destination.lat, destination.lng),
+                destination.loc_name, destination.address, icon_dest);
         for (int i = 0; i <= list.size() - 1; i++) {
             Log.d("List", "list=" + list.get(i).getLoc_name());
-            //BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-            BitmapDescriptor stopMarker = Util.createNewBubble(this, IconGenerator.STYLE_GREEN, R.style.iconGenText,
-                    getResources().getDrawable(R.drawable.ic_pin_map), " " + String.valueOf(i + 1) + ' ');
+            //BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker
+            // (BitmapDescriptorFactory.HUE_ORANGE);
+            BitmapDescriptor stopMarker = Util.createNewBubble(this, IconGenerator.STYLE_GREEN,
+                    R.style.iconGenText,
+                    getResources().getDrawable(R.drawable.ic_pin_map),
+                    " " + String.valueOf(i + 1) + ' ');
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(list.get(i).lat, list.get(i).lng))
                     .title(list.get(i).loc_name)
@@ -600,8 +596,10 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
 
         for (int j = 0; j <= directionPoint.size() - 2; j++) {
             latLngBuilder.include(directionPoint.get(j));
-            addMultipleRoute(new LatLng(directionPoint.get(j).latitude, directionPoint.get(j).longitude),
-                    new LatLng(directionPoint.get(j + 1).latitude, directionPoint.get(j + 1).longitude));
+            addMultipleRoute(
+                    new LatLng(directionPoint.get(j).latitude, directionPoint.get(j).longitude),
+                    new LatLng(directionPoint.get(j + 1).latitude,
+                            directionPoint.get(j + 1).longitude));
 
         }
 
@@ -643,7 +641,8 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                            Throwable error) {
 
                     }
                 });
@@ -667,9 +666,11 @@ public class HomeActivity extends AppCompatActivity implements TripRecyclerAdapt
         int maxX = mdisp.getWidth();
         float radius = Math.max(mapContainer.getWidth(), mapContainer.getHeight()) * 2.0f;
 
-        if (mapContainer.getVisibility() == View.INVISIBLE || mapContainer.getVisibility() == View.GONE) {
+        if (mapContainer.getVisibility() == View.INVISIBLE
+                || mapContainer.getVisibility() == View.GONE) {
             mapContainer.setVisibility(View.VISIBLE);
-            ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(1000).start();
+            ViewAnimationUtils.createCircularReveal(mapContainer, maxX, 0, 0, radius).setDuration(
+                    1000).start();
             mapMenu.setIcon(getResources().getDrawable(R.drawable.ic_list));
 
         } else {

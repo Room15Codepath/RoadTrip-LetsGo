@@ -61,14 +61,14 @@ public class Util {
         return builder.parse(new ByteArrayInputStream(documentoXml));
     }
 
-    public static float getDistance(double lat_a, double lng_a, double lat_b, double lng_b ) {
+    public static float getDistance(double lat_a, double lng_a, double lat_b, double lng_b) {
         double earthRadius = 3958.75;
-        double latDiff = Math.toRadians(lat_b-lat_a);
-        double lngDiff = Math.toRadians(lng_b-lng_a);
-        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+        double latDiff = Math.toRadians(lat_b - lat_a);
+        double lngDiff = Math.toRadians(lng_b - lng_a);
+        double a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
                 Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
-                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = earthRadius * c;
 
         int meterConversion = 1609;
@@ -106,14 +106,21 @@ public class Util {
     }
 
     public static String getReadableDay(int day) {
-        switch(day) {
-            case 0: return "Mon ";
-            case 1: return "Tue ";
-            case 2: return "Wed ";
-            case 3: return "Thu ";
-            case 4: return "Fri ";
-            case 5: return "Sat ";
-            default: return "Sun ";
+        switch (day) {
+            case 0:
+                return "Mon ";
+            case 1:
+                return "Tue ";
+            case 2:
+                return "Wed ";
+            case 3:
+                return "Thu ";
+            case 4:
+                return "Fri ";
+            case 5:
+                return "Sat ";
+            default:
+                return "Sun ";
         }
     }
 
@@ -146,7 +153,8 @@ public class Util {
         return relativeDate;
     }
 
-    public static void addRoute(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
+    public static void addRoute(TripLocation origin, TripLocation dest, Context context,
+            GoogleMap map) {
         final GMapV2Direction md = new GMapV2Direction();
         String mode = getTravelMode(context.getApplicationContext());
         LatLng pnt1 = new LatLng(origin.lat, origin.lng);
@@ -163,14 +171,17 @@ public class Util {
                             e.printStackTrace();
                         }
                     }
+
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                            Throwable error) {
                         Log.d("DBEUG", "failed with code " + statusCode);
                     }
                 });
     }
 
-    public static void drawPolyline(ArrayList<LatLng> directionPoint , Context context, GoogleMap map) {
+    public static void drawPolyline(ArrayList<LatLng> directionPoint, Context context,
+            GoogleMap map) {
         PolylineOptions rectLine = new PolylineOptions().width(7).color(
                 ContextCompat.getColor(context, R.color.colorPrimary));
 
@@ -180,16 +191,25 @@ public class Util {
         Polyline polyline = map.addPolyline(rectLine);
     }
 
-    public static void addLocationMarkers(TripLocation origin, TripLocation dest, Context context, GoogleMap map) {
-//        BitmapDescriptor originIcon = Util.createNewBubble(context, 0, R.style.iconGenText, context.getResources().getDrawable(R.drawable.ic_home), "");
-//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name, origin.address, originIcon);
-//        BitmapDescriptor destIcon = Util.createNewBubble(context, 0, R.style.iconGenText, context.getResources().getDrawable(R.drawable.ic_flag), "");
-//        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, destIcon);
+    public static void addLocationMarkers(TripLocation origin, TripLocation dest, Context context,
+            GoogleMap map) {
+//        BitmapDescriptor originIcon = Util.createNewBubble(context, 0, R.style.iconGenText,
+// context.getResources().getDrawable(R.drawable.ic_home), "");
+//        Marker marker_origin = Util.addMarker(map, new LatLng(origin.lat, origin.lng), origin
+// .loc_name, origin.address, originIcon);
+//        BitmapDescriptor destIcon = Util.createNewBubble(context, 0, R.style.iconGenText,
+// context.getResources().getDrawable(R.drawable.ic_flag), "");
+//        Marker marker_dest = Util.addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name,
+// dest.address, destIcon);
 
-        BitmapDescriptor icon_origin = Util.createBubble(context, IconGenerator.STYLE_WHITE, "origin");
-        Marker marker_origin = addMarker(map, new LatLng(origin.lat,origin.lng), origin.loc_name, origin.address, icon_origin);
-        BitmapDescriptor icon_dest = Util.createBubble(context, IconGenerator.STYLE_WHITE, "destination");
-        Marker marker_dest = addMarker(map, new LatLng(dest.lat,dest.lng), dest.loc_name, dest.address, icon_dest);
+        BitmapDescriptor icon_origin = Util.createBubble(context, IconGenerator.STYLE_WHITE,
+                "origin");
+        Marker marker_origin = addMarker(map, new LatLng(origin.lat, origin.lng), origin.loc_name,
+                origin.address, icon_origin);
+        BitmapDescriptor icon_dest = Util.createBubble(context, IconGenerator.STYLE_WHITE,
+                "destination");
+        Marker marker_dest = addMarker(map, new LatLng(dest.lat, dest.lng), dest.loc_name,
+                dest.address, icon_dest);
     }
 
     public static BitmapDescriptor createBubble(Context context, int style, String title) {
@@ -200,7 +220,8 @@ public class Util {
         return bitmapDescriptor;
     }
 
-    public static BitmapDescriptor createNewBubble(Context context, int style, int text_style, Drawable background, String title) {
+    public static BitmapDescriptor createNewBubble(Context context, int style, int text_style,
+            Drawable background, String title) {
         IconGenerator iconGenerator = new IconGenerator(context);
         iconGenerator.setStyle(style);
         iconGenerator.setBackground(background);
@@ -210,7 +231,8 @@ public class Util {
         return bitmapDescriptor;
     }
 
-    public static Marker addMarker(GoogleMap map, LatLng point, String title, String snippet, BitmapDescriptor icon) {
+    public static Marker addMarker(GoogleMap map, LatLng point, String title, String snippet,
+            BitmapDescriptor icon) {
         MarkerOptions options = new MarkerOptions()
                 .position(point)
                 .title(title)
@@ -249,14 +271,14 @@ public class Util {
 
     public static TripLocation getOrigin(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        if(prefs.contains(ORIGIN_PARAM)) {
+        if (prefs.contains(ORIGIN_PARAM)) {
             String originJSON = prefs.getString(ORIGIN_PARAM, "");
 
             TripLocation origin =
                     new Gson().fromJson(originJSON, new TypeToken<TripLocation>() {
                     }.getType());
             return origin;
-        }else{
+        } else {
             return null;
         }
     }
@@ -278,21 +300,21 @@ public class Util {
 
     public static TripLocation getDestination(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        if(prefs.contains(DESTINATION_PARAM)) {
+        if (prefs.contains(DESTINATION_PARAM)) {
             String originJSON = prefs.getString(DESTINATION_PARAM, "");
 
             TripLocation destination =
                     new Gson().fromJson(originJSON, new TypeToken<TripLocation>() {
                     }.getType());
             return destination;
-        }else{
+        } else {
             return null;
         }
     }
 
     public static ArrayList<TripLocation> getStops(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        if(prefs.contains(STOP_LIST_PARAM)) {
+        if (prefs.contains(STOP_LIST_PARAM)) {
             String JSONList = prefs.getString(STOP_LIST_PARAM, "");
 
             List<TripLocation> list =
@@ -304,7 +326,7 @@ public class Util {
         }
     }
 
-    public static void saveStops(Context context,List<TripLocation> list){
+    public static void saveStops(Context context, List<TripLocation> list) {
         String JSONList = new Gson().toJson(list);
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -324,7 +346,7 @@ public class Util {
 
     public static void saveStop(Context context, TripLocation stop, int position) {
         ArrayList<TripLocation> trips = getStops(context);
-        trips.add(position,stop);
+        trips.add(position, stop);
         String stopJSON = new Gson().toJson(trips);
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -334,7 +356,7 @@ public class Util {
 
 
     public static void deleteStop(Context context, TripLocation stop) {
-        Log.d ("DEBUG", "stop="+stop.getLoc_name());
+        Log.d("DEBUG", "stop=" + stop.getLoc_name());
         ArrayList<TripLocation> trips = getStops(context);
         trips.remove(stop);
         String stopJSON = new Gson().toJson(trips);
@@ -354,7 +376,7 @@ public class Util {
         editor.apply();
     }
 
-    public static void deleteStops(Context context,List<TripLocation> list){
+    public static void deleteStops(Context context, List<TripLocation> list) {
         list.clear();
         String JSONList = new Gson().toJson(list);
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
@@ -372,10 +394,10 @@ public class Util {
 
     public static String getTravelMode(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        if(prefs.contains(TRAVEL_MODE_PARAM)) {
+        if (prefs.contains(TRAVEL_MODE_PARAM)) {
             String mode = prefs.getString(TRAVEL_MODE_PARAM, "");
             return mode;
-        }else{
+        } else {
             return null;
         }
     }

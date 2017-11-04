@@ -19,33 +19,32 @@ import com.google.android.gms.maps.SupportMapFragment;
 public class SearchPagerAdapter extends SmartFragmentStatePagerAdapter {
 
 
-    private String[] tabTitles = new String[] {"Map","List"};
+    private String[] tabTitles = new String[]{"Map", "List"};
     private Context mContext;
 
-    public SearchPagerAdapter(FragmentManager fragmentManager, Context context){
+    public SearchPagerAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
         mContext = context;
     }
+
     @Override
-    public int getCount(){
+    public int getCount() {
         return 2;
     }
 
     @Override
-    public Fragment getItem(int position){
-        if(position == 0){
+    public Fragment getItem(int position) {
+        if (position == 0) {
             return SupportMapFragment.newInstance();
-        }
-        else if(position == 1){
+        } else if (position == 1) {
             return ListViewFragment.newInstance(1);
-        }
-        else{
+        } else {
             return null;
         }
     }
 
     @Override
-    public CharSequence getPageTitle(int position){
+    public CharSequence getPageTitle(int position) {
         return tabTitles[position];
     }
 }

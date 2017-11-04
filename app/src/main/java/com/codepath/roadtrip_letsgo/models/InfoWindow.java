@@ -13,7 +13,8 @@ public class InfoWindow {
     public int reviewCount;
     public String price;
 
-    public InfoWindow() {}
+    public InfoWindow() {
+    }
 
     public static InfoWindow fromTripStop(TripStop stop) {
         InfoWindow iw = new InfoWindow();

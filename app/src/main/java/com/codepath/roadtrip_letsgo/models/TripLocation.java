@@ -17,7 +17,8 @@ public class TripLocation {
     public double lat;
     public double lng;
 
-    public TripLocation() {}
+    public TripLocation() {
+    }
 
     public static TripLocation fromPlace(Place place) {
         TripLocation tripLocation = new TripLocation();

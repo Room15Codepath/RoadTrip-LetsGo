@@ -24,7 +24,8 @@ public class GMapV2Direction {
     public GMapV2Direction() {
     }
 
-    public void getDocument(LatLng start, LatLng end, String mode, AsyncHttpResponseHandler handler) {
+    public void getDocument(LatLng start, LatLng end, String mode,
+            AsyncHttpResponseHandler handler) {
         String url = "http://maps.googleapis.com/maps/api/directions/xml?"
                 + "origin=" + start.latitude + "," + start.longitude
                 + "&destination=" + end.latitude + "," + end.longitude
@@ -139,6 +140,7 @@ public class GMapV2Direction {
             return "-1";
         }
     }
+
     public String getCopyRights(Document doc) {
         try {
             NodeList nl1 = doc.getElementsByTagName("copyrights");
@@ -193,8 +195,9 @@ public class GMapV2Direction {
 
     private int getNodeIndex(NodeList nl, String nodename) {
         for (int i = 0; i < nl.getLength(); i++) {
-            if (nl.item(i).getNodeName().equals(nodename))
+            if (nl.item(i).getNodeName().equals(nodename)) {
                 return i;
+            }
         }
         return -1;
     }

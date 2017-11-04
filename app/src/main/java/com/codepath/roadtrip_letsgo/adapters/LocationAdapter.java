@@ -55,7 +55,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         holder.tvName.setText(location.trip_location.loc_name);
         holder.tvAddress.setText(location.trip_location.address);
-        float distance = Util.getDistance(origin.lat, origin.lng, location.trip_location.lat, location.trip_location.lng);
+        float distance = Util.getDistance(origin.lat, origin.lng, location.trip_location.lat,
+                location.trip_location.lng);
         Log.d("distance between", String.valueOf(distance));
         String miles = String.format("%.1f mi", distance * 0.0006213719);
         holder.tvMiles.setText(miles);
@@ -76,7 +77,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         return mLocations.size();
     }
 
-    public void addItems(List<TripStop> list){
+    public void addItems(List<TripStop> list) {
         mLocations.addAll(list);
         notifyDataSetChanged();
     }
