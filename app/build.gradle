@@ -10,7 +10,7 @@ repositories {
 }
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.codepath.roadtrip_letsgo"
         minSdkVersion 19
@@ -101,4 +101,3 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'me.tatarka.retrolambda'
