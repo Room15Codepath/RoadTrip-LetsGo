@@ -1,14 +1,19 @@
 package com.codepath.roadtrip_letsgo.activities;
 
+import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
+import static com.codepath.roadtrip_letsgo.utils.Util.getTravelMode;
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.codepath.roadtrip_letsgo.R;
 import com.codepath.roadtrip_letsgo.adapters.MapInfoAdapter;
 import com.codepath.roadtrip_letsgo.adapters.SearchPagerAdapter;
@@ -48,7 +54,6 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -58,8 +63,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.maps.android.ui.IconGenerator;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -79,10 +82,6 @@ import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
-
-import static com.codepath.roadtrip_letsgo.RoadTripApplication.getYelpClient;
-import static com.codepath.roadtrip_letsgo.utils.Util.getTravelMode;
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 @RuntimePermissions
 public class SearchActivity extends AppCompatActivity {
@@ -152,6 +151,8 @@ public class SearchActivity extends AppCompatActivity {
 
     @BindView(R.id.multiple_sort)
     com.getbase.floatingactionbutton.FloatingActionsMenu fabMenu;
+    @BindView(R.id.animation_view)
+    LottieAnimationView animationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +163,16 @@ public class SearchActivity extends AppCompatActivity {
         yelpClient = getYelpClient();
         //setSupportActionBar(toolbar);
         adapterViewPager = new SearchPagerAdapter(getSupportFragmentManager(), this);
+
         fabMenu.setVisibility(View.GONE);
+        animationView.setVisibility(View.GONE);
+        animationView.addColorFilterToLayer("Pin 1",
+                new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent),
+                        PorterDuff.Mode.SRC_ATOP));
+        animationView.addColorFilterToLayer("C3",
+                new PorterDuffColorFilter(this.getResources().getColor(R.color.colorAccent),
+                        PorterDuff.Mode.SRC_ATOP));
+
         viewPager.setAdapter(adapterViewPager);
         tabLayout.setupWithViewPager(viewPager);
         pos = getIntent().getIntExtra("position", -1);  //get stop position in list
@@ -188,6 +198,17 @@ public class SearchActivity extends AppCompatActivity {
                 Log.d("STRING", stopType);
                 cleanTabs();
                 searchStops.clearFocus();
+
+                // animation
+                animationView.setVisibility(View.VISIBLE);
+                animationView.addColorFilterToLayer("Pin 1",
+                        new PorterDuffColorFilter(getResources().getColor(R.color.colorAccent),
+                                PorterDuff.Mode.SRC_ATOP));
+                animationView.addColorFilterToLayer("C3",
+                        new PorterDuffColorFilter(getResources().getColor(R.color.colorAccent),
+                                PorterDuff.Mode.SRC_ATOP));
+                animationView.playAnimation();
+
                 onComplete();
                 return true;
             }
@@ -431,6 +452,8 @@ public class SearchActivity extends AppCompatActivity {
                             if (stopType != null) {
                                 getBusinesses(directionPoint);
                             }
+
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -465,6 +488,10 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i < directionPoint.size(); i += 20) {
             getYelpBusinessesFromPoint(directionPoint.get(i), radius);
         }
+
+        //stop animation
+        animationView.cancelAnimation();
+        animationView.setVisibility(View.GONE);
     }
 
     private void getYelpBusinessesFromPoint(LatLng point, float radius) {
@@ -510,9 +537,9 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d("response length", "" + response.getJSONArray("businesses").length());
 
                     Collections.sort(stops, TripStop.COMPARE_BY_DISTANCE);
-
-                    lvFragment.cleanList();
+                  //  lvFragment.cleanList();
                     lvFragment.addItems(stops);
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -603,20 +630,24 @@ public class SearchActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION})
     void getMyLocation() {
         //noinspection MissingPermission
-        map.setMyLocationEnabled(true);
+        try {
+            map.setMyLocationEnabled(true);
 
-        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
-        //noinspection MissingPermission
-        locationClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        onLocationChanged(location);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                    e.printStackTrace();
-                });
+            FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
+            //noinspection MissingPermission
+            locationClient.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            onLocationChanged(location);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    });
+        }catch (SecurityException ex){
+            ex.printStackTrace();
+        }
     }
 
     @SuppressLint("MissingPermission")

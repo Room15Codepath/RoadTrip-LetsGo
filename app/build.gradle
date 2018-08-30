@@ -9,14 +9,15 @@ repositories {
 
 }
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.codepath.roadtrip_letsgo"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,7 +44,7 @@ android {
     }
     defaultConfig {
         // ...
-        resConfigs "auto"
+        resConfigs "en"
     }
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
@@ -55,49 +56,55 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.1.0'  // variable that can be referenced to keep support libs consistent
+    supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
 }
 
 dependencies {
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
     }
     // for logging API calls to LogCat
 
     // Required only if Facebook login support is required
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
-    compile "com.android.support:support-v4:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile "com.android.support:support-vector-drawable:${supportLibVersion}"
-    compile 'jp.wasabeef:glide-transformations:3.0.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-    compile 'com.github.hotchemi:permissionsdispatcher:2.4.0'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'com.google.android.gms:play-services-maps:11.4.2'
-    compile 'com.google.android.gms:play-services-location:11.4.2'
-    compile 'com.google.android.gms:play-services-places:11.4.2'
-    compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.bumptech.glide:glide:4.2.0'
-    compile 'org.parceler:parceler-api:1.1.6'
-    compile 'com.google.maps.android:android-maps-utils:0.5'
-    compile 'com.firebaseui:firebase-ui-auth:3.0.0'
-    compile 'com.facebook.android:facebook-login:4.27.0'
-    compile 'com.facebook.android:facebook-share:[4,5)'
-    compile 'com.google.firebase:firebase-auth:11.4.2'
-    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
-    compile 'com.getbase:floatingactionbutton:1.10.1'
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'com.airbnb.android:lottie:2.2.5'
-    testCompile 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:27.1.1"
+    implementation "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support:support-v4:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:support-vector-drawable:${supportLibVersion}"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'jp.wasabeef:glide-transformations:3.0.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    implementation 'com.github.hotchemi:permissionsdispatcher:2.4.0'
+    implementation 'com.jakewharton:butterknife:8.4.0'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-places:15.0.1'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    implementation 'org.parceler:parceler-api:1.1.6'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+    implementation 'com.firebaseui:firebase-ui-auth:3.0.0'
+    implementation 'com.facebook.android:facebook-login:4.35.0'
+    implementation 'com.facebook.android:facebook-share:4.35.0'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.facebook.android:facebook-android-sdk:4.35.0'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.airbnb.android:lottie:2.2.5'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.6"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
